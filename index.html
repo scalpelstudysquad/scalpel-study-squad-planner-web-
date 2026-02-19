@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Scalpel Study Squad — 20th Book Revision Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES & THEME
+============================================================ */
+:root {
+  --bg-primary: #0b1a14;
+  --bg-secondary: #112219;
+  --bg-card: #172d20;
+  --bg-input: #0f201a;
+  --border: #2a5040;
+  --border-light: #1e3d2e;
+  --accent: #4ade80;
+  --accent-dim: #22c55e;
+  --accent-gold: #fbbf24;
+  --accent-gold-dim: #d97706;
+  --text-primary: #e8f5ee;
+  --text-secondary: #9dc4ae;
+  --text-muted: #5a8a6e;
+  --danger: #ef4444;
+  --danger-dark: #b91c1c;
+  --shadow: rgba(0,0,0,0.5);
+  --tab-active: #4ade80;
+  --tab-bg: #1e3a2a;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+[data-theme="light"] {
+  --bg-primary: #f0f7f2;
+  --bg-secondary: #e4f0e8;
+  --bg-card: #ffffff;
+  --bg-input: #f8fbf9;
+  --border: #b2d9c0;
+  --border-light: #d0ebd8;
+  --accent: #16a34a;
+  --accent-dim: #15803d;
+  --accent-gold: #d97706;
+  --accent-gold-dim: #b45309;
+  --text-primary: #0a1f13;
+  --text-secondary: #2d6647;
+  --text-muted: #5a8a6e;
+  --danger: #dc2626;
+  --danger-dark: #991b1b;
+  --shadow: rgba(0,0,0,0.12);
+  --tab-active: #16a34a;
+  --tab-bg: #d4edda;
+}
+
+/* ============================================================
+   RESET & BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background 0.35s, color 0.35s;
+  overflow-x: hidden;
+}
+/* Subtle animated mesh background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 10%, rgba(74,222,128,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 90%, rgba(251,191,36,0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* ============================================================
+   HEADER
+============================================================ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 2px 20px var(--shadow);
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+/* Theme Toggle */
+.theme-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  width: 52px;
+  height: 28px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+[data-theme="light"] .theme-toggle::after { transform: translateX(24px); }
+.theme-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Logo */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.logo-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 20px rgba(74,222,128,0.35);
+  transition: box-shadow 0.3s;
+}
+.logo-img:hover { box-shadow: 0 0 30px rgba(74,222,128,0.55); }
+.logo-text { text-align: center; }
+.site-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(20px, 3.5vw, 32px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-shadow: 0 0 30px rgba(74,222,128,0.4);
+}
+.site-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 1.5vw, 15px);
+  color: var(--accent-gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Telegram User */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 6px 14px 6px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 140px;
+  justify-content: center;
+}
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+}
+#tg-login-wrap { min-width: 140px; display: flex; justify-content: flex-end; }
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+.main { position: relative; z-index: 1; }
+
+/* ============================================================
+   SLIDESHOW DASHBOARD
+============================================================ */
+.slideshow-section {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 24px;
+}
+.slideshow-section h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 16px;
+}
+.slideshow-container {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+}
+.slide-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 36px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  box-shadow: 0 4px 24px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.slide-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-gold));
+  animation: progress 20s linear infinite;
+}
+@keyframes progress { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+.slide-content { flex: 1; text-align: left; }
+.slide-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+.slide-subject {
+  font-size: 11px;
+  color: var(--accent-gold);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+.slide-question {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.slide-answer {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.slide-image {
+  width: 120px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.slide-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 14px;
+}
+.slide-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+}
+.slide-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slide-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+.slide-counter {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ============================================================
+   TABS NAVIGATION (5 sections)
+============================================================ */
+.tabs-wrapper {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  position: sticky;
+  top: 116px;
+  z-index: 90;
+  overflow-x: auto;
+}
+.tabs-nav {
+  display: flex;
+  gap: 4px;
+  min-width: max-content;
+}
+.tab-btn {
+  padding: 14px 22px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-secondary); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ============================================================
+   TAB PANELS
+============================================================ */
+.tab-panel { display: none; padding: 28px 24px; max-width: 980px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+
+/* ============================================================
+   CARDS & FORMS
+============================================================ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 16px var(--shadow);
+}
+.card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.form-group.full { grid-column: 1 / -1; }
+label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+select, input[type="text"], textarea, input[type="date"], input[type="month"] {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+select:focus, input:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(74,222,128,0.12);
+}
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+select option { background: var(--bg-input); }
+
+/* Image upload */
+.img-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.img-upload-area:hover { border-color: var(--accent); background: rgba(74,222,128,0.04); }
+.img-upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+.img-upload-text { font-size: 12px; color: var(--text-muted); }
+.img-upload-text strong { color: var(--accent); }
+.img-preview {
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+  display: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+.btn-primary:hover { background: var(--accent-dim); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,222,128,0.3); }
+.btn-gold {
+  background: var(--accent-gold);
+  color: #000;
+}
+.btn-gold:hover { background: var(--accent-gold-dim); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--danger-dark); transform: translateY(-1px); }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+
+/* ============================================================
+   SUB-TABS (Download tabs)
+============================================================ */
+.sub-tabs-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.sub-tab-btn {
+  padding: 10px 18px;
+  background: var(--tab-bg);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.sub-tab-btn.active, .sub-tab-btn:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+.sub-tab-panel { display: none; }
+.sub-tab-panel.active { display: block; }
+.download-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  margin-bottom: 16px;
+}
+.download-controls .form-group { margin: 0; min-width: 160px; }
+
+/* ============================================================
+   SAVED ENTRIES LIST
+============================================================ */
+.entries-list { margin-top: 24px; }
+.entries-list h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.entry-item {
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.entry-text { flex: 1; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.entry-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+.entry-q { font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.entry-a { color: var(--accent); }
+.entry-img {
+  width: 80px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.entry-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.entry-delete:hover { color: var(--danger); }
+.badge-reason {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-new { background: rgba(74,222,128,0.2); color: var(--accent); }
+.badge-recall { background: rgba(251,191,36,0.2); color: var(--accent-gold); }
+.badge-silly { background: rgba(168,85,247,0.2); color: #c084fc; }
+.badge-contro { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+/* ============================================================
+   DANGER ZONE
+============================================================ */
+.danger-zone {
+  max-width: 980px;
+  margin: 40px auto 60px;
+  padding: 0 24px;
+}
+.danger-card {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+.danger-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--danger);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.danger-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+.danger-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px var(--shadow);
+  animation: slideIn 0.3s ease, fadeOut 0.4s ease 2.6s forwards;
+  max-width: 300px;
+}
+.toast.error { border-left-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
+
+/* ============================================================
+   MODAL (Confirm delete)
+============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.modal h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--danger);
+  margin-bottom: 12px;
+}
+.modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.7; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 700px) {
+  .header { padding: 10px 14px; }
+  .logo-img { width: 64px; height: 64px; }
+  .site-title { font-size: 18px; }
+  .form-row { grid-template-columns: 1fr; }
+  .tab-btn { padding: 12px 14px; font-size: 10px; }
+  .tabs-wrapper { top: 96px; }
+  .download-controls { flex-direction: column; }
+}
+
+/* ============================================================
+   SCROLLBAR
+============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* No entries state */
+.no-entries {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: var(--border-light);
+  margin: 28px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header class="header">
+  <div class="header-left">
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"></button>
+    <span class="theme-label" id="themeLabel">Dark</span>
+  </div>
+
+  <div class="header-center">
+    <div class="logo-wrap">
+      <img class="logo-img" id="logoImg"
+        src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
+        alt="Scalpel Study Squad Logo"
+        onerror="this.style.display='none'"/>
+      <div class="logo-text">
+        <div class="site-title">Scalpel Study Squad</div>
+        <div class="site-subtitle">20th Book — Revision Report</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div id="tg-login-wrap">
+      <div class="user-info" id="userInfo" style="display:none;">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span id="userNameDisplay">—</span>
+      </div>
+      <!-- Telegram Login Widget - Replace YOUR_BOT_NAME with your actual bot username -->
+      <script async src="https://telegram.org/js/telegram-widget.js?22"
+        data-telegram-login="SSSRevisionBot"
+        data-size="small"
+        data-onauth="onTelegramAuth(user)"
+        data-request-access="write"
+        id="tgWidget">
+      </script>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     SLIDESHOW DASHBOARD
+============================================================ -->
+<section class="slideshow-section">
+  <h2>📚 Facts Slideshow — Auto-rotating every 20 seconds</h2>
+  <div class="slideshow-container">
+    <div class="slide-card" id="slideCard">
+      <div class="slide-content" id="slideContent">
+        <div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>
+      </div>
+    </div>
+    <div class="slide-nav">
+      <button class="slide-btn" id="slidePrev" title="Previous">&#8592;</button>
+      <span class="slide-counter" id="slideCounter">0 / 0</span>
+      <button class="slide-btn" id="slideNext" title="Next">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION TABS
+============================================================ -->
+<div class="tabs-wrapper">
+  <div class="tabs-nav">
+    <button class="tab-btn active" data-tab="notes">📝 Notes</button>
+    <button class="tab-btn" data-tab="facts">🥗 Facts Salad</button>
+    <button class="tab-btn" data-tab="pyq">🎯 Difficult PYQ</button>
+    <button class="tab-btn" data-tab="swt">🔁 SWT Checkpoint</button>
+    <button class="tab-btn" data-tab="gt">⚡ GT Mistakes</button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- ============================================================
+     TAB 1: NOTES
+============================================================ -->
+<div class="tab-panel active" id="panel-notes">
+  <div class="card">
+    <div class="card-title">📝 Add Note</div>
+    <form id="form-notes" onsubmit="return false;">
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="notes-subject" class="section-subject-select"></select>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes-text" placeholder="Type your notes here..." rows="5"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image (max 100 KB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="notes-img-input" onchange="handleImageUpload(this,'notes-img-preview','notes-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <img id="notes-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="notes-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('notes')">💾 Save Note</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Download Notes PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'notes-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'notes-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="notes-daily">
+      <div class="download-controls">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="notes-dl-subject-daily"></select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="notes-dl-date"/>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="notes-monthly">
+      <div class="download-controls">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="notes-dl-subject-monthly"></select>
+        </div>
+        <div class="form-group">
+          <label>Month</label>
+          <input type="month" id="notes-dl-month"/>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="entries-list" id="entries-notes">
+    <h3>Saved Notes</h3>
+    <div id="list-notes"><div class="no-entries">No notes saved yet.</div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TAB 2: FACTS SALAD
+============================================================ -->
+<div class="tab-panel" id="panel-facts">
+  <div class="card">
+    <div class="card-title">🥗 Add Fact</div>
+    <form id="form-facts" onsubmit="return false;">
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="facts-subject" class="section-subject-select"></select>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="facts-question" placeholder="Enter question..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Answer / Fact</label>
+        <textarea id="facts-answer" placeholder="Enter answer or fact..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image (max 100 KB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="facts-img-input" onchange="handleImageUpload(this,'facts-img-preview','facts-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <img id="facts-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="facts-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('facts')">💾 Save Fact</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Download Facts PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'facts-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'facts-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="facts-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="facts-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="facts-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="facts-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="facts-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="facts-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="entries-list" id="entries-facts">
+    <h3>Saved Facts</h3>
+    <div id="list-facts"><div class="no-entries">No facts saved yet.</div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TAB 3: DIFFICULT PYQ
+============================================================ -->
+<div class="tab-panel" id="panel-pyq">
+  <div class="card">
+    <div class="card-title">🎯 Add Difficult PYQ</div>
+    <form id="form-pyq" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="pyq-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Exam</label>
+          <select id="pyq-exam">
+            <option value="">Select Exam</option>
+            <option>NEET PG</option><option>INICET May</option><option>INICET NOV</option>
+            <option>FMGE JULY</option><option>FMGE DEC</option><option>UPSC CMS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Year</label>
+          <select id="pyq-year"></select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="pyq-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="pyq-question" placeholder="Enter PYQ question..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="pyq-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="pyq-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 100 KB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="pyq-img-input" onchange="handleImageUpload(this,'pyq-img-preview','pyq-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <img id="pyq-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="pyq-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('pyq')">💾 Save PYQ</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Download PYQ PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'pyq-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'pyq-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="pyq-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="pyq-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="pyq-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="pyq-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="entries-list">
+    <h3>Saved PYQs</h3>
+    <div id="list-pyq"><div class="no-entries">No PYQs saved yet.</div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TAB 4: SWT CHECKPOINT
+============================================================ -->
+<div class="tab-panel" id="panel-swt">
+  <div class="card">
+    <div class="card-title">🔁 Add SWT Checkpoint</div>
+    <form id="form-swt" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="swt-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="swt-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="swt-question" placeholder="Enter SWT question..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="swt-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="swt-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 100 KB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="swt-img-input" onchange="handleImageUpload(this,'swt-img-preview','swt-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <img id="swt-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="swt-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('swt')">💾 Save SWT</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Download SWT PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'swt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'swt-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="swt-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="swt-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="swt-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="swt-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="swt-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="swt-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="entries-list">
+    <h3>Saved SWT Checkpoints</h3>
+    <div id="list-swt"><div class="no-entries">No SWT checkpoints saved yet.</div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TAB 5: GT MISTAKES
+============================================================ -->
+<div class="tab-panel" id="panel-gt">
+  <div class="card">
+    <div class="card-title">⚡ Add GT Mistake</div>
+    <form id="form-gt" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="gt-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Exam</label>
+          <select id="gt-exam">
+            <option value="">Select Exam</option>
+            <option>NEET PG</option><option>INICET May</option><option>INICET NOV</option>
+            <option>FMGE JULY</option><option>FMGE DEC</option><option>UPSC CMS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="gt-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="gt-question" placeholder="Enter question..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="gt-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="gt-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 100 KB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="gt-img-input" onchange="handleImageUpload(this,'gt-img-preview','gt-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <img id="gt-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="gt-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('gt')">💾 Save GT Mistake</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Download GT PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'gt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'gt-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="gt-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="gt-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="gt-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="gt-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="gt-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="gt-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="entries-list">
+    <h3>Saved GT Mistakes</h3>
+    <div id="list-gt"><div class="no-entries">No GT mistakes saved yet.</div></div>
+  </div>
+</div>
+
+</main>
+
+<!-- ============================================================
+     DANGER ZONE
+============================================================ -->
+<div class="danger-zone">
+  <div class="danger-card">
+    <div class="danger-title">⚠ Danger Zone</div>
+    <p class="danger-desc">
+      Permanently delete your data stored in this browser. This action cannot be undone.
+      All your notes, facts, PYQs, SWT checkpoints, and GT mistakes will be erased from local storage.
+    </p>
+    <div class="danger-actions">
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('notes')">🗑 Delete Notes</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('facts')">🗑 Delete Facts</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('pyq')">🗑 Delete PYQs</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('swt')">🗑 Delete SWT</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('gt')">🗑 Delete GT</button>
+      <button class="btn btn-danger" onclick="confirmDelete('all')" style="background:#7f1d1d;">💀 Delete ALL Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>⚠ Confirm Permanent Deletion</h3>
+    <p id="modalText">This action is irreversible. All data will be permanently deleted from your browser's local storage.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   CONSTANTS & CONFIG
+============================================================ */
+const SUBJECTS = [
+  'Anatomy','Physiology','Biochemistry','Pathology','Microbiology',
+  'Pharmacology','FMT','PSM','Ophthalmology','ENT','Medicine',
+  'Surgery','OBG','Pediatrics','Anesthesia','Dermatology',
+  'Orthopedics','Psychiatry','Radiology'
+];
+
+const SECTION_LABELS = {
+  notes: 'Notes',
+  facts: 'Facts Salad',
+  pyq: 'Difficult PYQ Checkpoint',
+  swt: 'SWT Checkpoint',
+  gt: 'GT Mistakes Checkpoint'
+};
+
+const LOGO_URL = 'https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg';
+
+/* ============================================================
+   LOCAL STORAGE DATABASE
+============================================================ */
+const DB = {};
+const DB_KEYS = ['notes','facts','pyq','swt','gt'];
+
+function loadDB() {
+  DB_KEYS.forEach(k => {
+    try { DB[k] = JSON.parse(localStorage.getItem('sss_' + k) || '[]'); }
+    catch(e) { DB[k] = []; }
+  });
+}
+
+function saveDB(key) {
+  localStorage.setItem('sss_' + key, JSON.stringify(DB[key]));
+}
+
+loadDB();
+
+/* ============================================================
+   THEME TOGGLE
+============================================================ */
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+
+let currentTheme = localStorage.getItem('sss_theme') || 'dark';
+html.setAttribute('data-theme', currentTheme);
+themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+
+themeToggle.addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', currentTheme);
+  themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+  localStorage.setItem('sss_theme', currentTheme);
+});
+
+/* ============================================================
+   TELEGRAM AUTH
+============================================================ */
+let currentUser = null;
+try {
+  const saved = localStorage.getItem('sss_user');
+  if (saved) { currentUser = JSON.parse(saved); updateUserDisplay(); }
+} catch(e) {}
+
+function onTelegramAuth(user) {
+  currentUser = user;
+  localStorage.setItem('sss_user', JSON.stringify(user));
+  updateUserDisplay();
+  showToast('✅ Logged in as ' + user.first_name);
+}
+
+function updateUserDisplay() {
+  if (!currentUser) return;
+  const tgWidget = document.getElementById('tgWidget');
+  if (tgWidget) tgWidget.style.display = 'none';
+  const userInfo = document.getElementById('userInfo');
+  userInfo.style.display = 'flex';
+  document.getElementById('userNameDisplay').textContent = currentUser.first_name + ' #' + currentUser.id;
+  document.getElementById('userAvatar').textContent = currentUser.first_name.charAt(0).toUpperCase();
+}
+
+/* ============================================================
+   POPULATE DROPDOWNS
+============================================================ */
+function populateSelect(el, options, includeAll = false) {
+  if (!el) return;
+  el.innerHTML = '';
+  if (includeAll) el.innerHTML = '<option value="all">All Subjects</option>';
+  options.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s;
+    o.textContent = s;
+    el.appendChild(o);
+  });
+}
+
+function initDropdowns() {
+  // Subject selects in forms
+  document.querySelectorAll('.section-subject-select').forEach(sel => {
+    populateSelect(sel, SUBJECTS);
+  });
+
+  // Year select
+  const yearSel = document.getElementById('pyq-year');
+  if (yearSel) {
+    yearSel.innerHTML = '<option value="">Select Year</option>';
+    for (let y = 2025; y >= 2011; y--) {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      yearSel.appendChild(o);
+    }
+  }
+
+  // Download dropdowns
+  const dlIds = [
+    'notes-dl-subject-daily','notes-dl-subject-monthly',
+    'facts-dl-subject-daily','facts-dl-subject-monthly',
+    'pyq-dl-subject-daily','pyq-dl-subject-monthly',
+    'swt-dl-subject-daily','swt-dl-subject-monthly',
+    'gt-dl-subject-daily','gt-dl-subject-monthly'
+  ];
+  dlIds.forEach(id => populateSelect(document.getElementById(id), SUBJECTS, true));
+
+  // Set default dates
+  const today = new Date().toISOString().split('T')[0];
+  const thisMonth = today.substring(0, 7);
+  document.querySelectorAll('input[type="date"]').forEach(el => { if (!el.value) el.value = today; });
+  document.querySelectorAll('input[type="month"]').forEach(el => { if (!el.value) el.value = thisMonth; });
+}
+
+initDropdowns();
+
+/* ============================================================
+   TABS
+============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('panel-' + btn.dataset.tab);
+    if (panel) panel.classList.add('active');
+  });
+});
+
+function switchSubTab(btn, panelId) {
+  const parent = btn.closest('.card');
+  parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+/* ============================================================
+   IMAGE UPLOAD
+============================================================ */
+function handleImageUpload(input, previewId, dataId) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 102400) {
+    showToast('❌ Image too large. Max 100 KB allowed.', 'error');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById(dataId).value = e.target.result;
+    const preview = document.getElementById(previewId);
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============================================================
+   SAVE ENTRY
+============================================================ */
+function getTimestamp() {
+  const now = new Date();
+  return {
+    timestamp: now.toISOString(),
+    date: now.toISOString().split('T')[0],
+    month: now.toISOString().substring(0, 7),
+    displayDate: now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }),
+    displayTime: now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })
+  };
+}
+
+function saveEntry(section) {
+  const ts = getTimestamp();
+  let entry = { id: Date.now(), ...ts };
+
+  if (section === 'notes') {
+    const subject = document.getElementById('notes-subject').value;
+    const text = document.getElementById('notes-text').value.trim();
+    if (!text) { showToast('❌ Please enter notes text.', 'error'); return; }
+    entry = { ...entry, subject, text, image: document.getElementById('notes-img-data').value };
+    clearForm('notes', ['notes-text','notes-img-data'], ['notes-img-preview']);
+
+  } else if (section === 'facts') {
+    const subject = document.getElementById('facts-subject').value;
+    const question = document.getElementById('facts-question').value.trim();
+    const answer = document.getElementById('facts-answer').value.trim();
+    if (!question || !answer) { showToast('❌ Question and answer required.', 'error'); return; }
+    entry = { ...entry, subject, question, answer, image: document.getElementById('facts-img-data').value };
+    clearForm('facts', ['facts-question','facts-answer','facts-img-data'], ['facts-img-preview']);
+
+  } else if (section === 'pyq') {
+    const subject = document.getElementById('pyq-subject').value;
+    const exam = document.getElementById('pyq-exam').value;
+    const year = document.getElementById('pyq-year').value;
+    const question = document.getElementById('pyq-question').value.trim();
+    const correct = document.getElementById('pyq-correct').value.trim();
+    const wrong = document.getElementById('pyq-wrong').value.trim();
+    const reason = document.getElementById('pyq-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, exam, year, question, correct, wrong, reason, image: document.getElementById('pyq-img-data').value };
+    clearForm('pyq', ['pyq-question','pyq-correct','pyq-wrong','pyq-img-data'], ['pyq-img-preview']);
+
+  } else if (section === 'swt') {
+    const subject = document.getElementById('swt-subject').value;
+    const question = document.getElementById('swt-question').value.trim();
+    const correct = document.getElementById('swt-correct').value.trim();
+    const wrong = document.getElementById('swt-wrong').value.trim();
+    const reason = document.getElementById('swt-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, question, correct, wrong, reason, image: document.getElementById('swt-img-data').value };
+    clearForm('swt', ['swt-question','swt-correct','swt-wrong','swt-img-data'], ['swt-img-preview']);
+
+  } else if (section === 'gt') {
+    const subject = document.getElementById('gt-subject').value;
+    const exam = document.getElementById('gt-exam').value;
+    const question = document.getElementById('gt-question').value.trim();
+    const correct = document.getElementById('gt-correct').value.trim();
+    const wrong = document.getElementById('gt-wrong').value.trim();
+    const reason = document.getElementById('gt-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, exam, question, correct, wrong, reason, image: document.getElementById('gt-img-data').value };
+    clearForm('gt', ['gt-question','gt-correct','gt-wrong','gt-img-data'], ['gt-img-preview']);
+  }
+
+  DB[section].unshift(entry);
+  saveDB(section);
+  renderList(section);
+  if (section === 'facts') updateSlideshow();
+  showToast('✅ Saved successfully!');
+}
+
+function clearForm(section, textIds, imgIds) {
+  textIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  imgIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = ''; el.style.display = 'none'; }
+  });
+  const fileInput = document.getElementById(section + '-img-input');
+  if (fileInput) fileInput.value = '';
+}
+
+/* ============================================================
+   RENDER LISTS
+============================================================ */
+function reasonBadge(reason) {
+  if (!reason) return '';
+  const map = {
+    'New Concept': 'badge-new',
+    'Recall gap': 'badge-recall',
+    'Silly mistake': 'badge-silly',
+    'Controversial': 'badge-contro'
+  };
+  return `<span class="badge-reason ${map[reason] || ''}">${reason}</span>`;
+}
+
+function renderList(section) {
+  const container = document.getElementById('list-' + section);
+  if (!container) return;
+  const data = DB[section];
+  if (!data.length) { container.innerHTML = '<div class="no-entries">No entries saved yet.</div>'; return; }
+
+  container.innerHTML = data.map((e, i) => {
+    let bodyHtml = '';
+    if (section === 'notes') {
+      bodyHtml = `<div class="entry-q">${escHtml(e.text)}</div>`;
+    } else {
+      bodyHtml = `<div class="entry-q">Q: ${escHtml(e.question)}</div>
+        <div class="entry-a">✅ ${escHtml(e.correct || e.answer || '')}</div>`;
+      if (e.wrong) bodyHtml += `<div style="color:var(--danger);font-size:12px;margin-top:4px;">✗ ${escHtml(e.wrong)}</div>`;
+      if (e.reason) bodyHtml += `<div style="margin-top:6px;">${reasonBadge(e.reason)}</div>`;
+    }
+    const meta = [e.subject, e.displayDate, e.displayTime, e.exam, e.year].filter(Boolean).join(' · ');
+    return `<div class="entry-item">
+      <div class="entry-text">
+        <div class="entry-meta">${escHtml(meta)}</div>
+        ${bodyHtml}
+      </div>
+      ${e.image ? `<img class="entry-img" src="${e.image}" alt="Entry image"/>` : ''}
+      <button class="entry-delete" onclick="deleteEntry('${section}', ${e.id})" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteEntry(section, id) {
+  DB[section] = DB[section].filter(e => e.id !== id);
+  saveDB(section);
+  renderList(section);
+  if (section === 'facts') updateSlideshow();
+  showToast('Entry deleted.');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br/>');
+}
+
+DB_KEYS.forEach(k => renderList(k));
+
+/* ============================================================
+   SLIDESHOW
+============================================================ */
+let slideIndex = 0;
+let slideTimer = null;
+
+function updateSlideshow() {
+  const facts = DB.facts;
+  const card = document.getElementById('slideCard');
+  const counter = document.getElementById('slideCounter');
+
+  if (!facts.length) {
+    document.getElementById('slideContent').innerHTML = '<div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>';
+    counter.textContent = '0 / 0';
+    card.querySelector('::before') && null;
+    return;
+  }
+
+  if (slideIndex >= facts.length) slideIndex = 0;
+  if (slideIndex < 0) slideIndex = facts.length - 1;
+
+  const f = facts[slideIndex];
+  const contentEl = document.getElementById('slideContent');
+  contentEl.innerHTML = `
+    <span class="slide-badge">📚 Facts Salad</span>
+    <div class="slide-subject">${escHtml(f.subject)}</div>
+    <div class="slide-question">${escHtml(f.question)}</div>
+    <div class="slide-answer">→ ${escHtml(f.answer)}</div>
+  `;
+
+  // Reset image
+  const existImg = card.querySelector('.slide-image');
+  if (existImg) existImg.remove();
+  if (f.image) {
+    const img = document.createElement('img');
+    img.className = 'slide-image';
+    img.src = f.image;
+    img.alt = 'Fact image';
+    card.appendChild(img);
+  }
+
+  counter.textContent = `${slideIndex + 1} / ${facts.length}`;
+
+  // Restart progress animation
+  card.style.animation = 'none';
+  const bar = card.querySelector('::before');
+  // Re-trigger CSS animation by cloning
+  void card.offsetWidth;
+
+  resetSlideTimer();
+}
+
+function resetSlideTimer() {
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => {
+    slideIndex++;
+    updateSlideshow();
+  }, 20000);
+}
+
+document.getElementById('slidePrev').addEventListener('click', () => {
+  slideIndex--;
+  updateSlideshow();
+});
+document.getElementById('slideNext').addEventListener('click', () => {
+  slideIndex++;
+  updateSlideshow();
+});
+
+updateSlideshow();
+
+/* ============================================================
+   PDF GENERATION
+============================================================ */
+let logoBase64 = null;
+
+function loadLogoBase64(callback) {
+  if (logoBase64) { callback(logoBase64); return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || 200;
+    canvas.height = img.naturalHeight || 200;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    try {
+      logoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      callback(logoBase64);
+    } catch(e) {
+      console.warn('CORS: Could not load logo for PDF');
+      callback(null);
+    }
+  };
+  img.onerror = () => callback(null);
+  img.src = LOGO_URL;
+}
+
+async function downloadPDF(section, mode) {
+  const subjectKey = `${section}-dl-subject-${mode === 'daily' ? 'daily' : 'monthly'}`;
+  const subject = document.getElementById(subjectKey)?.value || 'all';
+
+  let filterDate = '';
+  let filterMonth = '';
+  let subtitleExtra = '';
+
+  if (mode === 'daily') {
+    filterDate = document.getElementById(`${section}-dl-date`)?.value || '';
+    if (!filterDate) { showToast('❌ Please select a date.', 'error'); return; }
+    const d = new Date(filterDate);
+    subtitleExtra = d.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+  } else {
+    filterMonth = document.getElementById(`${section}-dl-month`)?.value || '';
+    if (!filterMonth) { showToast('❌ Please select a month.', 'error'); return; }
+    const [y, m] = filterMonth.split('-');
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    subtitleExtra = `${monthNames[parseInt(m)-1]} ${y}`;
+  }
+
+  let data = DB[section].filter(e => {
+    const subjectMatch = subject === 'all' || e.subject === subject;
+    const dateMatch = mode === 'daily' ? e.date === filterDate : e.month === filterMonth;
+    return subjectMatch && dateMatch;
+  });
+
+  if (!data.length) {
+    showToast(`❌ No entries found for ${subject === 'all' ? 'all subjects' : subject} on ${subtitleExtra}.`, 'error');
+    return;
+  }
+
+  showToast('⏳ Generating PDF...');
+
+  loadLogoBase64((logo) => {
+    generateJsPDF(section, subject, subtitleExtra, mode, data, logo);
+  });
+}
+
+function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+  const PW = doc.internal.pageSize.getWidth();
+  const PH = doc.internal.pageSize.getHeight();
+  const MARGIN = 18;
+  const CONTENT_W = PW - MARGIN * 2;
+  let y = MARGIN;
+
+  function checkPage(needed = 20) {
+    if (y + needed > PH - MARGIN) {
+      doc.addPage();
+      y = MARGIN;
+      drawHeader();
+    }
+  }
+
+  function drawHeader() {
+    // Green top bar
+    doc.setFillColor(26, 71, 49);
+    doc.rect(0, 0, PW, 6, 'F');
+    // Gold accent
+    doc.setFillColor(251, 191, 36);
+    doc.rect(0, 5.5, PW, 1.5, 'F');
+  }
+
+  // ---- PAGE 1 COVER HEADER ----
+  drawHeader();
+  y = 14;
+
+  // Logo
+  if (logo) {
+    try {
+      doc.addImage(logo, 'JPEG', MARGIN, y, 28, 28, '', 'FAST');
+    } catch(e) {}
+  }
+
+  const textX = logo ? MARGIN + 32 : MARGIN;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(26, 71, 49);
+  doc.text('SCALPEL STUDY SQUAD', textX, y + 8);
+
+  doc.setFontSize(13);
+  doc.setTextColor(180, 120, 10);
+  doc.text('20th Book — Revision Report', textX, y + 17);
+
+  // Subtitle with date/month
+  doc.setFontSize(11);
+  doc.setTextColor(100, 100, 100);
+  doc.text(mode === 'daily' ? `Date: ${subtitleExtra}` : `Month: ${subtitleExtra}`, textX, y + 25);
+
+  y = Math.max(y + 32, logo ? y + 34 : y + 32);
+
+  // Subject & Section
+  doc.setFillColor(240, 248, 242);
+  doc.roundedRect(MARGIN, y, CONTENT_W, 20, 3, 3, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(15, 50, 30);
+  doc.text(`Subject: ${subject === 'all' ? 'All Subjects' : subject}`, MARGIN + 6, y + 8);
+  doc.setFontSize(11);
+  doc.setTextColor(60, 100, 75);
+  doc.text(`Section: ${SECTION_LABELS[section]}`, MARGIN + 6, y + 15);
+
+  y += 26;
+
+  // Divider
+  doc.setDrawColor(180, 220, 195);
+  doc.setLineWidth(0.5);
+  doc.line(MARGIN, y, PW - MARGIN, y);
+  y += 8;
+
+  // ---- ENTRIES ----
+  data.forEach((entry, idx) => {
+    checkPage(30);
+
+    // Entry number + meta
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(26, 71, 49);
+    doc.text(`Entry ${idx + 1}`, MARGIN, y);
+
+    const meta = [entry.subject, entry.displayDate, entry.exam, entry.year].filter(Boolean).join('  ·  ');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(140, 140, 140);
+    doc.text(meta, MARGIN + 20, y);
+    y += 5;
+
+    // Determine content width (reserve space for image if exists)
+    const hasImg = !!entry.image;
+    const imgW = 55;
+    const imgH = 45;
+    const textW = hasImg ? CONTENT_W - imgW - 6 : CONTENT_W;
+    const imgX = MARGIN + textW + 6;
+
+    // ---- TEXT CONTENT ----
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(20, 20, 20);
+
+    const startY = y;
+
+    if (section === 'notes') {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(26, 71, 49);
+      doc.text('Notes:', MARGIN, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      const lines = doc.splitTextToSize(entry.text || '', textW - 2);
+      doc.text(lines, MARGIN, y);
+      y += lines.length * 4.5;
+
+    } else {
+      // Question
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(26, 71, 49);
+      doc.text('Q:', MARGIN, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(20, 20, 20);
+      const qLines = doc.splitTextToSize(entry.question || '', textW - 8);
+      doc.text(qLines, MARGIN + 6, y);
+      y += qLines.length * 4.5 + 2;
+
+      // Answer
+      checkPage(15);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(16, 100, 55);
+      doc.text('✓ Ans:', MARGIN, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(16, 80, 45);
+      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 10);
+      doc.text(aLines, MARGIN + 12, y);
+      y += aLines.length * 4.5 + 2;
+
+      if (entry.wrong) {
+        checkPage(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(200, 30, 30);
+        doc.text('✗ Wrong:', MARGIN, y);
+        doc.setFont('helvetica', 'normal');
+        const wLines = doc.splitTextToSize(entry.wrong, textW - 14);
+        doc.text(wLines, MARGIN + 14, y);
+        y += wLines.length * 4.5 + 2;
+      }
+
+      if (entry.reason) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.setTextColor(130, 80, 0);
+        doc.text(`Reason: ${entry.reason}`, MARGIN, y);
+        y += 5;
+      }
+    }
+
+    // ---- IMAGE ----
+    if (hasImg) {
+      const imgY = startY - 3;
+      const contentBottom = y;
+      const imgBottom = imgY + imgH;
+      // Draw image
+      try {
+        const imgType = entry.image.includes('image/png') ? 'PNG' : 'JPEG';
+        doc.addImage(entry.image, imgType, imgX, imgY, imgW, imgH, '', 'FAST');
+        // Box border around image
+        doc.setDrawColor(180, 220, 195);
+        doc.setLineWidth(0.4);
+        doc.rect(imgX - 1, imgY - 1, imgW + 2, imgH + 2);
+      } catch(e) {
+        console.warn('Could not embed image in PDF', e);
+      }
+      y = Math.max(contentBottom, imgBottom + 3);
+    }
+
+    // Entry divider
+    checkPage(5);
+    doc.setDrawColor(220, 240, 228);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, y, PW - MARGIN, y);
+    y += 7;
+  });
+
+  // Footer on each page
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(160, 160, 160);
+    doc.text(`Scalpel Study Squad — ${SECTION_LABELS[section]} — ${subject === 'all' ? 'All Subjects' : subject} — ${subtitleExtra}`, MARGIN, PH - 8);
+    doc.text(`Page ${i} of ${totalPages}`, PW - MARGIN, PH - 8, { align: 'right' });
+    doc.setDrawColor(220, 220, 220);
+    doc.line(MARGIN, PH - 10, PW - MARGIN, PH - 10);
+  }
+
+  // Save
+  const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g,'');
+  const safeDate = subtitleExtra.replace(/\s/g,'_');
+  doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
+  showToast('✅ PDF downloaded!');
+}
+
+/* ============================================================
+   DANGER ZONE — DELETE
+============================================================ */
+let pendingDeleteTarget = null;
+
+function confirmDelete(target) {
+  pendingDeleteTarget = target;
+  const labels = {
+    notes: 'all Notes', facts: 'all Facts', pyq: 'all PYQ checkpoints',
+    swt: 'all SWT checkpoints', gt: 'all GT mistakes', all: 'ALL data'
+  };
+  document.getElementById('modalText').textContent =
+    `You are about to permanently delete ${labels[target]}. This cannot be undone.`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  pendingDeleteTarget = null;
+}
+
+function executeDelete() {
+  if (!pendingDeleteTarget) return;
+  if (pendingDeleteTarget === 'all') {
+    DB_KEYS.forEach(k => { DB[k] = []; saveDB(k); renderList(k); });
+    updateSlideshow();
+  } else {
+    DB[pendingDeleteTarget] = [];
+    saveDB(pendingDeleteTarget);
+    renderList(pendingDeleteTarget);
+    if (pendingDeleteTarget === 'facts') updateSlideshow();
+  }
+  closeModal();
+  showToast('🗑 Data deleted permanently.');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast${type === 'error' ? ' error' : ''}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* ============================================================
+   SLIDE PROGRESS BAR RE-ANIMATION TRICK
+============================================================ */
+// Re-trigger the CSS animation on the slide-card progress bar
+function restartProgressBar() {
+  const card = document.getElementById('slideCard');
+  card.classList.remove('slide-card');
+  void card.offsetWidth;
+  card.classList.add('slide-card');
+}
+</script>
+</body>
+</html>
+
