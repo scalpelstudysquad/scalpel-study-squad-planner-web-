@@ -4,7 +4,7 @@
   "description": "Scalpel Study Squad Revision Report — Notes, Facts, PYQ, SWT & GT Mistakes",
   "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#0b1a14",
   "theme_color": "#0b1a14",
   "categories": ["education", "medical"],
@@ -25,4 +25,3 @@
   "screenshots": [],
   "prefer_related_applications": false
 }
-
