@@ -1928,6 +1928,7 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     doc.text(metaStr, PW - M - 3, y + 7.5, { align: 'right', maxWidth: CW - 30 });
 
     y += 14;
+    y += 4; /* gap between entry header bar and content */
 
     /* ── Image column layout ── */
     const hasImg  = !!entry.image;
@@ -1973,10 +1974,10 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
       doc.setTextColor(...C.green);
-      doc.text('Q', M, y);
+      doc.text('Q:', M, y);
       doc.setTextColor(...C.nearBlack);
-      const qLines = doc.splitTextToSize(entry.question || '', textW - 8);
-      doc.text(qLines, M + 6, y);
+      const qLines = doc.splitTextToSize(entry.question || '', textW - 10);
+      doc.text(qLines, M + 8, y);
       y += qLines.length * lh(14) + 4;
 
       /* Correct Answer */
@@ -1984,10 +1985,10 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
       doc.setTextColor(...C.ansGreen);
-      doc.text('Ans', M, y);
+      doc.text('Ans:', M, y);
       doc.setTextColor(...[20, 80, 45]);
-      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 12);
-      doc.text(aLines, M + 10, y);
+      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 14);
+      doc.text(aLines, M + 12, y);
       y += aLines.length * lh(14) + 4;
 
       /* Wrong Answer */
@@ -1996,10 +1997,10 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
         doc.setTextColor(...C.wrongRed);
-        doc.text('Wrong', M, y);
+        doc.text('Wrong:', M, y);
         doc.setTextColor(...[160, 30, 30]);
-        const wLines = doc.splitTextToSize(entry.wrong, textW - 16);
-        doc.text(wLines, M + 14, y);
+        const wLines = doc.splitTextToSize(entry.wrong, textW - 18);
+        doc.text(wLines, M + 16, y);
         y += wLines.length * lh(14) + 4;
       }
 
