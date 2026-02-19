@@ -8,6 +8,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="theme-color" content="#0b1a14"/>
 <title>Scalpel Study Squad — 20th Book Revision Report</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json"/>
+
+<!-- iOS PWA Support -->
+<meta name="apple-mobile-web-app-title" content="Scalpel SSS"/>
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
+
+<!-- Windows / Android tile -->
+<meta name="msapplication-TileColor" content="#0b1a14"/>
+<meta name="msapplication-TileImage" content="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -193,83 +204,137 @@ body::before {
 [data-theme="light"] .advisory-bar { color: #92650a; }
 .advisory-bar strong { color: var(--accent-gold); }
 .advisory-icon { font-size: 14px; flex-shrink: 0; }
-.name-widget {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  padding: 5px 5px 5px 14px;
-  min-width: 170px;
+/* ── Single profile circle ── */
+.name-circle-wrap {
+  position: relative;
 }
-.name-widget-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-.name-avatar {
-  width: 28px;
-  height: 28px;
+.name-circle {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: var(--accent);
+  border: 2.5px solid var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
   font-weight: 700;
   color: #000;
-  flex-shrink: 0;
-  order: 2;
-}
-.name-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  flex: 1;
   cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 110px;
+  flex-shrink: 0;
+  user-select: none;
+  transition: box-shadow 0.25s, transform 0.2s, background 0.2s;
+  box-shadow: 0 0 0 0 rgba(74,222,128,0);
 }
-.name-input-wrap {
+.name-circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(74,222,128,0.55);
+}
+.name-circle.has-name {
+  background: var(--bg-card);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* Popover card */
+.name-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 230px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px 14px;
+  box-shadow: 0 8px 32px var(--shadow);
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  animation: popIn 0.18s ease;
+}
+.name-popover.open { display: flex; }
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.name-popover-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.name-popover-fullname {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+  word-break: break-word;
+}
+.name-popover-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: 100%;
-}
-.name-input-wrap input {
-  flex: 1;
-  padding: 5px 10px;
-  font-size: 13px;
-  border-radius: 30px;
+  gap: 0;
   border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
   background: var(--bg-input);
+}
+.name-popover-prefix {
+  padding: 9px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: rgba(251,191,36,0.1);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.name-popover-input {
+  flex: 1;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 9px 10px !important;
+  font-size: 13px;
   color: var(--text-primary);
   font-family: 'Nunito', sans-serif;
   outline: none;
-  width: 110px;
+  min-width: 0;
+  box-shadow: none !important;
 }
-.name-input-wrap input:focus { border-color: var(--accent); }
-.name-save-btn {
+.name-popover-save {
   background: var(--accent);
-  border: none;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  cursor: pointer;
   color: #000;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  flex-shrink: 0;
-  transition: background 0.2s;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  width: 100%;
 }
-.name-save-btn:hover { background: var(--accent-dim); }
+.name-popover-save:hover { background: var(--accent-dim); transform: translateY(-1px); }
+.name-popover-edit {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+  padding: 2px 0;
+  transition: color 0.2s;
+}
+.name-popover-edit:hover { color: var(--accent); }
 .main { position: relative; z-index: 1; }
 .slideshow-section {
   background: var(--bg-secondary);
@@ -713,7 +778,6 @@ select option { background: var(--bg-input); }
   .tab-panel { padding: 22px 20px; }
   .slideshow-section { padding: 18px 20px; }
   .slide-card { min-height: 120px; }
-  .name-widget { min-width: 140px; }
 }
 @media (min-width: 600px) and (max-width: 768px) and (orientation: portrait) {
   .header { padding: 10px 16px; }
@@ -724,16 +788,12 @@ select option { background: var(--bg-input); }
   .tab-btn { padding: 12px 14px; font-size: 10px; }
   .tab-panel { padding: 20px 16px; }
   .form-row { grid-template-columns: 1fr 1fr; }
-  .name-widget { min-width: 130px; }
 }
 @media (max-width: 599px) and (orientation: portrait) {
   .header { grid-template-columns: 40px 1fr 40px; padding: 10px 12px 12px; gap: 6px; }
   .logo-img { width: 52px; height: 52px; border-width: 2px; margin-bottom: 5px; }
   .site-title { font-size: 16px; letter-spacing: 0.8px; line-height: 1.2; }
   .site-subtitle { font-size: 8.5px; letter-spacing: 1.5px; margin-top: 3px; }
-  .name-widget { min-width: 0; padding: 4px 4px 4px 8px; }
-  .name-text { font-size: 11px; max-width: 62px; }
-  .name-avatar { width: 26px; height: 26px; font-size: 11px; }
   .tabs-wrapper { top: 0; position: relative; padding: 0 4px; }
   .tabs-nav { justify-content: flex-start; }
   .tab-btn { padding: 10px 8px; font-size: 8px; letter-spacing: 0.5px; }
@@ -780,7 +840,6 @@ select option { background: var(--bg-input); }
   .site-title { font-size: 13.5px; letter-spacing: 0.5px; }
   .site-subtitle { font-size: 7.5px; letter-spacing: 1px; }
   .tab-btn { padding: 9px 6px; font-size: 7.5px; }
-  .name-text { max-width: 50px; }
   .advisory-bar { font-size: 10px; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
@@ -788,9 +847,6 @@ select option { background: var(--bg-input); }
   .logo-img { width: 40px; height: 40px; border-width: 2px; margin-bottom: 3px; }
   .site-title { font-size: 14px; letter-spacing: 0.8px; }
   .site-subtitle { font-size: 8px; letter-spacing: 1.5px; margin-top: 2px; }
-  .name-widget { min-width: 0; padding: 3px 3px 3px 8px; }
-  .name-text { font-size: 11px; max-width: 65px; }
-  .name-avatar { width: 22px; height: 22px; font-size: 10px; }
   .theme-emoji-btn { width: 28px; height: 28px; font-size: 15px; }
   .advisory-bar { font-size: 10.5px; padding: 5px 16px; }
   .tabs-wrapper { top: 0; position: relative; padding: 0 8px; }
@@ -817,7 +873,8 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 
 @media (hover: none) and (pointer: coarse) {
   .btn, .tab-btn, .sub-tab-btn, .slide-btn, select, input[type="date"], input[type="month"] { min-height: 44px; }
-  .name-save-btn { width: 36px; height: 36px; font-size: 16px; }
+  .name-circle { width: 44px; height: 44px; font-size: 18px; }
+  .name-popover-save { padding: 12px 0; font-size: 13px; }
   .entry-delete { padding: 8px; font-size: 18px; }
 }
 
@@ -890,15 +947,10 @@ body { padding-bottom: env(safe-area-inset-bottom); }
     </div>
   </div>
   <div class="header-right">
-    <div class="name-widget" id="nameWidget">
-      <div class="name-widget-display" id="nameDisplay">
-        <span class="name-text" id="nameText" onclick="switchToEdit()" title="Click to edit name">Set name…</span>
-        <div class="name-avatar" id="nameAvatar">👤</div>
-      </div>
-      <div class="name-input-wrap" id="nameEditWrap" style="display:none;">
-        <input type="text" id="nameInput" maxlength="20" placeholder="Your name…"
-          onkeydown="if(event.key==='Enter') saveName()"/>
-        <button class="name-save-btn" onclick="saveName()" title="Save">✓</button>
+    <div class="name-circle-wrap" id="nameCircleWrap">
+      <div class="name-circle" id="nameCircle" onclick="toggleNamePopover()" title="Profile">👤</div>
+      <div class="name-popover" id="namePopover">
+        <!-- filled by JS -->
       </div>
     </div>
   </div>
@@ -1346,6 +1398,31 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- ═══════════════════════════════════════════
+     PWA INSTALL BANNER
+════════════════════════════════════════════ -->
+<div id="pwaInstallBanner" style="
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:10000;
+  background:#112219;
+  border-top:2px solid #4ade80;
+  padding:14px 20px;
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+  box-shadow:0 -4px 24px rgba(0,0,0,0.5);
+  align-items:center;
+  gap:14px;
+">
+  <img src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
+    style="width:46px;height:46px;border-radius:50%;border:2px solid #4ade80;object-fit:cover;flex-shrink:0;" alt=""/>
+  <div style="flex:1;min-width:0;">
+    <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#4ade80;letter-spacing:1px;">Install App</div>
+    <div style="font-size:12px;color:#9dc4ae;margin-top:2px;line-height:1.4;">Add Scalpel Study Squad to your home screen for quick access &amp; offline use.</div>
+  </div>
+  <button id="pwaInstallBtn" style="background:#4ade80;color:#000;border:none;border-radius:8px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:0.5px;">⬇ Install</button>
+  <button id="pwaDismissBtn" style="background:none;border:none;color:#5a8a6e;font-size:22px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;" title="Dismiss">✕</button>
+</div>
+
 <script>
 /* ============================================================
    CONSTANTS & CONFIG
@@ -1406,35 +1483,91 @@ themeToggle.addEventListener('click', () => {
 /* ============================================================
    LOCAL NAME WIDGET
 ============================================================ */
-function loadStoredName() {
-  const saved = localStorage.getItem('sss_username') || '';
-  if (saved) renderNameDisplay(saved);
+/* ============================================================
+   PROFILE CIRCLE — POPOVER NAME WIDGET
+============================================================ */
+const nameCircle  = document.getElementById('nameCircle');
+const namePopover = document.getElementById('namePopover');
+
+function getStoredName() { return localStorage.getItem('sss_username') || ''; }
+
+function renderCircle() {
+  const raw = getStoredName();
+  if (raw) {
+    /* Show first letter only on circle */
+    nameCircle.textContent = raw.charAt(0).toUpperCase();
+    nameCircle.classList.add('has-name');
+  } else {
+    nameCircle.textContent = '👤';
+    nameCircle.classList.remove('has-name');
+  }
 }
 
-function renderNameDisplay(name) {
-  document.getElementById('nameText').textContent = name;
-  document.getElementById('nameAvatar').textContent = name.charAt(0).toUpperCase();
-  document.getElementById('nameDisplay').style.display = 'flex';
-  document.getElementById('nameEditWrap').style.display = 'none';
+function buildPopoverView() {
+  const raw = getStoredName();
+  if (raw) {
+    /* View state — show full Dr. name + Edit button */
+    namePopover.innerHTML = `
+      <div class="name-popover-label">Your Profile</div>
+      <div class="name-popover-fullname">Dr. ${escHtmlName(raw)}</div>
+      <button class="name-popover-edit" onclick="buildPopoverEdit()">✏ Edit Name</button>
+    `;
+  } else {
+    buildPopoverEdit();
+  }
 }
 
-function switchToEdit() {
-  const current = localStorage.getItem('sss_username') || '';
-  document.getElementById('nameInput').value = current;
-  document.getElementById('nameDisplay').style.display = 'none';
-  document.getElementById('nameEditWrap').style.display = 'flex';
-  document.getElementById('nameInput').focus();
+function buildPopoverEdit() {
+  namePopover.innerHTML = `
+    <div class="name-popover-label">Enter Your Name</div>
+    <div class="name-popover-row">
+      <span class="name-popover-prefix">Dr.</span>
+      <input class="name-popover-input" id="namePopInput" type="text"
+        maxlength="30" placeholder="Your name…"
+        onkeydown="if(event.key==='Enter') savePopoverName()"/>
+    </div>
+    <button class="name-popover-save" onclick="savePopoverName()">✓ Save</button>
+  `;
+  const inp = document.getElementById('namePopInput');
+  inp.value = getStoredName();
+  /* slight delay so popover is visible first */
+  setTimeout(() => inp.focus(), 60);
 }
 
-function saveName() {
-  const val = document.getElementById('nameInput').value.trim();
-  if (!val) { showToast('❌ Please enter a name.', 'error'); return; }
+function savePopoverName() {
+  const inp = document.getElementById('namePopInput');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val) { showToast('❌ Please enter your name.', 'error'); return; }
   localStorage.setItem('sss_username', val);
-  renderNameDisplay(val);
+  renderCircle();
+  buildPopoverView();
   showToast('✅ Name saved!');
 }
 
-loadStoredName();
+function toggleNamePopover() {
+  const isOpen = namePopover.classList.contains('open');
+  if (isOpen) {
+    namePopover.classList.remove('open');
+  } else {
+    buildPopoverView();
+    namePopover.classList.add('open');
+  }
+}
+
+/* Close popover when clicking outside */
+document.addEventListener('click', e => {
+  if (!document.getElementById('nameCircleWrap').contains(e.target)) {
+    namePopover.classList.remove('open');
+  }
+});
+
+function escHtmlName(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+renderCircle();
 
 /* ============================================================
    POPULATE DROPDOWNS
@@ -2097,6 +2230,66 @@ function showToast(msg, type = 'success') {
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
+
+/* ============================================================
+   PWA — SERVICE WORKER REGISTRATION
+============================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+
+/* ============================================================
+   PWA — INSTALL BANNER
+============================================================ */
+let deferredPrompt = null;
+const installBanner = document.getElementById('pwaInstallBanner');
+const installBtn    = document.getElementById('pwaInstallBtn');
+const dismissBtn    = document.getElementById('pwaDismissBtn');
+
+/* Capture the browser's beforeinstallprompt event (Android/Chrome/Edge) */
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  /* Don't show if user already dismissed */
+  if (!localStorage.getItem('sss_pwa_dismissed')) {
+    installBanner.style.display = 'flex';
+    /* Push body up so content isn't hidden behind banner */
+    document.body.style.paddingBottom = '90px';
+  }
+});
+
+/* Install button tapped */
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    showToast('✅ App installed! Find it on your home screen.');
+  }
+  deferredPrompt = null;
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+});
+
+/* Dismiss button */
+dismissBtn.addEventListener('click', () => {
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+  localStorage.setItem('sss_pwa_dismissed', '1');
+});
+
+/* Hide banner once app is installed */
+window.addEventListener('appinstalled', () => {
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+  deferredPrompt = null;
+  showToast('🎉 Scalpel Study Squad installed!');
+});
 </script>
 </body>
 </html>
