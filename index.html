@@ -84,7 +84,7 @@ body::before {
   z-index: 0;
 }
 /* ============================================================
-   HEADER
+   HEADER — 3-column grid: [toggle] [logo+title] [username]
 ============================================================ */
 .header {
   position: sticky;
@@ -93,101 +93,126 @@ body::before {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px);
-  padding: 12px 24px;
+  box-shadow: 0 2px 20px var(--shadow);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  padding-left:  max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
+  padding-top:   max(14px, env(safe-area-inset-top));
+}
+
+/* Left column — theme button */
+.header-left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: 0 2px 20px var(--shadow);
+  justify-content: flex-start;
 }
-.header-left { display: flex; align-items: center; gap: 12px; }
+
+/* Centre column — logo, title, subtitle stacked */
 .header-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-}
-.header-right { display: flex; align-items: center; gap: 12px; }
-
-/* Theme Toggle */
-.theme-toggle {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  width: 52px;
-  height: 28px;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s;
-  flex-shrink: 0;
-}
-.theme-toggle::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
-  background: var(--accent);
-  border-radius: 50%;
-  transition: transform 0.3s;
-}
-[data-theme="light"] .theme-toggle::after { transform: translateX(24px); }
-.theme-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  gap: 0;
+  justify-self: center;
 }
 
-/* Logo */
-.logo-wrap {
+/* Right column — name widget */
+.header-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  justify-content: flex-end;
 }
+
+/* header-row-top wrapper: ignored — display:contents on all screens */
+.header-row-top { display: contents; }
+
+/* Logo image */
 .logo-img {
-  width: 90px;
-  height: 90px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--accent);
   box-shadow: 0 0 20px rgba(74,222,128,0.35);
   transition: box-shadow 0.3s;
+  display: block;
+  margin: 0 auto 8px;
 }
 .logo-img:hover { box-shadow: 0 0 30px rgba(74,222,128,0.55); }
+
+/* Title & subtitle always centred under logo */
 .logo-text { text-align: center; }
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .site-title {
   font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(20px, 3.5vw, 32px);
+  font-size: clamp(18px, 3vw, 30px);
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 2px;
-  line-height: 1.1;
+  line-height: 1.15;
   text-shadow: 0 0 30px rgba(74,222,128,0.4);
+  text-align: center;
 }
 .site-subtitle {
   font-family: 'Cinzel', serif;
-  font-size: clamp(11px, 1.5vw, 15px);
+  font-size: clamp(9px, 1.2vw, 13px);
   color: var(--accent-gold);
   letter-spacing: 3px;
   text-transform: uppercase;
   font-weight: 600;
   margin-top: 4px;
+  text-align: center;
 }
-.device-advisory {
-  font-size: 11px;
-  color: var(--accent-gold);
-  background: rgba(251,191,36,0.10);
-  border: 1px solid rgba(251,191,36,0.28);
-  border-radius: 20px;
-  padding: 4px 12px;
-  margin-top: 7px;
+
+/* Theme Emoji Button */
+.theme-emoji-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+}
+.theme-emoji-btn:hover {
+  background: var(--border);
+  transform: rotate(20deg) scale(1.15);
+  box-shadow: 0 0 10px rgba(74,222,128,0.25);
+}
+
+/* Advisory Bar — sits below header, full width */
+.advisory-bar {
+  background: rgba(251,191,36,0.12);
+  border-bottom: 1px solid rgba(251,191,36,0.3);
+  color: #c8930a;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.3px;
-  display: inline-block;
+  text-align: center;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.4;
 }
+[data-theme="light"] .advisory-bar { color: #92650a; }
+.advisory-bar strong { color: var(--accent-gold); }
+.advisory-icon { font-size: 14px; flex-shrink: 0; }
 
 /* Local Name Widget */
 .name-widget {
@@ -400,16 +425,20 @@ body::before {
 .tabs-wrapper {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
-  padding: 0 24px;
+  padding: 0 16px;
   position: sticky;
   top: 116px;
   z-index: 90;
   overflow-x: auto;
+  scrollbar-width: none; /* hide scrollbar but keep scrollable */
 }
+.tabs-wrapper::-webkit-scrollbar { display: none; }
 .tabs-nav {
   display: flex;
+  justify-content: center;
   gap: 4px;
   min-width: max-content;
+  margin: 0 auto;
 }
 .tab-btn {
   padding: 14px 22px;
@@ -758,201 +787,153 @@ select option { background: var(--bg-input); }
 .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
 
 /* ============================================================
-   RESPONSIVE — Portrait & Landscape for Mobile & Tablet
+   RESPONSIVE — 3-column grid header at every breakpoint
+   Portrait & Landscape, Mobile & Tablet & Desktop
 ============================================================ */
 
-/* ----------------------------------------------------------
-   TABLET PORTRAIT  (481px – 768px)
----------------------------------------------------------- */
-@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
-  .header { padding: 12px 18px; gap: 12px; }
-  .logo-img { width: 72px; height: 72px; }
-  .site-title { font-size: 22px; letter-spacing: 1.5px; }
-  .site-subtitle { font-size: 12px; letter-spacing: 2px; }
-  .device-advisory { font-size: 10px; padding: 3px 10px; }
-  .tabs-wrapper { top: 108px; padding: 0 14px; }
-  .tab-btn { padding: 12px 16px; font-size: 10.5px; }
-  .tab-panel { padding: 22px 18px; }
-  .card { padding: 20px; }
-  .form-row { grid-template-columns: 1fr 1fr; }
-  .download-controls { flex-wrap: wrap; }
-  .entry-item { flex-wrap: wrap; }
-  .name-widget { min-width: 150px; }
+/* ── Desktop large (> 1024px) ── */
+@media (min-width: 1025px) {
+  .tabs-wrapper { top: 148px; }
+  .tab-panel { max-width: 980px; }
 }
 
-/* ----------------------------------------------------------
-   TABLET LANDSCAPE  (769px – 1024px height constraint)
----------------------------------------------------------- */
-@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-  .header { padding: 8px 24px; }
-  .logo-img { width: 54px; height: 54px; }
-  .site-title { font-size: 20px; }
-  .site-subtitle { font-size: 11px; letter-spacing: 2px; }
-  .device-advisory { font-size: 10px; padding: 3px 10px; margin-top: 4px; }
-  .tabs-wrapper { top: 80px; }
-  .tab-btn { padding: 11px 18px; font-size: 10px; }
-  .tab-panel { padding: 20px 24px; }
-  .form-row { grid-template-columns: 1fr 1fr; }
-  .slideshow-section { padding: 16px 24px; }
-  .slide-card { min-height: 120px; padding: 18px 24px; }
+/* ── Desktop medium / tablet landscape (769px–1024px) ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .header { padding: 10px 20px; }
+  .logo-img { width: 70px; height: 70px; margin-bottom: 6px; }
+  .site-title { font-size: 22px; }
+  .site-subtitle { font-size: 10px; letter-spacing: 2.5px; }
+  .tabs-wrapper { top: 118px; }
+  .tab-btn { padding: 12px 16px; font-size: 10px; }
+  .tab-panel { padding: 22px 20px; }
+  .slideshow-section { padding: 18px 20px; }
+  .slide-card { min-height: 120px; }
+  .name-widget { min-width: 140px; }
 }
 
-/* ----------------------------------------------------------
-   MOBILE PORTRAIT  (≤ 480px)
----------------------------------------------------------- */
-@media (max-width: 480px) and (orientation: portrait) {
+/* ── Tablet portrait (600px–768px) ── */
+@media (min-width: 600px) and (max-width: 768px) and (orientation: portrait) {
+  .header { padding: 10px 16px; }
+  .logo-img { width: 64px; height: 64px; margin-bottom: 5px; }
+  .site-title { font-size: 20px; letter-spacing: 1.5px; }
+  .site-subtitle { font-size: 9.5px; letter-spacing: 2px; }
+  .tabs-wrapper { top: 112px; padding: 0 12px; }
+  .tab-btn { padding: 12px 14px; font-size: 10px; }
+  .tab-panel { padding: 20px 16px; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+  .name-widget { min-width: 130px; }
+}
+
+/* ── Mobile portrait (≤ 599px) ── */
+@media (max-width: 599px) and (orientation: portrait) {
   .header {
-    padding: 10px 12px;
-    gap: 8px;
-    flex-wrap: nowrap;
+    grid-template-columns: 40px 1fr 40px;
+    padding: 10px 12px 12px;
+    gap: 6px;
   }
-  .header-left { gap: 8px; flex-shrink: 0; }
-  .header-center { flex: 1; min-width: 0; }
-  .header-right { flex-shrink: 0; }
+  .logo-img { width: 52px; height: 52px; border-width: 2px; margin-bottom: 5px; }
+  .site-title { font-size: 16px; letter-spacing: 0.8px; line-height: 1.2; }
+  .site-subtitle { font-size: 8.5px; letter-spacing: 1.5px; margin-top: 3px; }
 
-  .logo-wrap { gap: 10px; }
-  .logo-img { width: 52px; height: 52px; border-width: 2px; }
-  .logo-text { text-align: left; }
-  .site-title { font-size: 15px; letter-spacing: 0.5px; line-height: 1.2; }
-  .site-subtitle { font-size: 9px; letter-spacing: 1.5px; margin-top: 2px; }
-  .device-advisory {
-    font-size: 8.5px;
-    padding: 3px 8px;
-    margin-top: 4px;
-    display: block;
-    line-height: 1.4;
-  }
+  /* Name widget compact on right */
+  .name-widget { min-width: 0; padding: 4px 4px 4px 8px; }
+  .name-text { font-size: 11px; max-width: 62px; }
+  .name-avatar { width: 26px; height: 26px; font-size: 11px; }
 
-  .theme-label { display: none; }
-  .theme-toggle { width: 44px; height: 24px; }
-  .theme-toggle::after { width: 18px; height: 18px; }
-  [data-theme="light"] .theme-toggle::after { transform: translateX(20px); }
+  .tabs-wrapper { top: 0; position: relative; padding: 0 4px; }
+  .tabs-nav { justify-content: flex-start; } /* left-align so scroll works */
+  .tab-btn { padding: 10px 8px; font-size: 8px; letter-spacing: 0.5px; }
 
-  .name-widget { min-width: 0; padding: 4px 4px 4px 10px; }
-  .name-text { font-size: 12px; max-width: 70px; }
-  .name-avatar { width: 24px; height: 24px; font-size: 11px; }
+  .advisory-bar { font-size: 11px; padding: 7px 12px; }
 
-  .tabs-wrapper { top: 0; padding: 0 8px; position: relative; }
-  .tabs-nav { gap: 0; }
-  .tab-btn { padding: 10px 10px; font-size: 9px; letter-spacing: 0.8px; }
-
-  .slideshow-section { padding: 16px 12px; }
-  .slideshow-section h2 { font-size: 10px; letter-spacing: 1.5px; margin-bottom: 12px; }
-  .slide-card { padding: 16px 14px; min-height: 130px; flex-direction: column; gap: 12px; }
-  .slide-image { width: 100%; height: 100px; }
+  .slideshow-section { padding: 14px 12px; }
+  .slideshow-section h2 { font-size: 10px; letter-spacing: 1px; margin-bottom: 10px; }
+  .slide-card { padding: 14px; min-height: 115px; flex-direction: column; gap: 10px; }
+  .slide-image { width: 100%; height: 85px; }
   .slide-question { font-size: 14px; }
   .slide-answer { font-size: 13px; }
 
-  .tab-panel { padding: 16px 12px; }
-  .card { padding: 16px 14px; }
-  .card-title { font-size: 11px; letter-spacing: 1.5px; margin-bottom: 14px; }
+  .tab-panel { padding: 14px 12px; }
+  .card { padding: 14px 12px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; letter-spacing: 1.5px; margin-bottom: 12px; }
   .form-row { grid-template-columns: 1fr; }
   .form-group { margin-bottom: 12px; }
   label { font-size: 10px; }
   select, input[type="text"], textarea,
-  input[type="date"], input[type="month"] { font-size: 13px; padding: 9px 12px; }
-  textarea { min-height: 80px; }
-
-  .img-upload-area { padding: 14px; }
+  input[type="date"], input[type="month"] { font-size: 13px; padding: 9px 11px; }
+  textarea { min-height: 78px; }
+  .img-upload-area { padding: 12px; }
   .img-upload-text { font-size: 11px; }
-
-  .btn { padding: 10px 18px; font-size: 12px; }
-  .btn-sm { padding: 8px 14px; font-size: 11px; }
-
+  .btn { padding: 10px 16px; font-size: 12px; }
+  .btn-sm { padding: 8px 12px; font-size: 11px; }
   .sub-tabs-nav { gap: 6px; flex-wrap: wrap; }
-  .sub-tab-btn { padding: 8px 14px; font-size: 11px; }
-  .download-controls { flex-direction: column; gap: 12px; padding: 12px; }
+  .sub-tab-btn { padding: 8px 12px; font-size: 11px; }
+  .download-controls { flex-direction: column; gap: 10px; padding: 12px; }
   .download-controls .form-group { min-width: unset; width: 100%; }
-
-  .entry-item { flex-wrap: wrap; padding: 12px; }
-  .entry-img { width: 100%; height: 120px; }
+  .entry-item { flex-wrap: wrap; padding: 11px; }
+  .entry-img { width: 100%; height: 100px; }
   .entry-text { font-size: 12px; }
   .entry-meta { font-size: 10px; }
-
-  .danger-zone { padding: 0 12px; margin: 28px auto 48px; }
-  .danger-card { padding: 18px; }
+  .advice-banner { padding: 12px 12px; gap: 10px; }
+  .advice-icon { font-size: 20px; }
+  .advice-text { font-size: 12px; }
+  .danger-zone { padding: 0 12px; margin: 24px auto 48px; }
+  .danger-card { padding: 16px; }
   .danger-actions { flex-direction: column; gap: 8px; }
   .danger-actions .btn { width: 100%; justify-content: center; }
-
-  .modal { padding: 22px 18px; }
+  .modal { padding: 20px 16px; }
   .toast { max-width: 90vw; font-size: 12px; }
 }
 
-/* ----------------------------------------------------------
-   MOBILE LANDSCAPE  (max-height: 500px, orientation: landscape)
-   — phones rotated sideways
----------------------------------------------------------- */
+/* ── Very small phones (≤ 380px portrait) ── */
+@media (max-width: 380px) and (orientation: portrait) {
+  .header { grid-template-columns: 36px 1fr 36px; padding: 8px 10px 10px; }
+  .logo-img { width: 44px; height: 44px; }
+  .site-title { font-size: 13.5px; letter-spacing: 0.5px; }
+  .site-subtitle { font-size: 7.5px; letter-spacing: 1px; }
+  .tab-btn { padding: 9px 6px; font-size: 7.5px; }
+  .name-text { max-width: 50px; }
+  .advisory-bar { font-size: 10px; }
+}
+
+/* ── Mobile landscape (height ≤ 500px) ── */
 @media (max-height: 500px) and (orientation: landscape) {
   .header {
+    grid-template-columns: 38px 1fr 38px;
     padding: 6px 16px;
-    gap: 10px;
+    gap: 8px;
   }
-  .logo-img { width: 44px; height: 44px; }
-  .site-title { font-size: 16px; letter-spacing: 1px; }
-  .site-subtitle { font-size: 9px; letter-spacing: 1.5px; margin-top: 2px; }
-  .device-advisory { font-size: 8.5px; padding: 2px 8px; margin-top: 3px; }
-  .theme-label { display: none; }
-  .theme-toggle { width: 40px; height: 22px; }
-  .theme-toggle::after { width: 16px; height: 16px; top: 3px; left: 3px; }
-  [data-theme="light"] .theme-toggle::after { transform: translateX(18px); }
+  .logo-img { width: 40px; height: 40px; border-width: 2px; margin-bottom: 3px; }
+  .site-title { font-size: 14px; letter-spacing: 0.8px; }
+  .site-subtitle { font-size: 8px; letter-spacing: 1.5px; margin-top: 2px; }
+  .name-widget { min-width: 0; padding: 3px 3px 3px 8px; }
+  .name-text { font-size: 11px; max-width: 65px; }
+  .name-avatar { width: 22px; height: 22px; font-size: 10px; }
+  .theme-emoji-btn { width: 28px; height: 28px; font-size: 15px; }
 
-  /* Make tabs sticky from very top in landscape — header is compact */
-  .tabs-wrapper { top: 0; padding: 0 12px; position: relative; }
-  .tab-btn { padding: 9px 14px; font-size: 9.5px; letter-spacing: 0.8px; }
+  .advisory-bar { font-size: 10.5px; padding: 5px 16px; }
+  .tabs-wrapper { top: 0; position: relative; padding: 0 8px; }
+  .tabs-nav { justify-content: flex-start; }
+  .tab-btn { padding: 8px 12px; font-size: 9px; letter-spacing: 0.5px; }
 
-  /* Slideshow compact */
-  .slideshow-section { padding: 10px 16px; }
-  .slideshow-section h2 { display: none; } /* hide in tiny landscape */
-  .slide-card { min-height: 90px; padding: 12px 18px; }
+  .slideshow-section { padding: 8px 16px; }
+  .slideshow-section h2 { display: none; }
+  .slide-card { min-height: 80px; padding: 10px 16px; }
   .slide-question { font-size: 13px; }
   .slide-answer { font-size: 12px; }
-  .slide-image { width: 90px; height: 75px; }
+  .slide-image { width: 80px; height: 65px; }
 
-  /* Two-column layout for forms in landscape mobile */
-  .tab-panel { padding: 14px 16px; }
-  .card { padding: 14px 16px; margin-bottom: 14px; }
+  .tab-panel { padding: 10px 14px; }
+  .card { padding: 12px 14px; margin-bottom: 12px; }
   .form-row { grid-template-columns: 1fr 1fr; }
-  .form-group { margin-bottom: 10px; }
+  .form-group { margin-bottom: 8px; }
   label { font-size: 10px; }
-  textarea { min-height: 65px; }
-
-  .download-controls { flex-direction: row; flex-wrap: wrap; gap: 10px; padding: 10px; }
-  .download-controls .form-group { min-width: 140px; }
-
-  .name-widget { min-width: 0; }
-  .name-text { max-width: 75px; font-size: 12px; }
-
+  textarea { min-height: 58px; }
+  .download-controls { flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 10px; }
+  .download-controls .form-group { min-width: 130px; }
   .danger-actions { flex-wrap: wrap; gap: 8px; }
 }
 
-/* ----------------------------------------------------------
-   SMALL MOBILE PORTRAIT  (≤ 360px — very small phones)
----------------------------------------------------------- */
-@media (max-width: 360px) and (orientation: portrait) {
-  .site-title { font-size: 13px; }
-  .site-subtitle { letter-spacing: 1px; font-size: 8px; }
-  .device-advisory { font-size: 7.5px; }
-  .logo-img { width: 44px; height: 44px; }
-  .tab-btn { padding: 9px 8px; font-size: 8.5px; letter-spacing: 0.5px; }
-  .name-text { max-width: 55px; }
-}
-
-/* ----------------------------------------------------------
-   DESKTOP fallback  (> 1024px)
----------------------------------------------------------- */
-@media (min-width: 1025px) {
-  .tabs-wrapper { top: 116px; }
-  .tab-panel { max-width: 980px; }
-}
-
-/* ============================================================
-   SAFE AREA INSETS (iPhone notch / Dynamic Island / Android cutouts)
-============================================================ */
-.header {
-  padding-left: max(24px, env(safe-area-inset-left));
-  padding-right: max(24px, env(safe-area-inset-right));
-  padding-top: max(12px, env(safe-area-inset-top));
-}
 body {
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -965,7 +946,6 @@ body {
   select, input[type="date"], input[type="month"] {
     min-height: 44px;
   }
-  .theme-toggle { width: 56px; height: 32px; }
   .name-save-btn { width: 36px; height: 36px; font-size: 16px; }
   .entry-delete { padding: 8px; font-size: 18px; }
 }
@@ -975,7 +955,54 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* No entries state */
+/* Advice Dashboard */
+.advice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(251,191,36,0.10) 0%, rgba(74,222,128,0.07) 100%);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-left: 4px solid var(--accent-gold);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.advice-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.advice-body {}
+.advice-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.advice-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-weight: 500;
+}
+.advice-text strong { color: var(--accent-gold); font-weight: 700; }
+
+/* Topic field */
+.topic-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: rgba(251,191,36,0.12);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+}
 .no-entries {
   text-align: center;
   padding: 32px;
@@ -998,33 +1025,30 @@ body {
      HEADER
 ============================================================ -->
 <header class="header">
+  <!-- Col 1: Theme toggle -->
   <div class="header-left">
-    <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"></button>
-    <span class="theme-label" id="themeLabel">Dark</span>
+    <button class="theme-emoji-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
   </div>
 
+  <!-- Col 2: Logo + Title + Subtitle centred -->
   <div class="header-center">
     <div class="logo-wrap">
       <img class="logo-img" id="logoImg"
         src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
         alt="Scalpel Study Squad Logo"
         onerror="this.style.display='none'"/>
-      <div class="logo-text">
-        <div class="site-title">Scalpel Study Squad</div>
-        <div class="site-subtitle">20th Book — Revision Report</div>
-        <div class="device-advisory">⚠ Data saved on this device only — use on one device</div>
-      </div>
+      <div class="site-title">Scalpel Study Squad</div>
+      <div class="site-subtitle">20th Book — Revision Report</div>
     </div>
   </div>
 
+  <!-- Col 3: Name widget -->
   <div class="header-right">
     <div class="name-widget" id="nameWidget">
-      <!-- Display mode -->
       <div class="name-widget-display" id="nameDisplay">
         <span class="name-text" id="nameText" onclick="switchToEdit()" title="Click to edit name">Set name…</span>
         <div class="name-avatar" id="nameAvatar">👤</div>
       </div>
-      <!-- Edit mode (hidden by default) -->
       <div class="name-input-wrap" id="nameEditWrap" style="display:none;">
         <input type="text" id="nameInput" maxlength="20" placeholder="Your name…"
           onkeydown="if(event.key==='Enter') saveName()"/>
@@ -1033,6 +1057,12 @@ body {
     </div>
   </div>
 </header>
+
+<!-- Advisory Bar -->
+<div class="advisory-bar">
+  <span class="advisory-icon">⚠</span>
+  <span>Data is saved <strong>only on this device</strong> — use this website on one device only for best results.</span>
+</div>
 
 <!-- ============================================================
      SLIDESHOW DASHBOARD
@@ -1072,22 +1102,41 @@ body {
      TAB 1: NOTES
 ============================================================ -->
 <div class="tab-panel active" id="panel-notes">
+
+  <!-- Advice Banner -->
+  <div class="advice-banner">
+    <div class="advice-icon">💡</div>
+    <div class="advice-body">
+      <div class="advice-title">Pro Tip — Organised Study</div>
+      <div class="advice-text">
+        <strong>Study a specific subject and specific topics</strong> and add notes on them in one session to get an organised PDF.
+        Entry of mixed topics gives a mixed topics PDF.
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-title">📝 Add Note</div>
     <form id="form-notes" onsubmit="return false;">
-      <div class="form-group">
-        <label>Subject</label>
-        <select id="notes-subject" class="section-subject-select"></select>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="notes-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Topic Name</label>
+          <input type="text" id="notes-topic" placeholder="e.g. Iron Deficiency Anaemia"/>
+        </div>
       </div>
       <div class="form-group">
         <label>Notes</label>
         <textarea id="notes-text" placeholder="Type your notes here..." rows="5"></textarea>
       </div>
       <div class="form-group">
-        <label>Image (max 100 KB)</label>
+        <label>Image (max 2 MB)</label>
         <div class="img-upload-area">
           <input type="file" accept="image/*" id="notes-img-input" onchange="handleImageUpload(this,'notes-img-preview','notes-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
           <img id="notes-img-preview" class="img-preview"/>
         </div>
         <input type="hidden" id="notes-img-data"/>
@@ -1140,12 +1189,30 @@ body {
      TAB 2: FACTS SALAD
 ============================================================ -->
 <div class="tab-panel" id="panel-facts">
+  <!-- Advice Banner -->
+  <div class="advice-banner">
+    <div class="advice-icon">💡</div>
+    <div class="advice-body">
+      <div class="advice-title">Pro Tip — Organised Study</div>
+      <div class="advice-text">
+        <strong>Study a specific subject and specific topics</strong> and add facts on them in one session to get an organised PDF.
+        Entry of mixed topics gives a mixed topics PDF.
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-title">🥗 Add Fact</div>
     <form id="form-facts" onsubmit="return false;">
-      <div class="form-group">
-        <label>Subject</label>
-        <select id="facts-subject" class="section-subject-select"></select>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="facts-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Topic Name</label>
+          <input type="text" id="facts-topic" placeholder="e.g. Coagulation Cascade"/>
+        </div>
       </div>
       <div class="form-group">
         <label>Question</label>
@@ -1156,10 +1223,10 @@ body {
         <textarea id="facts-answer" placeholder="Enter answer or fact..." rows="3"></textarea>
       </div>
       <div class="form-group">
-        <label>Image (max 100 KB)</label>
+        <label>Image (max 2 MB)</label>
         <div class="img-upload-area">
           <input type="file" accept="image/*" id="facts-img-input" onchange="handleImageUpload(this,'facts-img-preview','facts-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
           <img id="facts-img-preview" class="img-preview"/>
         </div>
         <input type="hidden" id="facts-img-data"/>
@@ -1244,10 +1311,10 @@ body {
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 100 KB)</label>
+        <label>Image (max 2 MB)</label>
         <div class="img-upload-area">
           <input type="file" accept="image/*" id="pyq-img-input" onchange="handleImageUpload(this,'pyq-img-preview','pyq-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
           <img id="pyq-img-preview" class="img-preview"/>
         </div>
         <input type="hidden" id="pyq-img-data"/>
@@ -1320,10 +1387,10 @@ body {
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 100 KB)</label>
+        <label>Image (max 2 MB)</label>
         <div class="img-upload-area">
           <input type="file" accept="image/*" id="swt-img-input" onchange="handleImageUpload(this,'swt-img-preview','swt-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
           <img id="swt-img-preview" class="img-preview"/>
         </div>
         <input type="hidden" id="swt-img-data"/>
@@ -1404,10 +1471,10 @@ body {
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 100 KB)</label>
+        <label>Image (max 2 MB)</label>
         <div class="img-upload-area">
           <input type="file" accept="image/*" id="gt-img-input" onchange="handleImageUpload(this,'gt-img-preview','gt-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 100 KB</span></div>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
           <img id="gt-img-preview" class="img-preview"/>
         </div>
         <input type="hidden" id="gt-img-data"/>
@@ -1530,16 +1597,15 @@ loadDB();
 ============================================================ */
 const html = document.documentElement;
 const themeToggle = document.getElementById('themeToggle');
-const themeLabel = document.getElementById('themeLabel');
 
 let currentTheme = localStorage.getItem('sss_theme') || 'dark';
 html.setAttribute('data-theme', currentTheme);
-themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
 
 themeToggle.addEventListener('click', () => {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', currentTheme);
-  themeLabel.textContent = currentTheme === 'dark' ? 'Dark' : 'Light';
+  themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
   localStorage.setItem('sss_theme', currentTheme);
 });
 
@@ -1654,8 +1720,8 @@ function switchSubTab(btn, panelId) {
 function handleImageUpload(input, previewId, dataId) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 102400) {
-    showToast('❌ Image too large. Max 100 KB allowed.', 'error');
+  if (file.size > 2097152) {
+    showToast('❌ Image too large. Max 2 MB allowed.', 'error');
     input.value = '';
     return;
   }
@@ -1689,18 +1755,20 @@ function saveEntry(section) {
 
   if (section === 'notes') {
     const subject = document.getElementById('notes-subject').value;
+    const topic = document.getElementById('notes-topic').value.trim();
     const text = document.getElementById('notes-text').value.trim();
     if (!text) { showToast('❌ Please enter notes text.', 'error'); return; }
-    entry = { ...entry, subject, text, image: document.getElementById('notes-img-data').value };
-    clearForm('notes', ['notes-text','notes-img-data'], ['notes-img-preview']);
+    entry = { ...entry, subject, topic, text, image: document.getElementById('notes-img-data').value };
+    clearForm('notes', ['notes-topic','notes-text','notes-img-data'], ['notes-img-preview']);
 
   } else if (section === 'facts') {
     const subject = document.getElementById('facts-subject').value;
+    const topic = document.getElementById('facts-topic').value.trim();
     const question = document.getElementById('facts-question').value.trim();
     const answer = document.getElementById('facts-answer').value.trim();
     if (!question || !answer) { showToast('❌ Question and answer required.', 'error'); return; }
-    entry = { ...entry, subject, question, answer, image: document.getElementById('facts-img-data').value };
-    clearForm('facts', ['facts-question','facts-answer','facts-img-data'], ['facts-img-preview']);
+    entry = { ...entry, subject, topic, question, answer, image: document.getElementById('facts-img-data').value };
+    clearForm('facts', ['facts-topic','facts-question','facts-answer','facts-img-data'], ['facts-img-preview']);
 
   } else if (section === 'pyq') {
     const subject = document.getElementById('pyq-subject').value;
@@ -1786,7 +1854,7 @@ function renderList(section) {
       if (e.wrong) bodyHtml += `<div style="color:var(--danger);font-size:12px;margin-top:4px;">✗ ${escHtml(e.wrong)}</div>`;
       if (e.reason) bodyHtml += `<div style="margin-top:6px;">${reasonBadge(e.reason)}</div>`;
     }
-    const meta = [e.subject, e.displayDate, e.displayTime, e.exam, e.year].filter(Boolean).join(' · ');
+    const meta = [e.subject, e.topic ? `📌 ${e.topic}` : null, e.displayDate, e.displayTime, e.exam, e.year].filter(Boolean).join(' · ');
     return `<div class="entry-item">
       <div class="entry-text">
         <div class="entry-meta">${escHtml(meta)}</div>
@@ -1956,207 +2024,276 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
 
   const PW = doc.internal.pageSize.getWidth();
   const PH = doc.internal.pageSize.getHeight();
-  const MARGIN = 18;
+  const MARGIN = 16;
   const CONTENT_W = PW - MARGIN * 2;
   let y = MARGIN;
 
-  function checkPage(needed = 20) {
-    if (y + needed > PH - MARGIN) {
+  // Line heights per font size (mm per line at given pt)
+  const LH = (pt) => pt * 0.4 + 1.2;
+
+  function checkPage(needed = 25) {
+    if (y + needed > PH - MARGIN - 12) {
       doc.addPage();
       y = MARGIN;
-      drawHeader();
+      drawPageHeader();
     }
   }
 
-  function drawHeader() {
-    // Green top bar
+  function drawTopBar() {
     doc.setFillColor(26, 71, 49);
-    doc.rect(0, 0, PW, 6, 'F');
-    // Gold accent
+    doc.rect(0, 0, PW, 7, 'F');
     doc.setFillColor(251, 191, 36);
-    doc.rect(0, 5.5, PW, 1.5, 'F');
+    doc.rect(0, 6.5, PW, 2, 'F');
   }
 
-  // ---- PAGE 1 COVER HEADER ----
-  drawHeader();
+  function drawPageHeader() {
+    drawTopBar();
+    // Thin section label on repeat pages
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(26, 71, 49);
+    doc.text(`SCALPEL STUDY SQUAD  ·  ${SECTION_LABELS[section].toUpperCase()}  ·  ${subject === 'all' ? 'All Subjects' : subject.toUpperCase()}`, MARGIN, 14);
+    doc.setDrawColor(200, 230, 210);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, 16, PW - MARGIN, 16);
+    y = 21;
+  }
+
+  // ══════════════════════════════════════════════
+  // COVER PAGE HEADER
+  // ══════════════════════════════════════════════
+  drawTopBar();
   y = 14;
 
-  // Logo
+  // Logo (big: 36x36)
   if (logo) {
-    try {
-      doc.addImage(logo, 'JPEG', MARGIN, y, 28, 28, '', 'FAST');
-    } catch(e) {}
+    try { doc.addImage(logo, 'JPEG', MARGIN, y, 36, 36, '', 'FAST'); } catch(e) {}
   }
+  const textX = logo ? MARGIN + 42 : MARGIN;
 
-  const textX = logo ? MARGIN + 32 : MARGIN;
-
+  // Title
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
+  doc.setFontSize(26);
   doc.setTextColor(26, 71, 49);
-  doc.text('SCALPEL STUDY SQUAD', textX, y + 8);
+  doc.text('SCALPEL STUDY SQUAD', textX, y + 10);
 
-  doc.setFontSize(13);
+  // Subtitle
+  doc.setFontSize(15);
   doc.setTextColor(180, 120, 10);
-  doc.text('20th Book — Revision Report', textX, y + 17);
-
-  // Subtitle with date/month
-  doc.setFontSize(11);
-  doc.setTextColor(100, 100, 100);
-  doc.text(mode === 'daily' ? `Date: ${subtitleExtra}` : `Month: ${subtitleExtra}`, textX, y + 25);
-
-  y = Math.max(y + 32, logo ? y + 34 : y + 32);
-
-  // Subject & Section
-  doc.setFillColor(240, 248, 242);
-  doc.roundedRect(MARGIN, y, CONTENT_W, 20, 3, 3, 'F');
   doc.setFont('helvetica', 'bold');
+  doc.text('20th Book — Revision Report', textX, y + 20);
+
+  // Date/Month
   doc.setFontSize(13);
-  doc.setTextColor(15, 50, 30);
-  doc.text(`Subject: ${subject === 'all' ? 'All Subjects' : subject}`, MARGIN + 6, y + 8);
-  doc.setFontSize(11);
-  doc.setTextColor(60, 100, 75);
-  doc.text(`Section: ${SECTION_LABELS[section]}`, MARGIN + 6, y + 15);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(60, 60, 60);
+  doc.text(mode === 'daily' ? `Date: ${subtitleExtra}` : `Month: ${subtitleExtra}`, textX, y + 30);
 
-  y += 26;
+  y = Math.max(y + 44, logo ? y + 46 : y + 44);
 
-  // Divider
-  doc.setDrawColor(180, 220, 195);
+  // Subject & Section block
+  doc.setFillColor(235, 248, 240);
+  doc.setDrawColor(26, 71, 49);
   doc.setLineWidth(0.5);
-  doc.line(MARGIN, y, PW - MARGIN, y);
+  doc.roundedRect(MARGIN, y, CONTENT_W, 26, 3, 3, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(15, 50, 30);
+  doc.text(`Subject: ${subject === 'all' ? 'All Subjects' : subject}`, MARGIN + 7, y + 10);
+
+  doc.setFontSize(13);
+  doc.setTextColor(40, 90, 60);
+  doc.text(`Section: ${SECTION_LABELS[section]}`, MARGIN + 7, y + 20);
+
+  y += 32;
+
+  // Thick divider
+  doc.setFillColor(26, 71, 49);
+  doc.rect(MARGIN, y, CONTENT_W, 1.5, 'F');
   y += 8;
 
-  // ---- ENTRIES ----
+  // ══════════════════════════════════════════════
+  // ENTRIES
+  // ══════════════════════════════════════════════
   data.forEach((entry, idx) => {
-    checkPage(30);
+    checkPage(40);
 
-    // Entry number + meta
+    // ── Entry header strip ──
+    doc.setFillColor(240, 250, 244);
+    doc.rect(MARGIN, y, CONTENT_W, 10, 'F');
+    doc.setDrawColor(180, 220, 195);
+    doc.setLineWidth(0.3);
+    doc.rect(MARGIN, y, CONTENT_W, 10);
+
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
+    doc.setFontSize(12);
     doc.setTextColor(26, 71, 49);
-    doc.text(`Entry ${idx + 1}`, MARGIN, y);
+    doc.text(`Entry ${idx + 1}`, MARGIN + 4, y + 7);
 
-    const meta = [entry.subject, entry.displayDate, entry.exam, entry.year].filter(Boolean).join('  ·  ');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(140, 140, 140);
-    doc.text(meta, MARGIN + 20, y);
-    y += 5;
-
-    // Determine content width (reserve space for image if exists)
-    const hasImg = !!entry.image;
-    const imgW = 55;
-    const imgH = 45;
-    const textW = hasImg ? CONTENT_W - imgW - 6 : CONTENT_W;
-    const imgX = MARGIN + textW + 6;
-
-    // ---- TEXT CONTENT ----
+    // Meta: subject · topic · date · exam · year
+    const metaParts = [
+      entry.subject,
+      entry.topic ? `Topic: ${entry.topic}` : null,
+      entry.displayDate,
+      entry.exam,
+      entry.year
+    ].filter(Boolean);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.setTextColor(20, 20, 20);
+    doc.setTextColor(80, 80, 80);
+    const metaStr = metaParts.join('   ·   ');
+    doc.text(metaStr, MARGIN + 26, y + 7, { maxWidth: CONTENT_W - 30 });
+    y += 13;
 
-    const startY = y;
+    // ── Image layout: reserve right column if image exists ──
+    const hasImg = !!entry.image;
+    const imgW = 68;
+    const imgH = 58;
+    const textW = hasImg ? CONTENT_W - imgW - 8 : CONTENT_W;
+    const imgX = MARGIN + textW + 8;
+    const imgStartY = y;
 
+    // ── TEXT CONTENT ──
     if (section === 'notes') {
+      // Topic label (if present)
+      if (entry.topic) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(180, 120, 10);
+        doc.text(`📌 ${entry.topic}`, MARGIN, y);
+        y += LH(13) + 2;
+        checkPage(20);
+      }
+
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(12);
       doc.setTextColor(26, 71, 49);
       doc.text('Notes:', MARGIN, y);
-      y += 5;
+      y += LH(12) + 1;
+
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(40, 40, 40);
+      doc.setFontSize(12);
+      doc.setTextColor(20, 20, 20);
       const lines = doc.splitTextToSize(entry.text || '', textW - 2);
-      doc.text(lines, MARGIN, y);
-      y += lines.length * 4.5;
+      lines.forEach(line => {
+        checkPage(LH(12) + 1);
+        doc.text(line, MARGIN, y);
+        y += LH(12);
+      });
+      y += 3;
 
     } else {
+      // Topic label (if present)
+      if (entry.topic) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(180, 120, 10);
+        doc.text(`📌 ${entry.topic}`, MARGIN, y);
+        y += LH(13) + 2;
+        checkPage(20);
+      }
+
       // Question
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(12);
       doc.setTextColor(26, 71, 49);
       doc.text('Q:', MARGIN, y);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(20, 20, 20);
-      const qLines = doc.splitTextToSize(entry.question || '', textW - 8);
-      doc.text(qLines, MARGIN + 6, y);
-      y += qLines.length * 4.5 + 2;
-
-      // Answer
-      checkPage(15);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(12);
+      doc.setTextColor(20, 20, 20);
+      const qLines = doc.splitTextToSize(entry.question || '', textW - 10);
+      doc.text(qLines, MARGIN + 8, y);
+      y += qLines.length * LH(12) + 3;
+      checkPage(20);
+
+      // Correct Answer
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
       doc.setTextColor(16, 100, 55);
       doc.text('✓ Ans:', MARGIN, y);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
       doc.setTextColor(16, 80, 45);
-      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 10);
-      doc.text(aLines, MARGIN + 12, y);
-      y += aLines.length * 4.5 + 2;
+      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 14);
+      doc.text(aLines, MARGIN + 14, y);
+      y += aLines.length * LH(12) + 3;
 
+      // Wrong Answer
       if (entry.wrong) {
-        checkPage(10);
+        checkPage(15);
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
+        doc.setFontSize(12);
         doc.setTextColor(200, 30, 30);
         doc.text('✗ Wrong:', MARGIN, y);
         doc.setFont('helvetica', 'normal');
-        const wLines = doc.splitTextToSize(entry.wrong, textW - 14);
-        doc.text(wLines, MARGIN + 14, y);
-        y += wLines.length * 4.5 + 2;
+        doc.setFontSize(12);
+        doc.setTextColor(180, 30, 30);
+        const wLines = doc.splitTextToSize(entry.wrong, textW - 16);
+        doc.text(wLines, MARGIN + 16, y);
+        y += wLines.length * LH(12) + 3;
       }
 
+      // Reason badge
       if (entry.reason) {
+        checkPage(10);
+        doc.setFillColor(251, 191, 36, 0.2);
+        doc.setDrawColor(200, 140, 10);
+        doc.setLineWidth(0.4);
+        const reasonLabel = `Reason: ${entry.reason}`;
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor(130, 80, 0);
-        doc.text(`Reason: ${entry.reason}`, MARGIN, y);
-        y += 5;
+        doc.setFontSize(11);
+        const rW = doc.getTextWidth(reasonLabel) + 8;
+        doc.roundedRect(MARGIN, y - 4, rW, 8, 2, 2, 'D');
+        doc.setTextColor(140, 80, 0);
+        doc.text(reasonLabel, MARGIN + 4, y + 2);
+        y += 11;
       }
     }
 
-    // ---- IMAGE ----
+    // ── IMAGE ──
     if (hasImg) {
-      const imgY = startY - 3;
-      const contentBottom = y;
-      const imgBottom = imgY + imgH;
-      // Draw image
+      const imgY = imgStartY;
       try {
         const imgType = entry.image.includes('image/png') ? 'PNG' : 'JPEG';
         doc.addImage(entry.image, imgType, imgX, imgY, imgW, imgH, '', 'FAST');
-        // Box border around image
-        doc.setDrawColor(180, 220, 195);
-        doc.setLineWidth(0.4);
+        doc.setDrawColor(26, 71, 49);
+        doc.setLineWidth(0.5);
         doc.rect(imgX - 1, imgY - 1, imgW + 2, imgH + 2);
-      } catch(e) {
-        console.warn('Could not embed image in PDF', e);
-      }
-      y = Math.max(contentBottom, imgBottom + 3);
+      } catch(e) { console.warn('Image embed failed', e); }
+      y = Math.max(y, imgY + imgH + 4);
     }
 
-    // Entry divider
-    checkPage(5);
-    doc.setDrawColor(220, 240, 228);
-    doc.setLineWidth(0.3);
+    // ── Entry divider ──
+    checkPage(6);
+    doc.setDrawColor(200, 235, 215);
+    doc.setLineWidth(0.5);
     doc.line(MARGIN, y, PW - MARGIN, y);
-    y += 7;
+    y += 8;
   });
 
-  // Footer on each page
+  // ══════════════════════════════════════════════
+  // FOOTER on every page
+  // ══════════════════════════════════════════════
   const totalPages = doc.internal.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
+    doc.setFontSize(8);
     doc.setTextColor(160, 160, 160);
-    doc.text(`Scalpel Study Squad — ${SECTION_LABELS[section]} — ${subject === 'all' ? 'All Subjects' : subject} — ${subtitleExtra}`, MARGIN, PH - 8);
-    doc.text(`Page ${i} of ${totalPages}`, PW - MARGIN, PH - 8, { align: 'right' });
-    doc.setDrawColor(220, 220, 220);
+    doc.text(
+      `Scalpel Study Squad  ·  ${SECTION_LABELS[section]}  ·  ${subject === 'all' ? 'All Subjects' : subject}  ·  ${subtitleExtra}`,
+      MARGIN, PH - 7
+    );
+    doc.text(`Page ${i} of ${totalPages}`, PW - MARGIN, PH - 7, { align: 'right' });
+    doc.setDrawColor(210, 210, 210);
+    doc.setLineWidth(0.3);
     doc.line(MARGIN, PH - 10, PW - MARGIN, PH - 10);
   }
 
-  // Save
-  const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g,'');
-  const safeDate = subtitleExtra.replace(/\s/g,'_');
+  // ── Save file ──
+  const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g, '');
+  const safeDate = subtitleExtra.replace(/[\s,]/g, '_');
   doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
   showToast('✅ PDF downloaded!');
 }
