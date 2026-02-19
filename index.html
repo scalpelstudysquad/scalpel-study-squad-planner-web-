@@ -1779,22 +1779,20 @@ async function downloadPDF(section, mode) {
 }
 
 /* ============================================================
-   CORE PDF ENGINE — Bold fonts, larger sizes, clean layout
+   CORE PDF ENGINE
 ============================================================ */
 function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
-  const PW  = doc.internal.pageSize.getWidth();   // 210
-  const PH  = doc.internal.pageSize.getHeight();  // 297
-  const M   = 15;   // margin
-  const CW  = PW - M * 2;  // content width = 180
+  const PW  = doc.internal.pageSize.getWidth();
+  const PH  = doc.internal.pageSize.getHeight();
+  const M   = 15;
+  const CW  = PW - M * 2;
   let y = M;
 
-  // Helper: line height for a given font size (pt -> mm, generous spacing)
   const lh = (pt) => pt * 0.42 + 1.6;
 
-  // Helper: safe page break
   function np(needed = 30) {
     if (y + needed > PH - M - 14) {
       doc.addPage();
@@ -1803,7 +1801,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     }
   }
 
-  // Colour palette (RGB)
   const C = {
     green:    [26,  71,  49],
     greenMid: [40, 100,  65],
@@ -1817,9 +1814,9 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     divider:  [200, 230, 210],
     muted:    [100, 100, 100],
     headerBg: [22,  60,  42],
+    topicRed: [200,   0,   0],
   };
 
-  /* ── Top accent bar (2 stripes) ── */
   function drawAccentBar() {
     doc.setFillColor(...C.green);
     doc.rect(0, 0, PW, 6, 'F');
@@ -1827,7 +1824,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     doc.rect(0, 5.5, PW, 2, 'F');
   }
 
-  /* ── Repeat header on continuation pages ── */
   function repeatHeader() {
     drawAccentBar();
     doc.setFillColor(...C.headerBg);
@@ -1849,14 +1845,12 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
   drawAccentBar();
   y = 10;
 
-  /* Logo */
   const logoSize = 38;
   if (logo) {
     try { doc.addImage(logo, 'JPEG', M, y, logoSize, logoSize, '', 'FAST'); }
     catch(e) {}
   }
 
-  /* Title block — right of logo */
   const tx = logo ? M + logoSize + 8 : M;
   const titleW = PW - tx - M;
 
@@ -1876,7 +1870,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
 
   y = Math.max(y + logoSize + 4, y + 40);
 
-  /* Subject / Section banner */
   doc.setFillColor(...C.stripBg);
   doc.setDrawColor(...C.green);
   doc.setLineWidth(0.6);
@@ -1893,7 +1886,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
 
   y += 34;
 
-  /* Thick rule */
   doc.setFillColor(...C.green);
   doc.rect(M, y, CW, 2, 'F');
   y += 10;
@@ -1904,7 +1896,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
   data.forEach((entry, idx) => {
     np(50);
 
-    /* ── Entry header strip ── */
     doc.setFillColor(...C.headerBg);
     doc.rect(M, y, CW, 11, 'F');
 
@@ -1913,7 +1904,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     doc.setTextColor(...C.white);
     doc.text(`Entry ${idx + 1}`, M + 4, y + 7.5);
 
-    /* Meta info: subject / topic / date / exam / year — right-aligned */
     const metaParts = [
       entry.subject,
       entry.topic  ? entry.topic : null,
@@ -1928,35 +1918,31 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     doc.text(metaStr, PW - M - 3, y + 7.5, { align: 'right', maxWidth: CW - 30 });
 
     y += 14;
-    y += 4; /* gap between entry header bar and content */
+    y += 4;
 
-    /* ── Image column layout ── */
     const hasImg  = !!entry.image;
     const imgW    = 70;
     const imgH    = 62;
     const textW   = hasImg ? CW - imgW - 6 : CW;
     const imgX    = M + textW + 6;
-    const blockY  = y;   // remember top of content block
+    const blockY  = y;
 
-    /* ── TEXT CONTENT ── */
-
-    /* Topic pill (if present) */
+    /* ── Topic label — bold, red, underlined, no box ── */
     if (entry.topic) {
       np(14);
-      doc.setFillColor(...C.goldBg);
-      doc.setDrawColor(...C.gold);
-      doc.setLineWidth(0.4);
-      const pillW = Math.min(doc.getTextWidth(`  ${entry.topic}  `) + 6, textW);
-      doc.roundedRect(M, y - 3, pillW, 9, 2, 2, 'FD');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.setTextColor(...C.gold);
-      doc.text(entry.topic, M + 4, y + 3.5);
-      y += 12;
+      doc.setFontSize(13);
+      doc.setTextColor(...C.topicRed);
+      doc.text(entry.topic, M, y);
+      /* Draw underline beneath the text */
+      const tW = doc.getTextWidth(entry.topic);
+      doc.setDrawColor(...C.topicRed);
+      doc.setLineWidth(0.5);
+      doc.line(M, y + 1.8, M + tW, y + 1.8);
+      y += 10;
     }
 
     if (section === 'notes') {
-      /* Notes body */
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
       doc.setTextColor(...C.nearBlack);
@@ -1969,7 +1955,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       y += 4;
 
     } else {
-      /* Question */
       np(20);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
@@ -1980,7 +1965,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       doc.text(qLines, M + 8, y);
       y += qLines.length * lh(14) + 4;
 
-      /* Correct Answer */
       np(16);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(14);
@@ -1991,7 +1975,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       doc.text(aLines, M + 12, y);
       y += aLines.length * lh(14) + 4;
 
-      /* Wrong Answer */
       if (entry.wrong) {
         np(14);
         doc.setFont('helvetica', 'bold');
@@ -2004,7 +1987,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
         y += wLines.length * lh(14) + 4;
       }
 
-      /* Reason badge */
       if (entry.reason) {
         np(10);
         doc.setFillColor(...C.goldBg);
@@ -2021,7 +2003,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       }
     }
 
-    /* ── IMAGE ── */
     if (hasImg) {
       try {
         const imgType = entry.image.startsWith('data:image/png') ? 'PNG' : 'JPEG';
@@ -2033,7 +2014,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
       y = Math.max(y, blockY + imgH + 4);
     }
 
-    /* ── Entry divider ── */
     np(8);
     doc.setDrawColor(...C.divider);
     doc.setLineWidth(0.5);
@@ -2060,7 +2040,6 @@ function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
     doc.line(M, PH - 10, PW - M, PH - 10);
   }
 
-  /* ── Save ── */
   const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g, '');
   const safeDate    = subtitleExtra.replace(/[\s,]/g, '_');
   doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
