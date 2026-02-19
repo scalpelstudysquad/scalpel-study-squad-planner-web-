@@ -172,23 +172,37 @@ body::before {
   font-weight: 600;
   margin-top: 4px;
 }
+.device-advisory {
+  font-size: 11px;
+  color: var(--accent-gold);
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.28);
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-top: 7px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  display: inline-block;
+}
 
-/* Telegram User */
-.user-info {
+/* Local Name Widget */
+.name-widget {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 50px;
-  padding: 6px 14px 6px 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  min-width: 140px;
-  justify-content: center;
+  padding: 5px 5px 5px 14px;
+  min-width: 170px;
 }
-.user-avatar {
+.name-widget-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.name-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -196,12 +210,59 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #000;
   flex-shrink: 0;
+  order: 2;
 }
-#tg-login-wrap { min-width: 140px; display: flex; justify-content: flex-end; }
+.name-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+.name-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.name-input-wrap input {
+  flex: 1;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+  width: 110px;
+}
+.name-input-wrap input:focus { border-color: var(--accent); }
+.name-save-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  color: #000;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.name-save-btn:hover { background: var(--accent-dim); }
 
 /* ============================================================
    MAIN CONTENT
@@ -750,23 +811,24 @@ select option { background: var(--bg-input); }
       <div class="logo-text">
         <div class="site-title">Scalpel Study Squad</div>
         <div class="site-subtitle">20th Book — Revision Report</div>
+        <div class="device-advisory">⚠ Data saved on this device only — use on one device</div>
       </div>
     </div>
   </div>
 
   <div class="header-right">
-    <div id="tg-login-wrap">
-      <div class="user-info" id="userInfo" style="display:none;">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <span id="userNameDisplay">—</span>
+    <div class="name-widget" id="nameWidget">
+      <!-- Display mode -->
+      <div class="name-widget-display" id="nameDisplay">
+        <span class="name-text" id="nameText" onclick="switchToEdit()" title="Click to edit name">Set name…</span>
+        <div class="name-avatar" id="nameAvatar">👤</div>
       </div>
-      <script async src="https://telegram.org/js/telegram-widget.js?22"
-        data-telegram-login="Scalpel_Study_Squad_Login_bot"
-        data-size="small"
-        data-onauth="onTelegramAuth(user)"
-        data-request-access="write"
-        id="tgWidget">
-      </script>
+      <!-- Edit mode (hidden by default) -->
+      <div class="name-input-wrap" id="nameEditWrap" style="display:none;">
+        <input type="text" id="nameInput" maxlength="20" placeholder="Your name…"
+          onkeydown="if(event.key==='Enter') saveName()"/>
+        <button class="name-save-btn" onclick="saveName()" title="Save">✓</button>
+      </div>
     </div>
   </div>
 </header>
@@ -1281,30 +1343,37 @@ themeToggle.addEventListener('click', () => {
 });
 
 /* ============================================================
-   TELEGRAM AUTH
+   LOCAL NAME WIDGET
 ============================================================ */
-let currentUser = null;
-try {
-  const saved = localStorage.getItem('sss_user');
-  if (saved) { currentUser = JSON.parse(saved); updateUserDisplay(); }
-} catch(e) {}
-
-function onTelegramAuth(user) {
-  currentUser = user;
-  localStorage.setItem('sss_user', JSON.stringify(user));
-  updateUserDisplay();
-  showToast('✅ Logged in as ' + user.first_name);
+function loadStoredName() {
+  const saved = localStorage.getItem('sss_username') || '';
+  if (saved) renderNameDisplay(saved);
 }
 
-function updateUserDisplay() {
-  if (!currentUser) return;
-  const tgWidget = document.getElementById('tgWidget');
-  if (tgWidget) tgWidget.style.display = 'none';
-  const userInfo = document.getElementById('userInfo');
-  userInfo.style.display = 'flex';
-  document.getElementById('userNameDisplay').textContent = currentUser.first_name + ' #' + currentUser.id;
-  document.getElementById('userAvatar').textContent = currentUser.first_name.charAt(0).toUpperCase();
+function renderNameDisplay(name) {
+  document.getElementById('nameText').textContent = name;
+  document.getElementById('nameAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('nameDisplay').style.display = 'flex';
+  document.getElementById('nameEditWrap').style.display = 'none';
 }
+
+function switchToEdit() {
+  const current = localStorage.getItem('sss_username') || '';
+  document.getElementById('nameInput').value = current;
+  document.getElementById('nameDisplay').style.display = 'none';
+  document.getElementById('nameEditWrap').style.display = 'flex';
+  document.getElementById('nameInput').focus();
+}
+
+function saveName() {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) { showToast('❌ Please enter a name.', 'error'); return; }
+  localStorage.setItem('sss_username', val);
+  renderNameDisplay(val);
+  showToast('✅ Name saved!');
+}
+
+loadStoredName();
 
 /* ============================================================
    POPULATE DROPDOWNS
