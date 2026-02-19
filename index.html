@@ -1,1577 +1,2433 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Scalpel Study Squad — Material UI Preview</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#0b1a14"/>
+<title>Scalpel Study Squad — 20th Book Revision Report</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json"/>
+
+<!-- iOS PWA Support -->
+<meta name="apple-mobile-web-app-title" content="Scalpel SSS"/>
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
+
+<!-- Windows / Android tile -->
+<meta name="msapplication-TileColor" content="#0b1a14"/>
+<meta name="msapplication-TileImage" content="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Nunito:wght@300;400;500;600;700&family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-/* ═══════════════════════════════════════════════
-   MATERIAL YOU TOKENS — SCALPEL STUDY SQUAD
-═══════════════════════════════════════════════ */
+/* ============================================================
+   CSS CUSTOM PROPERTIES & THEME
+============================================================ */
 :root {
-  /* Primary — Light Blue */
-  --md-primary:           #1a6080;
-  --md-on-primary:        #ffffff;
-  --md-primary-container: #c2e4f5;
-  --md-on-primary-container: #002133;
-
-  /* Secondary — Dark Red */
-  --md-secondary:           #8B0000;
-  --md-on-secondary:        #ffffff;
-  --md-secondary-container: #ffd9d9;
-  --md-on-secondary-container: #3b0000;
-
-  /* Tertiary — Orange (danger) */
-  --md-tertiary:           #b84e00;
-  --md-on-tertiary:        #ffffff;
-  --md-tertiary-container: #ffdcc6;
-  --md-on-tertiary-container: #3b1400;
-
-  /* Surface scale */
-  --md-surface:        #f2fafd;
-  --md-surface-dim:    #daedf6;
-  --md-surface-bright: #ffffff;
-  --md-surface-1:      rgba(26,96,128,0.05);
-  --md-surface-2:      rgba(26,96,128,0.08);
-  --md-surface-3:      rgba(26,96,128,0.11);
-  --md-surface-4:      rgba(26,96,128,0.12);
-  --md-surface-5:      rgba(26,96,128,0.14);
-
-  --md-on-surface:         #0a1e27;
-  --md-on-surface-variant: #3b5868;
-  --md-outline:            #6a8fa0;
-  --md-outline-variant:    #b2cdd8;
-
-  /* Elevation shadows (Material You style) */
-  --elev-0: none;
-  --elev-1: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px 1px rgba(0,0,0,0.04);
-  --elev-2: 0 1px 2px rgba(0,0,0,0.08), 0 2px 6px 2px rgba(0,0,0,0.05);
-  --elev-3: 0 4px 8px 3px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
-  --elev-4: 0 6px 10px 4px rgba(0,0,0,0.07), 0 2px 3px rgba(0,0,0,0.08);
-  --elev-5: 0 8px 12px 6px rgba(0,0,0,0.08), 0 4px 4px rgba(0,0,0,0.08);
-
-  /* Shape */
-  --shape-xs:   4px;
-  --shape-sm:   8px;
-  --shape-md:   12px;
-  --shape-lg:   16px;
-  --shape-xl:   28px;
-  --shape-full: 9999px;
-
-  /* Type scale */
-  --type-display-l:  57px;
-  --type-display-m:  45px;
-  --type-display-s:  36px;
-  --type-headline-l: 32px;
-  --type-headline-m: 28px;
-  --type-headline-s: 24px;
-  --type-title-l:    22px;
-  --type-title-m:    16px;
-  --type-title-s:    14px;
-  --type-label-l:    14px;
-  --type-label-m:    12px;
-  --type-label-s:    11px;
-  --type-body-l:     16px;
-  --type-body-m:     14px;
-  --type-body-s:     12px;
+  --bg-primary: #071510;
+  --bg-secondary: #0a1c18;
+  --bg-card: #0d2318;
+  --bg-input: #091a14;
+  --border: #1e4535;
+  --border-light: #163829;
+  --accent: #4ade80;
+  --accent-dim: #22c55e;
+  --accent-gold: #fbbf24;
+  --accent-gold-dim: #d97706;
+  --text-primary: #e8f5ee;
+  --text-secondary: #9dc4ae;
+  --text-muted: #5a8a6e;
+  --danger: #ef4444;
+  --danger-dark: #b91c1c;
+  --shadow: rgba(0,0,0,0.6);
+  --tab-active: #4ade80;
+  --tab-bg: #1e3a2a;
+  --radius: 12px;
+  --radius-sm: 8px;
+  /* Light-blue theme vars */
+  --header-bg: rgba(0, 70, 110, 0.82);
+  --section-card-bg: rgba(0, 55, 90, 0.80);
+  --section-text: #ffffff;
+  --danger-zone-bg: rgba(180, 60, 0, 0.88);
+  --subtitle-color: #ff6b6b;
+  --tab-box-bg: rgba(0, 80, 130, 0.70);
+  --tab-box-active-bg: rgba(0, 100, 160, 0.90);
+}
+[data-theme="light"] {
+  --bg-primary: #cdeaf5;
+  --bg-secondary: #b8dff0;
+  --bg-card: #d8eef8;
+  --bg-input: #e8f5fc;
+  --border: #7bbdd8;
+  --border-light: #a0d0e8;
+  --accent: #0369a1;
+  --accent-dim: #075985;
+  --accent-gold: #b45309;
+  --accent-gold-dim: #92400e;
+  --text-primary: #0a1f2e;
+  --text-secondary: #0f3d5c;
+  --text-muted: #2a6080;
+  --danger: #dc2626;
+  --danger-dark: #991b1b;
+  --shadow: rgba(0,0,0,0.18);
+  --tab-active: #0369a1;
+  --tab-bg: #a0d0e8;
+  --radius: 12px;
+  --radius-sm: 8px;
+  /* Light-blue theme vars — lighter, still visible */
+  --header-bg: rgba(173, 216, 230, 0.80);
+  --section-card-bg: rgba(140, 200, 225, 0.72);
+  --section-text: #041820;
+  --danger-zone-bg: rgba(220, 100, 0, 0.90);
+  --subtitle-color: #8B0000;
+  --tab-box-bg: rgba(100, 175, 210, 0.65);
+  --tab-box-active-bg: rgba(60, 140, 185, 0.90);
 }
 
-/* ═══════════════════════════════════════════════
+/* ============================================================
    RESET & BASE
-═══════════════════════════════════════════════ */
+============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
 body {
-  font-family: 'Roboto', sans-serif;
-  background: var(--md-surface);
-  color: var(--md-on-surface);
+  font-family: 'Oswald', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
+  transition: background 0.35s, color 0.35s;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
 }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--md-surface-dim); }
-::-webkit-scrollbar-thumb { background: var(--md-outline-variant); border-radius: 99px; }
-
-/* ═══════════════════════════════════════════════
-   MATERIAL RIPPLE
-═══════════════════════════════════════════════ */
-.ripple-host { position: relative; overflow: hidden; }
-.ripple-host::after {
+body::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: currentColor;
-  opacity: 0;
-  transition: opacity 0.15s;
-  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 10%, rgba(173,216,230,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 90%, rgba(173,216,230,0.08) 0%, transparent 60%);
   pointer-events: none;
+  z-index: 0;
 }
-.ripple-host:active::after { opacity: 0.10; }
-
-/* ═══════════════════════════════════════════════
-   TOP APP BAR — Material You
-═══════════════════════════════════════════════ */
-.top-app-bar {
+.header {
   position: sticky;
   top: 0;
-  z-index: 200;
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  box-shadow: var(--elev-2);
-  padding: 0 16px;
-  height: auto;
-  min-height: 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.top-bar-row {
-  display: flex;
+  z-index: 100;
+  background: var(--header-bg);
+  border-bottom: 1px solid rgba(173,216,230,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 2px 24px rgba(0,100,160,0.25);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  min-height: 64px;
+  padding: 14px 24px;
+  padding-left:  max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
+  padding-top:   max(14px, env(safe-area-inset-top));
 }
-
-.top-bar-logo {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2.5px solid var(--md-primary);
-  box-shadow: var(--elev-2);
-  flex-shrink: 0;
-}
-
-.top-bar-titles { flex: 1; }
-
-.top-bar-headline {
-  font-family: 'Oswald', sans-serif;
-  font-size: clamp(16px, 3.5vw, 24px);
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--md-on-primary-container);
-  line-height: 1.1;
-}
-
-.top-bar-subhead {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-size: clamp(9px, 1.8vw, 12px);
-  font-weight: 700;
-  color: var(--md-secondary);
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.top-bar-actions { display: flex; gap: 6px; align-items: center; }
-
-.icon-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--md-on-primary-container);
-  cursor: pointer;
+.header-left {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  flex-shrink: 0;
+  justify-content: flex-start;
 }
-.icon-btn:hover { background: rgba(26,96,128,0.12); }
-.icon-btn .material-icons-round { font-size: 22px; }
-
-/* Avatar chip */
-.avatar-chip {
-  height: 32px;
-  border-radius: var(--shape-full);
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px 0 4px;
-  cursor: pointer;
-  border: none;
-  font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: var(--elev-1);
-  transition: box-shadow 0.2s, background 0.2s;
-}
-.avatar-chip:hover { box-shadow: var(--elev-2); background: #185070; }
-.avatar-chip-circle {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--md-on-primary);
-  color: var(--md-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-/* Info strip */
-.info-strip {
-  background: rgba(139,0,0,0.10);
-  border-top: 1px solid rgba(139,0,0,0.20);
-  padding: 7px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  color: var(--md-secondary);
-  font-weight: 500;
-}
-.info-strip .material-icons-round { font-size: 15px; }
-
-/* ═══════════════════════════════════════════════
-   NAV RAIL / BOTTOM NAV
-═══════════════════════════════════════════════ */
-.nav-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 190;
-  background: var(--md-primary-container);
-  box-shadow: 0 -1px 0 var(--md-outline-variant), var(--elev-2);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0 0 env(safe-area-inset-bottom);
-  height: 80px;
-}
-
-.nav-item {
+.header-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  flex: 1;
-  padding: 12px 4px 8px;
-  color: var(--md-on-primary-container);
-  opacity: 0.65;
-  transition: opacity 0.2s;
-  position: relative;
+  gap: 0;
+  justify-self: center;
 }
-.nav-item:hover { opacity: 0.85; }
-.nav-item.active { opacity: 1; }
-
-.nav-indicator {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 32px;
-  border-radius: var(--shape-full);
-  background: transparent;
-  transition: background 0.25s;
-}
-.nav-item.active .nav-indicator { background: var(--md-primary); }
-
-.nav-icon {
-  position: relative;
-  z-index: 1;
-  font-size: 22px !important;
-}
-.nav-item.active .nav-icon { color: var(--md-on-primary); }
-
-.nav-label {
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-/* ═══════════════════════════════════════════════
-   MAIN LAYOUT
-═══════════════════════════════════════════════ */
-.page {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 16px 16px 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* ═══════════════════════════════════════════════
-   HERO CARD — Slideshow
-═══════════════════════════════════════════════ */
-.hero-card {
-  background: var(--md-primary-container);
-  border-radius: var(--shape-xl);
-  padding: 28px 24px 20px;
-  box-shadow: var(--elev-2);
-  position: relative;
-  overflow: hidden;
-}
-.hero-card::before {
-  content: '';
-  position: absolute;
-  top: -40px; right: -40px;
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: rgba(26,96,128,0.10);
-  pointer-events: none;
-}
-.hero-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-  border-radius: var(--shape-full);
-  padding: 4px 14px 4px 10px;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.hero-chip .material-icons-round { font-size: 14px; }
-
-.hero-label {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--md-primary);
-  margin-bottom: 8px;
-}
-.hero-question {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--md-on-primary-container);
-  line-height: 1.4;
-  margin-bottom: 14px;
-}
-.hero-answer {
-  font-family: 'Oswald', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--md-primary);
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-.hero-answer .material-icons-round { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
-
-.hero-nav {
+.header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 20px;
-  border-top: 1px solid var(--md-outline-variant);
-  padding-top: 14px;
 }
-.hero-counter {
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--md-on-surface-variant);
-  flex: 1;
-  letter-spacing: 1px;
-}
-.nav-icon-btn {
-  width: 36px; height: 36px;
+.header-row-top { display: contents; }
+.logo-img {
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  border: 1.5px solid var(--md-outline-variant);
-  background: var(--md-surface-bright);
-  color: var(--md-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: var(--elev-1);
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 20px rgba(74,222,128,0.35);
+  transition: box-shadow 0.3s;
+  display: block;
+  margin: 0 auto 8px;
 }
-.nav-icon-btn:hover { background: var(--md-primary-container); box-shadow: var(--elev-2); }
-.nav-icon-btn .material-icons-round { font-size: 18px; }
-
-/* ═══════════════════════════════════════════════
-   SECTION HEADER (chip-style)
-═══════════════════════════════════════════════ */
-.section-header {
+.logo-img:hover { box-shadow: 0 0 30px rgba(74,222,128,0.55); }
+.logo-text { text-align: center; }
+.logo-wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-  margin-bottom: 4px;
 }
-.section-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px 6px 10px;
-  background: var(--md-primary-container);
-  border-radius: var(--shape-full);
+.site-title {
   font-family: 'Oswald', sans-serif;
-  font-size: 12px;
+  font-size: clamp(18px, 3vw, 30px);
   font-weight: 700;
-  letter-spacing: 1.5px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  line-height: 1.15;
+  text-shadow: 0 0 30px rgba(74,222,128,0.4);
+  text-align: center;
   text-transform: uppercase;
-  color: var(--md-on-primary-container);
 }
-.section-tag .material-icons-round { font-size: 15px; color: var(--md-primary); }
-.section-divider { flex: 1; height: 1px; background: var(--md-outline-variant); }
-
-/* ═══════════════════════════════════════════════
-   M3 FILLED CARD
-═══════════════════════════════════════════════ */
-.m3-card {
-  background: var(--md-surface-bright);
-  border-radius: var(--shape-xl);
-  box-shadow: var(--elev-1);
-  overflow: hidden;
-  transition: box-shadow 0.2s;
+[data-theme="light"] .site-title {
+  color: #023d58;
+  text-shadow: 0 1px 8px rgba(0,80,120,0.3);
 }
-.m3-card:hover { box-shadow: var(--elev-2); }
-
-/* Elevated card */
-.m3-card-elevated {
-  background: var(--md-surface-1);
-  border-radius: var(--shape-xl);
-  box-shadow: var(--elev-2);
-  overflow: hidden;
+.site-subtitle {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: clamp(9px, 1.2vw, 13px);
+  color: var(--subtitle-color);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 4px;
+  text-align: center;
 }
-
-/* Card header bar */
-.card-header-bar {
-  background: var(--md-primary);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.card-header-icon {
-  width: 36px; height: 36px;
-  border-radius: var(--shape-sm);
-  background: rgba(255,255,255,0.18);
+.theme-emoji-btn {
+  background: rgba(0,50,90,0.60);
+  border: 1.5px solid rgba(173,216,230,0.40);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
 }
-.card-header-icon .material-icons-round { color: #fff; font-size: 19px; }
-.card-header-title {
+.theme-emoji-btn:hover {
+  background: rgba(173,216,230,0.35);
+  transform: rotate(20deg) scale(1.15);
+  box-shadow: 0 0 10px rgba(173,216,230,0.40);
+}
+.advisory-bar {
+  background: rgba(0,50,90,0.75);
+  border-bottom: 1px solid rgba(173,216,230,0.30);
+  color: rgba(173,216,230,0.90);
   font-family: 'Oswald', sans-serif;
-  font-size: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+[data-theme="light"] .advisory-bar {
+  background: rgba(140,200,230,0.60);
+  color: #021b2e;
+  border-bottom-color: rgba(0,80,130,0.30);
+}
+.advisory-bar strong { color: #fff; }
+[data-theme="light"] .advisory-bar strong { color: #023d58; }
+.advisory-icon { font-size: 14px; flex-shrink: 0; }
+/* ── Single profile circle ── */
+.name-circle-wrap {
+  position: relative;
+}
+.name-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2.5px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 17px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: box-shadow 0.25s, transform 0.2s, background 0.2s;
+  box-shadow: 0 0 0 0 rgba(74,222,128,0);
+}
+.name-circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(74,222,128,0.55);
+}
+.name-circle.has-name {
+  background: var(--bg-card);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* Popover card */
+.name-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 230px;
+  background: rgba(0,40,70,0.96);
+  border: 1.5px solid rgba(173,216,230,0.40);
+  border-radius: var(--radius);
+  padding: 18px 16px 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  animation: popIn 0.18s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.name-popover.open { display: flex; }
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.name-popover-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  flex: 1;
-}
-.card-header-count {
-  background: rgba(255,255,255,0.22);
-  color: #fff;
-  border-radius: var(--shape-full);
-  padding: 3px 10px;
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px;
+  color: rgba(173,216,230,0.70);
   font-weight: 700;
-  letter-spacing: 1px;
 }
-
-/* Card body */
-.card-body { padding: 20px; }
-
-/* ═══════════════════════════════════════════════
-   FORM ELEMENTS — Material 3
-═══════════════════════════════════════════════ */
-.m3-field {
-  position: relative;
-  margin-bottom: 18px;
-}
-.m3-field label {
-  display: block;
+.name-popover-fullname {
   font-family: 'Oswald', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--md-primary);
-  margin-bottom: 6px;
-}
-.m3-input {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: var(--shape-sm);
-  border: 1.5px solid var(--md-outline-variant);
-  background: var(--md-surface-1);
-  color: var(--md-on-surface);
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.m3-input:focus {
-  border-color: var(--md-primary);
-  box-shadow: 0 0 0 3px rgba(26,96,128,0.12);
-  background: var(--md-surface-bright);
-}
-.m3-input::placeholder { color: var(--md-outline); font-size: 13px; }
-.m3-textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
-
-/* Select */
-.m3-select {
-  width: 100%;
-  padding: 14px 40px 14px 16px;
-  border-radius: var(--shape-sm);
-  border: 1.5px solid var(--md-outline-variant);
-  background: var(--md-surface-1);
-  color: var(--md-on-surface);
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%236a8fa0' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-}
-.m3-select:focus { border-color: var(--md-primary); }
-
-/* 2-col grid */
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 440px) { .field-row { grid-template-columns: 1fr; } }
-
-/* Upload zone */
-.m3-upload {
-  border: 2px dashed var(--md-outline-variant);
-  border-radius: var(--shape-md);
-  padding: 22px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  background: var(--md-surface-1);
-  margin-bottom: 18px;
-}
-.m3-upload:hover { border-color: var(--md-primary); background: var(--md-surface-2); }
-.m3-upload .material-icons-round { font-size: 28px; color: var(--md-primary); margin-bottom: 6px; display: block; }
-.m3-upload-text { font-family: 'Roboto', sans-serif; font-size: 12px; color: var(--md-on-surface-variant); line-height: 1.5; }
-.m3-upload-text strong { color: var(--md-primary); font-weight: 500; }
-
-/* ═══════════════════════════════════════════════
-   BUTTONS — Material 3
-═══════════════════════════════════════════════ */
-.m3-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
-  border-radius: var(--shape-full);
-  border: none;
-  font-family: 'Oswald', sans-serif;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: box-shadow 0.2s, background 0.2s;
-}
-.m3-btn .material-icons-round { font-size: 17px; }
-
-/* Filled */
-.m3-btn-filled {
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-  box-shadow: var(--elev-0);
-}
-.m3-btn-filled:hover { box-shadow: var(--elev-2); background: #185470; }
-
-/* Tonal */
-.m3-btn-tonal {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  box-shadow: var(--elev-0);
-}
-.m3-btn-tonal:hover { box-shadow: var(--elev-1); }
-
-/* Outlined */
-.m3-btn-outlined {
-  background: transparent;
-  color: var(--md-primary);
-  border: 1.5px solid var(--md-outline);
-  box-shadow: var(--elev-0);
-}
-.m3-btn-outlined:hover { background: var(--md-surface-2); }
-
-/* Error / danger */
-.m3-btn-error {
-  background: #b3261e;
-  color: #fff;
-}
-.m3-btn-error:hover { background: #8c1d18; box-shadow: var(--elev-2); }
-
-/* FAB */
-.fab {
-  position: fixed;
-  bottom: 96px;
-  right: 20px;
-  z-index: 180;
-  width: 56px; height: 56px;
-  border-radius: var(--shape-lg);
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--elev-3);
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.fab:hover { box-shadow: var(--elev-4); transform: scale(1.06); }
-.fab .material-icons-round { font-size: 24px; }
-
-/* Extended FAB */
-.fab-extended {
-  width: auto;
-  padding: 0 20px 0 16px;
-  gap: 10px;
-  font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* ═══════════════════════════════════════════════
-   ENTRY LIST ITEMS
-═══════════════════════════════════════════════ */
-.entry-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-
-.entry-card {
-  background: var(--md-surface-1);
-  border-radius: var(--shape-lg);
-  display: flex;
-  align-items: stretch;
-  overflow: hidden;
-  box-shadow: var(--elev-1);
-  transition: box-shadow 0.2s;
-}
-.entry-card:hover { box-shadow: var(--elev-2); }
-.entry-side-bar {
-  width: 5px;
-  flex-shrink: 0;
-  background: var(--md-primary);
-}
-.entry-content { flex: 1; padding: 14px 16px; }
-.entry-subject-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 10px;
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  border-radius: var(--shape-full);
-  font-family: 'Oswald', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.entry-question {
-  font-family: 'Oswald', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--md-on-surface);
-  margin-bottom: 6px;
-  line-height: 1.4;
-}
-.entry-answer {
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  color: var(--md-primary);
-  font-weight: 500;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  line-height: 1.5;
-}
-.entry-answer .material-icons-round { font-size: 15px; margin-top: 2px; flex-shrink: 0; }
-.entry-wrong {
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  color: #b3261e;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin-top: 4px;
-}
-.entry-wrong .material-icons-round { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
-.entry-time {
-  font-size: 11px;
-  color: var(--md-outline);
-  margin-top: 8px;
-  font-family: 'Roboto', sans-serif;
-}
-.entry-actions { display: flex; align-items: center; padding: 0 8px; gap: 2px; }
-.entry-icon-btn {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--md-outline);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
-}
-.entry-icon-btn:hover { background: rgba(179,38,30,0.10); color: #b3261e; }
-.entry-icon-btn .material-icons-round { font-size: 18px; }
-
-/* ═══════════════════════════════════════════════
-   REASON CHIPS
-═══════════════════════════════════════════════ */
-.reason-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: var(--shape-full);
-  font-family: 'Oswald', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
+  color: rgba(173,216,230,0.95);
   letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-top: 6px;
+  word-break: break-word;
 }
-.chip-new     { background: rgba(26,96,128,0.14); color: #1a6080; }
-.chip-recall  { background: rgba(180,78,0,0.14); color: #b44e00; }
-.chip-silly   { background: rgba(104,52,155,0.14); color: #68349b; }
-.chip-contro  { background: rgba(179,38,30,0.14); color: #b3261e; }
-
-/* ═══════════════════════════════════════════════
-   DOWNLOAD CARD
-═══════════════════════════════════════════════ */
-.download-surface {
-  background: var(--md-surface-2);
-  border-radius: var(--shape-lg);
-  padding: 16px;
-  margin-bottom: 16px;
+.name-popover-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-end;
-}
-.download-surface .m3-field { margin-bottom: 0; flex: 1; min-width: 130px; }
-
-/* Segmented button (By Date / By Month) */
-.segmented-btn-group {
-  display: flex;
-  border-radius: var(--shape-full);
-  border: 1.5px solid var(--md-outline-variant);
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(173,216,230,0.35);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  margin-bottom: 16px;
-  width: fit-content;
+  background: rgba(0,30,55,0.60);
 }
-.seg-btn {
-  padding: 8px 22px;
-  border: none;
-  background: transparent;
-  color: var(--md-on-surface-variant);
+.name-popover-prefix {
+  padding: 9px 10px;
   font-family: 'Oswald', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(173,216,230,0.95);
+  background: rgba(0,60,100,0.55);
+  border-right: 1px solid rgba(173,216,230,0.30);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.name-popover-input {
+  flex: 1;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 9px 10px !important;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  color: #fff !important;
+  outline: none;
+  min-width: 0;
+  box-shadow: none !important;
+}
+.name-popover-save {
+  background: rgba(173,216,230,0.85);
+  color: #021b2e;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  width: 100%;
+}
+.name-popover-save:hover { background: #ADD8E6; transform: translateY(-1px); }
+.name-popover-edit {
+  background: none;
+  border: none;
+  color: rgba(173,216,230,0.60);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  text-align: center;
+  padding: 2px 0;
+  transition: color 0.2s;
 }
-.seg-btn:not(:last-child) { border-right: 1.5px solid var(--md-outline-variant); }
-.seg-btn.active {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
+.name-popover-edit:hover { color: #ADD8E6; }
+.main { position: relative; z-index: 1; }
+.slideshow-section {
+  background: var(--header-bg);
+  border-bottom: 1px solid rgba(173,216,230,0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 28px 24px;
 }
-.seg-btn .material-icons-round { font-size: 15px; }
-
-/* ═══════════════════════════════════════════════
-   DANGER ZONE — Material 3 orange
-═══════════════════════════════════════════════ */
-.danger-surface {
-  background: linear-gradient(135deg, #b84e00 0%, #8a3800 100%);
-  border-radius: var(--shape-xl);
-  padding: 24px;
-  box-shadow: var(--elev-3);
+.slideshow-section h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(173,216,230,0.75);
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
-.danger-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+[data-theme="light"] .slideshow-section h2 { color: #023d58; }
+.slideshow-container {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
 }
-.danger-icon-wrap {
-  width: 44px; height: 44px;
-  border-radius: var(--shape-md);
-  background: rgba(255,255,255,0.15);
+.slide-card {
+  background: var(--section-card-bg);
+  border: 1.5px solid rgba(173,216,230,0.30);
+  border-radius: var(--radius);
+  padding: 28px 36px;
+  min-height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  gap: 24px;
+  box-shadow: 0 4px 24px rgba(0,80,140,0.30);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.danger-icon-wrap .material-icons-round { color: #fff; font-size: 22px; }
-.danger-title {
+.slide-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-gold));
+  animation: progress 20s linear infinite;
+}
+@keyframes progress { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+.slide-content { flex: 1; text-align: left; }
+.slide-badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(173,216,230,0.85);
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: block;
+}
+.slide-subject {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  color: rgba(173,216,230,0.70);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+.slide-question {
   font-family: 'Oswald', sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
-.danger-desc {
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  color: rgba(255,235,215,0.88);
-  line-height: 1.6;
-  margin-bottom: 20px;
+[data-theme="light"] .slide-question { color: #021b2e; }
+.slide-answer {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 700;
+  line-height: 1.5;
 }
-.danger-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.danger-chip {
-  display: inline-flex;
+.slide-image {
+  width: 120px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(173,216,230,0.35);
+  flex-shrink: 0;
+}
+.slide-empty {
+  text-align: center;
+  color: rgba(173,216,230,0.55);
+  font-style: italic;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+[data-theme="light"] .slide-empty { color: rgba(0,60,100,0.60); }
+.slide-nav {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--shape-full);
-  background: rgba(255,255,255,0.14);
-  border: 1.5px solid rgba(255,255,255,0.30);
-  color: #fff;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+}
+.slide-btn {
+  background: rgba(0,50,90,0.65);
+  border: 1.5px solid rgba(173,216,230,0.40);
+  color: rgba(173,216,230,0.85);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slide-btn:hover { background: rgba(173,216,230,0.80); color: #021b2e; border-color: #ADD8E6; }
+.slide-counter {
   font-family: 'Oswald', sans-serif;
   font-size: 12px;
+  color: rgba(173,216,230,0.65);
   font-weight: 700;
+  min-width: 60px;
+  text-align: center;
   letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s;
 }
-.danger-chip:hover { background: rgba(255,255,255,0.22); }
-.danger-chip .material-icons-round { font-size: 15px; }
-.danger-chip-primary {
-  background: rgba(0,0,0,0.35);
-  border-color: rgba(255,255,255,0.20);
-}
-
-/* ═══════════════════════════════════════════════
-   PRO TIP BANNER — Material 3
-═══════════════════════════════════════════════ */
-.tip-banner {
-  background: var(--md-surface-2);
-  border-radius: var(--shape-lg);
-  padding: 14px 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-  border-left: 4px solid var(--md-primary);
-}
-.tip-icon { color: var(--md-primary); flex-shrink: 0; }
-.tip-icon .material-icons-round { font-size: 20px; }
-.tip-body {}
-.tip-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--md-primary);
-  margin-bottom: 4px;
-}
-.tip-text {
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  color: var(--md-on-surface-variant);
-  line-height: 1.55;
-}
-.tip-text strong { color: var(--md-on-surface); font-weight: 500; }
-
-/* ═══════════════════════════════════════════════
-   TABS — Primary tab style
-═══════════════════════════════════════════════ */
-.tab-bar {
+[data-theme="light"] .slide-counter { color: rgba(0,60,100,0.70); }
+.tabs-wrapper {
+  background: var(--header-bg);
+  border-bottom: 1px solid rgba(173,216,230,0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 10px 16px;
   position: sticky;
-  top: 0;
-  z-index: 150;
-  background: var(--md-surface-bright);
-  box-shadow: var(--elev-1);
+  top: 116px;
+  z-index: 90;
   overflow-x: auto;
   scrollbar-width: none;
 }
-.tab-bar::-webkit-scrollbar { display: none; }
-.tab-list {
+.tabs-wrapper::-webkit-scrollbar { display: none; }
+.tabs-nav {
   display: flex;
+  justify-content: center;
+  gap: 8px;
   min-width: max-content;
+  margin: 0 auto;
 }
-.tab {
+.tab-btn {
+  padding: 11px 20px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  background: var(--tab-box-bg);
+  border: 1.5px solid rgba(173,216,230,0.30);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+  box-shadow: none;
+}
+[data-theme="light"] .tab-btn {
+  color: rgba(2,40,70,0.85);
+  background: var(--tab-box-bg);
+  border-color: rgba(0,80,130,0.30);
+}
+.tab-btn:hover {
+  background: var(--tab-box-active-bg);
+  color: #fff;
+  border-color: rgba(255,255,255,0.55);
+}
+[data-theme="light"] .tab-btn:hover {
+  color: #fff;
+  background: rgba(0,100,160,0.80);
+}
+.tab-btn.active {
+  background: var(--tab-box-active-bg);
+  color: #fff;
+  border-color: rgba(255,255,255,0.85);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.80),
+    0 0 14px rgba(255,255,255,0.45),
+    0 0 28px rgba(173,216,230,0.35);
+}
+.tab-panel { display: none; padding: 28px 24px; max-width: 980px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+.card {
+  background: var(--section-card-bg);
+  border: 1.5px solid rgba(173,216,230,0.30);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 20px rgba(0,80,140,0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.card-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(173,216,230,0.30);
+}
+[data-theme="light"] .card-title { color: #021b2e; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 14px 18px 10px;
-  border: none;
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  color: var(--md-on-surface-variant);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.form-group.full { grid-column: 1 / -1; }
+label {
   font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-  white-space: nowrap;
-}
-.tab .material-icons-round { font-size: 20px; }
-.tab:hover { color: var(--md-primary); background: var(--md-surface-2); }
-.tab.active {
-  color: var(--md-primary);
-  border-bottom-color: var(--md-primary);
-}
-
-/* ═══════════════════════════════════════════════
-   STATS ROW
-═══════════════════════════════════════════════ */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 4px;
-}
-.stat-card {
-  background: var(--md-surface-bright);
-  border-radius: var(--shape-lg);
-  padding: 16px 12px;
-  text-align: center;
-  box-shadow: var(--elev-1);
-}
-.stat-number {
-  font-family: 'Oswald', sans-serif;
-  font-size: 28px;
   font-weight: 700;
-  color: var(--md-primary);
-  line-height: 1;
-  margin-bottom: 4px;
+  color: rgba(255,255,255,0.80);
 }
-.stat-label {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--md-on-surface-variant);
-}
-
-/* ═══════════════════════════════════════════════
-   PANEL system
-═══════════════════════════════════════════════ */
-.panel { display: none; }
-.panel.active { display: contents; }
-
-/* ═══════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════ */
-.snackbar-host {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 300;
-}
-.snackbar {
-  background: #1a2b35;
+[data-theme="light"] label { color: rgba(2,30,50,0.85); }
+select, input[type="text"], textarea, input[type="date"], input[type="month"] {
+  background: rgba(0,40,70,0.55);
+  border: 1px solid rgba(173,216,230,0.35);
+  border-radius: var(--radius-sm);
   color: #fff;
-  border-radius: var(--shape-sm);
-  padding: 14px 20px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: var(--elev-3);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-width: 240px;
-  max-width: 90vw;
-  animation: snackIn 0.25s ease forwards;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
 }
-@keyframes snackIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
-.snackbar-action {
-  color: var(--md-primary-container);
+[data-theme="light"] select,
+[data-theme="light"] input[type="text"],
+[data-theme="light"] textarea,
+[data-theme="light"] input[type="date"],
+[data-theme="light"] input[type="month"] {
+  background: rgba(200,230,245,0.60);
+  border-color: rgba(0,80,130,0.40);
+  color: #021b2e;
+}
+select::placeholder, input::placeholder, textarea::placeholder { color: rgba(200,230,255,0.50); font-weight: 400; }
+[data-theme="light"] select::placeholder,
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder { color: rgba(2,40,70,0.45); }
+select:focus, input:focus, textarea:focus {
+  border-color: rgba(173,216,230,0.80);
+  box-shadow: 0 0 0 3px rgba(173,216,230,0.20);
+}
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+select option { background: #0a2535; color: #fff; }
+[data-theme="light"] select option { background: #b8dff0; color: #021b2e; }
+.img-upload-area {
+  border: 2px dashed rgba(173,216,230,0.40);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  background: rgba(0,40,70,0.30);
+}
+.img-upload-area:hover { border-color: rgba(173,216,230,0.75); background: rgba(0,60,100,0.35); }
+[data-theme="light"] .img-upload-area {
+  border-color: rgba(0,80,130,0.40);
+  background: rgba(150,210,240,0.25);
+}
+.img-upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+.img-upload-text { font-family: 'Oswald', sans-serif; font-size: 12px; color: rgba(173,216,230,0.65); font-weight: 400; }
+.img-upload-text strong { color: rgba(173,216,230,0.95); font-weight: 700; }
+[data-theme="light"] .img-upload-text { color: rgba(0,60,100,0.70); }
+[data-theme="light"] .img-upload-text strong { color: #023d58; }
+.img-preview {
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+  display: none;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
   font-family: 'Oswald', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
-  text-transform: uppercase;
   cursor: pointer;
-  background: none;
   border: none;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { background: var(--accent-dim); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,222,128,0.3); }
+.btn-gold { background: var(--accent-gold); color: #000; }
+.btn-gold:hover { background: var(--accent-gold-dim); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: var(--danger-dark); transform: translateY(-1px); }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+.sub-tabs-nav { display: flex; gap: 8px; margin-bottom: 20px; }
+.sub-tab-btn {
+  padding: 10px 18px;
+  background: rgba(0,60,100,0.55);
+  border: 1.5px solid rgba(173,216,230,0.35);
+  border-radius: 50px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.80);
+  transition: all 0.2s;
+}
+[data-theme="light"] .sub-tab-btn {
+  background: rgba(100,175,210,0.45);
+  color: #021b2e;
+  border-color: rgba(0,80,130,0.35);
+}
+.sub-tab-btn.active, .sub-tab-btn:hover {
+  background: rgba(173,216,230,0.85);
+  color: #021b2e;
+  border-color: rgba(255,255,255,0.70);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.55), 0 0 10px rgba(173,216,230,0.4);
+}
+.sub-tab-panel { display: none; }
+.sub-tab-panel.active { display: block; }
+.download-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: rgba(0,40,70,0.45);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(173,216,230,0.25);
+  margin-bottom: 16px;
+}
+[data-theme="light"] .download-controls {
+  background: rgba(150,210,235,0.35);
+  border-color: rgba(0,80,130,0.30);
+}
+.download-controls .form-group { margin: 0; min-width: 160px; }
+.entries-list { margin-top: 24px; }
+.entries-list h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+[data-theme="light"] .entries-list h3 { color: rgba(2,30,50,0.70); }
+.entry-item {
+  background: rgba(0,40,70,0.50);
+  border: 1px solid rgba(173,216,230,0.22);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+[data-theme="light"] .entry-item {
+  background: rgba(180,225,245,0.45);
+  border-color: rgba(0,80,130,0.28);
+}
+.entry-text { flex: 1; font-family: 'Oswald', sans-serif; font-size: 13px; color: rgba(255,255,255,0.88); line-height: 1.6; }
+[data-theme="light"] .entry-text { color: #021b2e; }
+.entry-meta { font-size: 11px; color: rgba(173,216,230,0.70); margin-bottom: 6px; font-weight: 400; letter-spacing: 0.3px; }
+[data-theme="light"] .entry-meta { color: rgba(0,60,100,0.70); }
+.entry-q { font-weight: 700; color: #fff; margin-bottom: 4px; }
+[data-theme="light"] .entry-q { color: #021b2e; }
+.entry-a { color: var(--accent); font-weight: 700; }
+.entry-img {
+  width: 80px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
+.entry-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.entry-delete:hover { color: var(--danger); }
+.badge-reason {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-new { background: rgba(74,222,128,0.25); color: #6effa8; border: 1px solid rgba(74,222,128,0.40); }
+.badge-recall { background: rgba(251,191,36,0.25); color: #ffe080; border: 1px solid rgba(251,191,36,0.40); }
+.badge-silly { background: rgba(168,85,247,0.25); color: #d8a8ff; border: 1px solid rgba(168,85,247,0.40); }
+.badge-contro { background: rgba(239,68,68,0.25); color: #ff9090; border: 1px solid rgba(239,68,68,0.40); }
+.danger-zone {
+  max-width: 980px;
+  margin: 40px auto 60px;
+  padding: 0 24px;
+}
+.danger-card {
+  background: var(--danger-zone-bg);
+  border: 1.5px solid rgba(255,160,50,0.55);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: 0 4px 24px rgba(180,80,0,0.35);
+}
+.danger-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.danger-desc { font-family: 'Oswald', sans-serif; font-size: 13px; color: rgba(255,230,200,0.90); margin-bottom: 20px; line-height: 1.6; font-weight: 400; }
+.danger-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px var(--shadow);
+  animation: slideIn 0.3s ease, fadeOut 0.4s ease 2.6s forwards;
+  max-width: 300px;
+}
+.toast.error { border-left-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal {
+  background: rgba(0,40,70,0.96);
+  border: 1.5px solid rgba(173,216,230,0.40);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+}
+.modal h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #ff6060;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.modal p { font-family: 'Oswald', sans-serif; font-size: 14px; color: rgba(173,216,230,0.85); margin-bottom: 24px; line-height: 1.7; font-weight: 400; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
 
-/* ═══════════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════════ */
-@media (max-width: 480px) {
-  .field-row { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .stat-card { padding: 12px 8px; }
-  .stat-number { font-size: 22px; }
-  .download-surface { flex-direction: column; }
-  .top-bar-headline { font-size: 16px; letter-spacing: 1.5px; }
+@media (min-width: 1025px) {
+  .tabs-wrapper { top: 148px; }
+  .tab-panel { max-width: 980px; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .header { padding: 10px 20px; }
+  .logo-img { width: 70px; height: 70px; margin-bottom: 6px; }
+  .site-title { font-size: 22px; }
+  .site-subtitle { font-size: 10px; letter-spacing: 2.5px; }
+  .tabs-wrapper { top: 118px; }
+  .tab-btn { padding: 12px 16px; font-size: 10px; }
+  .tab-panel { padding: 22px 20px; }
+  .slideshow-section { padding: 18px 20px; }
+  .slide-card { min-height: 120px; }
+}
+@media (min-width: 600px) and (max-width: 768px) and (orientation: portrait) {
+  .header { padding: 10px 16px; }
+  .logo-img { width: 64px; height: 64px; margin-bottom: 5px; }
+  .site-title { font-size: 20px; letter-spacing: 1.5px; }
+  .site-subtitle { font-size: 9.5px; letter-spacing: 2px; }
+  .tabs-wrapper { top: 112px; padding: 0 12px; }
+  .tab-btn { padding: 12px 14px; font-size: 10px; }
+  .tab-panel { padding: 20px 16px; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 599px) and (orientation: portrait) {
+  .header { grid-template-columns: 40px 1fr 40px; padding: 10px 12px 12px; gap: 6px; }
+  .logo-img { width: 52px; height: 52px; border-width: 2px; margin-bottom: 5px; }
+  .site-title { font-size: 16px; letter-spacing: 0.8px; line-height: 1.2; }
+  .site-subtitle { font-size: 8.5px; letter-spacing: 1.5px; margin-top: 3px; }
+  .tabs-wrapper { top: 0; position: relative; padding: 0 4px; }
+  .tabs-nav { justify-content: flex-start; }
+  .tab-btn { padding: 10px 8px; font-size: 8px; letter-spacing: 0.5px; }
+  .advisory-bar { font-size: 11px; padding: 7px 12px; }
+  .slideshow-section { padding: 14px 12px; }
+  .slideshow-section h2 { font-size: 10px; letter-spacing: 1px; margin-bottom: 10px; }
+  .slide-card { padding: 14px; min-height: 115px; flex-direction: column; gap: 10px; }
+  .slide-image { width: 100%; height: 85px; }
+  .slide-question { font-size: 14px; }
+  .slide-answer { font-size: 13px; }
+  .tab-panel { padding: 14px 12px; }
+  .card { padding: 14px 12px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-group { margin-bottom: 12px; }
+  label { font-size: 10px; }
+  select, input[type="text"], textarea, input[type="date"], input[type="month"] { font-size: 13px; padding: 9px 11px; }
+  textarea { min-height: 78px; }
+  .img-upload-area { padding: 12px; }
+  .img-upload-text { font-size: 11px; }
+  .btn { padding: 10px 16px; font-size: 12px; }
+  .btn-sm { padding: 8px 12px; font-size: 11px; }
+  .sub-tabs-nav { gap: 6px; flex-wrap: wrap; }
+  .sub-tab-btn { padding: 8px 12px; font-size: 11px; }
+  .download-controls { flex-direction: column; gap: 10px; padding: 12px; }
+  .download-controls .form-group { min-width: unset; width: 100%; }
+  .entry-item { flex-wrap: wrap; padding: 11px; }
+  .entry-img { width: 100%; height: 100px; }
+  .entry-text { font-size: 12px; }
+  .entry-meta { font-size: 10px; }
+  .advice-banner { padding: 12px 12px; gap: 10px; }
+  .advice-icon { font-size: 20px; }
+  .advice-text { font-size: 12px; }
+  .danger-zone { padding: 0 12px; margin: 24px auto 48px; }
+  .danger-card { padding: 16px; }
+  .danger-actions { flex-direction: column; gap: 8px; }
+  .danger-actions .btn { width: 100%; justify-content: center; }
+  .modal { padding: 20px 16px; }
+  .toast { max-width: 90vw; font-size: 12px; }
+}
+@media (max-width: 380px) and (orientation: portrait) {
+  .header { grid-template-columns: 36px 1fr 36px; padding: 8px 10px 10px; }
+  .logo-img { width: 44px; height: 44px; }
+  .site-title { font-size: 13.5px; letter-spacing: 0.5px; }
+  .site-subtitle { font-size: 7.5px; letter-spacing: 1px; }
+  .tab-btn { padding: 9px 6px; font-size: 7.5px; }
+  .advisory-bar { font-size: 10px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .header { grid-template-columns: 38px 1fr 38px; padding: 6px 16px; gap: 8px; }
+  .logo-img { width: 40px; height: 40px; border-width: 2px; margin-bottom: 3px; }
+  .site-title { font-size: 14px; letter-spacing: 0.8px; }
+  .site-subtitle { font-size: 8px; letter-spacing: 1.5px; margin-top: 2px; }
+  .theme-emoji-btn { width: 28px; height: 28px; font-size: 15px; }
+  .advisory-bar { font-size: 10.5px; padding: 5px 16px; }
+  .tabs-wrapper { top: 0; position: relative; padding: 0 8px; }
+  .tabs-nav { justify-content: flex-start; }
+  .tab-btn { padding: 8px 12px; font-size: 9px; letter-spacing: 0.5px; }
+  .slideshow-section { padding: 8px 16px; }
+  .slideshow-section h2 { display: none; }
+  .slide-card { min-height: 80px; padding: 10px 16px; }
+  .slide-question { font-size: 13px; }
+  .slide-answer { font-size: 12px; }
+  .slide-image { width: 80px; height: 65px; }
+  .tab-panel { padding: 10px 14px; }
+  .card { padding: 12px 14px; margin-bottom: 12px; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+  .form-group { margin-bottom: 8px; }
+  label { font-size: 10px; }
+  textarea { min-height: 58px; }
+  .download-controls { flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 10px; }
+  .download-controls .form-group { min-width: 130px; }
+  .danger-actions { flex-wrap: wrap; gap: 8px; }
 }
 
-/* ═══════════════════════════════════════════════
-   STAGGERED ENTRY ANIMATION
-═══════════════════════════════════════════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(12px); }
-  to   { opacity:1; transform: translateY(0); }
+body { padding-bottom: env(safe-area-inset-bottom); }
+
+@media (hover: none) and (pointer: coarse) {
+  .btn, .tab-btn, .sub-tab-btn, .slide-btn, select, input[type="date"], input[type="month"] { min-height: 44px; }
+  .name-circle { width: 44px; height: 44px; font-size: 18px; }
+  .name-popover-save { padding: 12px 0; font-size: 13px; }
+  .entry-delete { padding: 8px; font-size: 18px; }
 }
-.anim { animation: fadeUp 0.35s ease both; }
-.anim-1 { animation-delay: 0.04s; }
-.anim-2 { animation-delay: 0.08s; }
-.anim-3 { animation-delay: 0.12s; }
-.anim-4 { animation-delay: 0.16s; }
-.anim-5 { animation-delay: 0.20s; }
-.anim-6 { animation-delay: 0.24s; }
-.anim-7 { animation-delay: 0.28s; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+.advice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(0,50,90,0.60);
+  border: 1px solid rgba(173,216,230,0.35);
+  border-left: 4px solid rgba(173,216,230,0.80);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+[data-theme="light"] .advice-banner {
+  background: rgba(150,210,240,0.45);
+  border-color: rgba(0,80,130,0.40);
+  border-left-color: rgba(0,100,160,0.80);
+}
+.advice-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }
+.advice-body {}
+.advice-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(173,216,230,0.95);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+[data-theme="light"] .advice-title { color: #023d58; }
+.advice-text { font-family: 'Oswald', sans-serif; font-size: 13px; color: rgba(255,255,255,0.82); line-height: 1.65; font-weight: 400; }
+[data-theme="light"] .advice-text { color: #021b2e; }
+.advice-text strong { color: rgba(173,216,230,0.95); font-weight: 700; }
+[data-theme="light"] .advice-text strong { color: #023d58; }
+
+.topic-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: rgba(251,191,36,0.12);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+}
+.no-entries {
+  text-align: center;
+  padding: 32px;
+  color: rgba(173,216,230,0.55);
+  font-style: italic;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+[data-theme="light"] .no-entries { color: rgba(0,60,100,0.60); }
+.section-divider { height: 1px; background: rgba(173,216,230,0.25); margin: 28px 0; }
 </style>
 </head>
 <body>
 
-<!-- ═══ TOP APP BAR ═══ -->
-<header class="top-app-bar">
-  <div class="top-bar-row">
-    <img class="top-bar-logo"
-      src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
-      alt="Logo" onerror="this.style.display='none'"/>
-    <div class="top-bar-titles">
-      <div class="top-bar-headline">Scalpel Study Squad</div>
-      <div class="top-bar-subhead">20th Book — Revision Report</div>
-    </div>
-    <div class="top-bar-actions">
-      <button class="icon-btn ripple-host" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">
-        <span class="material-icons-round" id="themeIcon">dark_mode</span>
-      </button>
-      <button class="avatar-chip ripple-host" id="avatarChip" onclick="toggleProfileSheet()">
-        <div class="avatar-chip-circle" id="avatarLetter">S</div>
-        <span id="avatarName">Dr. Sharma</span>
-      </button>
+<header class="header">
+  <div class="header-left">
+    <button class="theme-emoji-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+  <div class="header-center">
+    <div class="logo-wrap">
+      <img class="logo-img" id="logoImg"
+        src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
+        alt="Scalpel Study Squad Logo"
+        onerror="this.style.display='none'"/>
+      <div class="site-title">Scalpel Study Squad</div>
+      <div class="site-subtitle">20th Book — Revision Report</div>
     </div>
   </div>
-
-  <!-- Info strip -->
-  <div class="info-strip">
-    <span class="material-icons-round">info</span>
-    Data saved <strong>only on this device</strong> — use one device for best results
+  <div class="header-right">
+    <div class="name-circle-wrap" id="nameCircleWrap">
+      <div class="name-circle" id="nameCircle" onclick="toggleNamePopover()" title="Profile">👤</div>
+      <div class="name-popover" id="namePopover">
+        <!-- filled by JS -->
+      </div>
+    </div>
   </div>
 </header>
 
-<!-- ═══ TAB BAR ═══ -->
-<div class="tab-bar">
-  <div class="tab-list">
-    <button class="tab active ripple-host" data-panel="notes" onclick="switchTab(this)">
-      <span class="material-icons-round">edit_note</span>
-      Notes
-    </button>
-    <button class="tab ripple-host" data-panel="facts" onclick="switchTab(this)">
-      <span class="material-icons-round">lightbulb</span>
-      Facts Salad
-    </button>
-    <button class="tab ripple-host" data-panel="pyq" onclick="switchTab(this)">
-      <span class="material-icons-round">quiz</span>
-      Difficult PYQ
-    </button>
-    <button class="tab ripple-host" data-panel="swt" onclick="switchTab(this)">
-      <span class="material-icons-round">loop</span>
-      SWT
-    </button>
-    <button class="tab ripple-host" data-panel="gt" onclick="switchTab(this)">
-      <span class="material-icons-round">bolt</span>
-      GT Mistakes
-    </button>
+<div class="advisory-bar">
+  <span class="advisory-icon">⚠</span>
+  <span>Data is saved <strong>only on this device</strong> — use this website on one device only for best results.</span>
+</div>
+
+<section class="slideshow-section">
+  <h2>📚 Facts Slideshow — Auto-rotating every 20 seconds</h2>
+  <div class="slideshow-container">
+    <div class="slide-card" id="slideCard">
+      <div class="slide-content" id="slideContent">
+        <div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>
+      </div>
+    </div>
+    <div class="slide-nav">
+      <button class="slide-btn" id="slidePrev" title="Previous">&#8592;</button>
+      <span class="slide-counter" id="slideCounter">0 / 0</span>
+      <button class="slide-btn" id="slideNext" title="Next">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+<div class="tabs-wrapper">
+  <div class="tabs-nav">
+    <button class="tab-btn active" data-tab="notes">📝 Notes</button>
+    <button class="tab-btn" data-tab="facts">🥗 Facts Salad</button>
+    <button class="tab-btn" data-tab="pyq">🎯 Difficult PYQ</button>
+    <button class="tab-btn" data-tab="swt">🔁 SWT Checkpoint</button>
+    <button class="tab-btn" data-tab="gt">⚡ GT Mistakes</button>
   </div>
 </div>
 
-<!-- ═══ MAIN CONTENT ═══ -->
-<main>
+<main class="main">
 
-<!-- SLIDESHOW HERO -->
-<div style="background: var(--md-primary-container); padding: 20px 16px 0; border-bottom: 1px solid var(--md-outline-variant);">
-  <div style="max-width: 700px; margin: 0 auto; padding-bottom: 20px;">
-    <p style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--md-primary);text-align:center;margin-bottom:14px;">📚 Facts Slideshow — Auto Rotating</p>
-    <div class="hero-card anim anim-1">
-      <div class="hero-chip">
-        <span class="material-icons-round">auto_stories</span>
-        Facts Salad
-      </div>
-      <div class="hero-label">Pathology · Coagulation</div>
-      <div class="hero-question">Which factor is the most common cause of hereditary thrombophilia and what is its mechanism?</div>
-      <div class="hero-answer">
-        <span class="material-icons-round">arrow_forward</span>
-        Factor V Leiden — resistant to APC (activated protein C), causing hypercoagulability.
-      </div>
-      <div class="hero-nav">
-        <span class="hero-counter">3 / 12</span>
-        <button class="nav-icon-btn ripple-host"><span class="material-icons-round">chevron_left</span></button>
-        <button class="nav-icon-btn ripple-host"><span class="material-icons-round">chevron_right</span></button>
+<!-- TAB 1: NOTES -->
+<div class="tab-panel active" id="panel-notes">
+  <div class="advice-banner">
+    <div class="advice-icon">💡</div>
+    <div class="advice-body">
+      <div class="advice-title">Pro Tip — Organised Study</div>
+      <div class="advice-text">
+        <strong>Study a specific subject and specific topics</strong> and add notes on them in one session to get an organised PDF.
+        Entry of mixed topics gives a mixed topics PDF.
       </div>
     </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 Add Note</div>
+    <form id="form-notes" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="notes-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Topic Name</label>
+          <input type="text" id="notes-topic" placeholder="e.g. Iron Deficiency Anaemia"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes-text" placeholder="Type your notes here..." rows="5"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image (max 2 MB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="notes-img-input" onchange="handleImageUpload(this,'notes-img-preview','notes-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <img id="notes-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="notes-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('notes')">💾 Save Note</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="card-title">📥 Download Notes PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'notes-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'notes-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="notes-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="notes-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="notes-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="notes-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="notes-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="notes-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','monthly')">⬇ Download PDF</button>
+      </div>
+    </div>
+  </div>
+  <div class="entries-list" id="entries-notes">
+    <h3>Saved Notes</h3>
+    <div id="list-notes"><div class="no-entries">No notes saved yet.</div></div>
   </div>
 </div>
 
-<!-- PAGE PANELS -->
-<div class="page">
-
-  <!-- ══ STATS ══ -->
-  <div class="stats-row anim anim-1">
-    <div class="stat-card">
-      <div class="stat-number">24</div>
-      <div class="stat-label">Notes</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">12</div>
-      <div class="stat-label">Facts</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">38</div>
-      <div class="stat-label">PYQs</div>
-    </div>
-  </div>
-
-  <!-- ══ PANEL: NOTES ══ -->
-  <div class="panel active" id="panel-notes">
-
-    <div class="anim anim-2">
-      <div class="tip-banner">
-        <div class="tip-icon"><span class="material-icons-round">tips_and_updates</span></div>
-        <div class="tip-body">
-          <div class="tip-title">Pro Tip — Organised Study</div>
-          <div class="tip-text"><strong>Study a specific subject and topic</strong> in one session for an organised PDF. Mixed entries give a mixed PDF.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Note card -->
-    <div class="m3-card anim anim-3">
-      <div class="card-header-bar">
-        <div class="card-header-icon"><span class="material-icons-round">edit_note</span></div>
-        <div class="card-header-title">Add Note</div>
-      </div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="m3-field">
-            <label>Subject</label>
-            <select class="m3-select">
-              <option>Pathology</option><option>Anatomy</option><option>Physiology</option>
-            </select>
-          </div>
-          <div class="m3-field">
-            <label>Topic Name</label>
-            <input class="m3-input" type="text" placeholder="e.g. Iron Deficiency Anaemia"/>
-          </div>
-        </div>
-        <div class="m3-field">
-          <label>Notes</label>
-          <textarea class="m3-input m3-textarea" placeholder="Type your notes here…"></textarea>
-        </div>
-        <div class="m3-upload">
-          <span class="material-icons-round">add_photo_alternate</span>
-          <div class="m3-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/>PNG, JPG, WEBP — max 2 MB</div>
-        </div>
-        <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;">
-          <span class="material-icons-round">save</span>
-          Save Note
-        </button>
-      </div>
-    </div>
-
-    <!-- Download card -->
-    <div class="m3-card anim anim-4">
-      <div class="card-header-bar" style="background: var(--md-secondary);">
-        <div class="card-header-icon"><span class="material-icons-round">download</span></div>
-        <div class="card-header-title">Download Notes PDF</div>
-      </div>
-      <div class="card-body">
-        <div class="segmented-btn-group">
-          <button class="seg-btn active ripple-host"><span class="material-icons-round">today</span>By Date</button>
-          <button class="seg-btn ripple-host"><span class="material-icons-round">calendar_month</span>By Month</button>
-        </div>
-        <div class="download-surface">
-          <div class="m3-field">
-            <label>Subject</label>
-            <select class="m3-select">
-              <option>All Subjects</option><option>Pathology</option>
-            </select>
-          </div>
-          <div class="m3-field">
-            <label>Date</label>
-            <input class="m3-input" type="date"/>
-          </div>
-          <button class="m3-btn m3-btn-tonal ripple-host" style="white-space:nowrap;align-self:flex-end;">
-            <span class="material-icons-round">picture_as_pdf</span>
-            Download
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Saved notes list -->
-    <div class="anim anim-5">
-      <div class="section-header">
-        <div class="section-tag"><span class="material-icons-round">list</span>Saved Notes</div>
-        <div class="section-divider"></div>
-      </div>
-      <div class="entry-list">
-        <div class="entry-card">
-          <div class="entry-side-bar" style="background:var(--md-primary);"></div>
-          <div class="entry-content">
-            <div class="entry-subject-chip">Pathology · Iron Deficiency Anaemia</div>
-            <div class="entry-question">Microcytic hypochromic RBCs. Low serum iron, low ferritin, high TIBC. Koilonychia, glossitis, angular stomatitis. Plummer-Vinson syndrome in chronic cases.</div>
-            <div class="entry-time">Today, 09:41 AM</div>
-          </div>
-          <div class="entry-actions">
-            <button class="entry-icon-btn ripple-host"><span class="material-icons-round">delete_outline</span></button>
-          </div>
-        </div>
-        <div class="entry-card">
-          <div class="entry-side-bar" style="background: #6750a4;"></div>
-          <div class="entry-content">
-            <div class="entry-subject-chip" style="background:rgba(103,80,164,0.12);color:#4a3680;">Pharmacology · Beta Blockers</div>
-            <div class="entry-question">Non-selective: Propranolol. Cardioselective (β1): Metoprolol, Atenolol, Bisoprolol. With ISA: Pindolol. With α-blocking: Carvedilol, Labetalol.</div>
-            <div class="entry-time">Today, 08:22 AM</div>
-          </div>
-          <div class="entry-actions">
-            <button class="entry-icon-btn ripple-host"><span class="material-icons-round">delete_outline</span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══ PANEL: FACTS ══ -->
-  <div class="panel" id="panel-facts">
-    <div class="tip-banner">
-      <div class="tip-icon"><span class="material-icons-round">tips_and_updates</span></div>
-      <div class="tip-body">
-        <div class="tip-title">Pro Tip — Facts Salad</div>
-        <div class="tip-text">Add Q&amp;A pairs. They appear in the <strong>rotating slideshow</strong> at the top for quick review.</div>
-      </div>
-    </div>
-    <div class="m3-card">
-      <div class="card-header-bar"><div class="card-header-icon"><span class="material-icons-round">lightbulb</span></div><div class="card-header-title">Add Fact</div></div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="m3-field"><label>Subject</label><select class="m3-select"><option>Pathology</option></select></div>
-          <div class="m3-field"><label>Topic</label><input class="m3-input" type="text" placeholder="e.g. Coagulation"/></div>
-        </div>
-        <div class="m3-field"><label>Question</label><textarea class="m3-input m3-textarea" placeholder="Enter question…" style="min-height:72px;"></textarea></div>
-        <div class="m3-field"><label>Answer / Fact</label><textarea class="m3-input m3-textarea" placeholder="Enter answer or fact…" style="min-height:72px;"></textarea></div>
-        <div class="m3-upload"><span class="material-icons-round">add_photo_alternate</span><div class="m3-upload-text"><strong>Click to upload</strong> image</div></div>
-        <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;"><span class="material-icons-round">save</span>Save Fact</button>
+<!-- TAB 2: FACTS SALAD -->
+<div class="tab-panel" id="panel-facts">
+  <div class="advice-banner">
+    <div class="advice-icon">💡</div>
+    <div class="advice-body">
+      <div class="advice-title">Pro Tip — Organised Study</div>
+      <div class="advice-text">
+        <strong>Study a specific subject and specific topics</strong> and add facts on them in one session to get an organised PDF.
+        Entry of mixed topics gives a mixed topics PDF.
       </div>
     </div>
   </div>
-
-  <!-- ══ PANEL: PYQ ══ -->
-  <div class="panel" id="panel-pyq">
-    <div class="m3-card">
-      <div class="card-header-bar"><div class="card-header-icon"><span class="material-icons-round">quiz</span></div><div class="card-header-title">Add Difficult PYQ</div></div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="m3-field"><label>Subject</label><select class="m3-select"><option>Pathology</option></select></div>
-          <div class="m3-field"><label>Exam</label><select class="m3-select"><option>NEET PG</option><option>INICET May</option></select></div>
-          <div class="m3-field"><label>Year</label><select class="m3-select"><option>2024</option><option>2023</option></select></div>
-          <div class="m3-field"><label>Reason</label><select class="m3-select"><option>New Concept</option><option>Recall gap</option><option>Silly mistake</option></select></div>
+  <div class="card">
+    <div class="card-title">🥗 Add Fact</div>
+    <form id="form-facts" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="facts-subject" class="section-subject-select"></select>
         </div>
-        <div class="m3-field"><label>Question</label><textarea class="m3-input m3-textarea" placeholder="Enter PYQ question…"></textarea></div>
-        <div class="field-row">
-          <div class="m3-field"><label>Correct Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Correct answer…"></textarea></div>
-          <div class="m3-field"><label>Your Wrong Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Your wrong answer…"></textarea></div>
+        <div class="form-group">
+          <label>Topic Name</label>
+          <input type="text" id="facts-topic" placeholder="e.g. Coagulation Cascade"/>
         </div>
-        <div class="m3-upload"><span class="material-icons-round">add_photo_alternate</span><div class="m3-upload-text"><strong>Click to upload</strong> image</div></div>
-        <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;"><span class="material-icons-round">save</span>Save PYQ</button>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="facts-question" placeholder="Enter question..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Answer / Fact</label>
+        <textarea id="facts-answer" placeholder="Enter answer or fact..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image (max 2 MB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="facts-img-input" onchange="handleImageUpload(this,'facts-img-preview','facts-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <img id="facts-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="facts-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('facts')">💾 Save Fact</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="card-title">📥 Download Facts PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'facts-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'facts-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="facts-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="facts-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="facts-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','daily')">⬇ Download PDF</button>
       </div>
     </div>
-
-    <div class="section-header"><div class="section-tag"><span class="material-icons-round">list</span>Saved PYQs</div><div class="section-divider"></div></div>
-    <div class="entry-list">
-      <div class="entry-card">
-        <div class="entry-side-bar" style="background:#b3261e;"></div>
-        <div class="entry-content">
-          <div class="entry-subject-chip" style="background:rgba(179,38,30,0.10);color:#b3261e;">Pathology · NEET PG 2023</div>
-          <div class="entry-question">Reed-Sternberg cells are pathognomonic of which lymphoma?</div>
-          <div class="entry-answer"><span class="material-icons-round">check_circle</span>Hodgkin's Lymphoma — mixed cellularity type has max RS cells</div>
-          <div class="entry-wrong"><span class="material-icons-round">cancel</span>Non-Hodgkin's Lymphoma</div>
-          <div class="reason-chip chip-recall">Recall gap</div>
-          <div class="entry-time">19 Feb 2026 · 10:15 AM</div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-icon-btn ripple-host"><span class="material-icons-round">delete_outline</span></button>
-        </div>
-      </div>
-      <div class="entry-card">
-        <div class="entry-side-bar" style="background:#b3261e;"></div>
-        <div class="entry-content">
-          <div class="entry-subject-chip" style="background:rgba(179,38,30,0.10);color:#b3261e;">Microbiology · INICET Nov 2023</div>
-          <div class="entry-question">Which organism causes Woolsorter's disease and what is the toxin involved?</div>
-          <div class="entry-answer"><span class="material-icons-round">check_circle</span>Bacillus anthracis — Anthrax toxin (EF + PA + LF)</div>
-          <div class="entry-wrong"><span class="material-icons-round">cancel</span>Clostridium tetani</div>
-          <div class="reason-chip chip-new">New Concept</div>
-          <div class="entry-time">19 Feb 2026 · 09:02 AM</div>
-        </div>
-        <div class="entry-actions">
-          <button class="entry-icon-btn ripple-host"><span class="material-icons-round">delete_outline</span></button>
-        </div>
+    <div class="sub-tab-panel" id="facts-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="facts-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="facts-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
+  <div class="entries-list" id="entries-facts">
+    <h3>Saved Facts</h3>
+    <div id="list-facts"><div class="no-entries">No facts saved yet.</div></div>
+  </div>
+</div>
 
-  <!-- ══ PANEL: SWT ══ -->
-  <div class="panel" id="panel-swt">
-    <div class="m3-card">
-      <div class="card-header-bar"><div class="card-header-icon"><span class="material-icons-round">loop</span></div><div class="card-header-title">Add SWT Checkpoint</div></div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="m3-field"><label>Subject</label><select class="m3-select"><option>Medicine</option></select></div>
-          <div class="m3-field"><label>Reason</label><select class="m3-select"><option>New Concept</option><option>Silly mistake</option></select></div>
+<!-- TAB 3: DIFFICULT PYQ -->
+<div class="tab-panel" id="panel-pyq">
+  <div class="card">
+    <div class="card-title">🎯 Add Difficult PYQ</div>
+    <form id="form-pyq" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="pyq-subject" class="section-subject-select"></select>
         </div>
-        <div class="m3-field"><label>Question</label><textarea class="m3-input m3-textarea" placeholder="Enter SWT question…"></textarea></div>
-        <div class="field-row">
-          <div class="m3-field"><label>Correct Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Correct answer…"></textarea></div>
-          <div class="m3-field"><label>Your Wrong Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Your wrong answer…"></textarea></div>
+        <div class="form-group">
+          <label>Exam</label>
+          <select id="pyq-exam">
+            <option value="">Select Exam</option>
+            <option>NEET PG</option><option>INICET May</option><option>INICET NOV</option>
+            <option>FMGE JULY</option><option>FMGE DEC</option><option>UPSC CMS</option>
+          </select>
         </div>
-        <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;"><span class="material-icons-round">save</span>Save SWT</button>
+        <div class="form-group">
+          <label>Year</label>
+          <select id="pyq-year"></select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="pyq-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="pyq-question" placeholder="Enter PYQ question..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="pyq-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="pyq-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 2 MB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="pyq-img-input" onchange="handleImageUpload(this,'pyq-img-preview','pyq-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <img id="pyq-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="pyq-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('pyq')">💾 Save PYQ</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="card-title">📥 Download PYQ PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'pyq-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'pyq-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="pyq-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="pyq-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="pyq-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="pyq-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
+  <div class="entries-list">
+    <h3>Saved PYQs</h3>
+    <div id="list-pyq"><div class="no-entries">No PYQs saved yet.</div></div>
+  </div>
+</div>
 
-  <!-- ══ PANEL: GT ══ -->
-  <div class="panel" id="panel-gt">
-    <div class="m3-card">
-      <div class="card-header-bar"><div class="card-header-icon"><span class="material-icons-round">bolt</span></div><div class="card-header-title">Add GT Mistake</div></div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="m3-field"><label>Subject</label><select class="m3-select"><option>Surgery</option></select></div>
-          <div class="m3-field"><label>Exam</label><select class="m3-select"><option>NEET PG</option></select></div>
-          <div class="m3-field"><label>Reason</label><select class="m3-select"><option>Silly mistake</option></select></div>
+<!-- TAB 4: SWT CHECKPOINT -->
+<div class="tab-panel" id="panel-swt">
+  <div class="card">
+    <div class="card-title">🔁 Add SWT Checkpoint</div>
+    <form id="form-swt" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="swt-subject" class="section-subject-select"></select>
         </div>
-        <div class="m3-field"><label>Question</label><textarea class="m3-input m3-textarea" placeholder="Enter question…"></textarea></div>
-        <div class="field-row">
-          <div class="m3-field"><label>Correct Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Correct answer…"></textarea></div>
-          <div class="m3-field"><label>Your Wrong Answer</label><textarea class="m3-input m3-textarea" style="min-height:72px;" placeholder="Your wrong answer…"></textarea></div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="swt-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
         </div>
-        <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;"><span class="material-icons-round">save</span>Save GT Mistake</button>
+      </div>
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="swt-question" placeholder="Enter SWT question..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="swt-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="swt-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 2 MB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="swt-img-input" onchange="handleImageUpload(this,'swt-img-preview','swt-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <img id="swt-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="swt-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('swt')">💾 Save SWT</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="card-title">📥 Download SWT PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'swt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'swt-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="swt-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="swt-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="swt-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="swt-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="swt-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="swt-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
+  <div class="entries-list">
+    <h3>Saved SWT Checkpoints</h3>
+    <div id="list-swt"><div class="no-entries">No SWT checkpoints saved yet.</div></div>
+  </div>
+</div>
 
-  <!-- ══ DANGER ZONE ══ -->
-  <div class="anim anim-7" style="margin-top: 8px;">
-    <div class="danger-surface">
-      <div class="danger-header">
-        <div class="danger-icon-wrap"><span class="material-icons-round">warning_amber</span></div>
-        <div>
-          <div class="danger-title">Danger Zone</div>
+<!-- TAB 5: GT MISTAKES -->
+<div class="tab-panel" id="panel-gt">
+  <div class="card">
+    <div class="card-title">⚡ Add GT Mistake</div>
+    <form id="form-gt" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="gt-subject" class="section-subject-select"></select>
+        </div>
+        <div class="form-group">
+          <label>Exam</label>
+          <select id="gt-exam">
+            <option value="">Select Exam</option>
+            <option>NEET PG</option><option>INICET May</option><option>INICET NOV</option>
+            <option>FMGE JULY</option><option>FMGE DEC</option><option>UPSC CMS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reason for Incorrect</label>
+          <select id="gt-reason">
+            <option value="">Select Reason</option>
+            <option>New Concept</option><option>Recall gap</option>
+            <option>Silly mistake</option><option>Controversial</option>
+          </select>
         </div>
       </div>
-      <div class="danger-desc">
-        Permanently delete data stored in this browser. This cannot be undone. All notes, facts, PYQs, SWT checkpoints and GT mistakes will be erased.
+      <div class="form-group">
+        <label>Question</label>
+        <textarea id="gt-question" placeholder="Enter question..." rows="4"></textarea>
       </div>
-      <div class="danger-chips">
-        <div class="danger-chip"><span class="material-icons-round">delete</span>Notes</div>
-        <div class="danger-chip"><span class="material-icons-round">delete</span>Facts</div>
-        <div class="danger-chip"><span class="material-icons-round">delete</span>PYQs</div>
-        <div class="danger-chip"><span class="material-icons-round">delete</span>SWT</div>
-        <div class="danger-chip"><span class="material-icons-round">delete</span>GT</div>
-        <div class="danger-chip danger-chip-primary"><span class="material-icons-round">skull</span>Delete ALL</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Correct Answer</label>
+          <textarea id="gt-correct" placeholder="Correct answer..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Wrong Answer</label>
+          <textarea id="gt-wrong" placeholder="Your wrong answer..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Image (max 2 MB)</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" id="gt-img-input" onchange="handleImageUpload(this,'gt-img-preview','gt-img-data')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <img id="gt-img-preview" class="img-preview"/>
+        </div>
+        <input type="hidden" id="gt-img-data"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry('gt')">💾 Save GT Mistake</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="card-title">📥 Download GT PDF</div>
+    <div class="sub-tabs-nav">
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'gt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'gt-monthly')">By Month</button>
+    </div>
+    <div class="sub-tab-panel active" id="gt-daily">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="gt-dl-subject-daily"></select></div>
+        <div class="form-group"><label>Date</label><input type="date" id="gt-dl-date"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','daily')">⬇ Download PDF</button>
+      </div>
+    </div>
+    <div class="sub-tab-panel" id="gt-monthly">
+      <div class="download-controls">
+        <div class="form-group"><label>Subject</label><select id="gt-dl-subject-monthly"></select></div>
+        <div class="form-group"><label>Month</label><input type="month" id="gt-dl-month"/></div>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
-
-  <!-- bottom spacer -->
-  <div style="height: 16px;"></div>
-</div><!-- end .page -->
+  <div class="entries-list">
+    <h3>Saved GT Mistakes</h3>
+    <div id="list-gt"><div class="no-entries">No GT mistakes saved yet.</div></div>
+  </div>
+</div>
 
 </main>
 
-<!-- ═══ FAB ═══ -->
-<button class="fab fab-extended ripple-host" id="fabBtn" onclick="showSnackbar('✓ Saved successfully!')">
-  <span class="material-icons-round">add</span>
-  Add Entry
-</button>
-
-<!-- ═══ SNACKBAR HOST ═══ -->
-<div class="snackbar-host" id="snackbarHost"></div>
-
-<!-- ═══ PROFILE SHEET (bottom sheet style) ═══ -->
-<div id="profileSheet" style="
-  display:none;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  z-index:500;
-  background:#fff;
-  border-radius:28px 28px 0 0;
-  padding:28px 24px 40px;
-  box-shadow:0 -4px 32px rgba(0,0,0,0.18);
-  max-width:600px;
-  margin:0 auto;
-  animation: sheetUp 0.28s cubic-bezier(0.3,0,0,1) both;
-">
-  <div style="width:36px;height:4px;border-radius:99px;background:var(--md-outline-variant);margin:0 auto 24px;"></div>
-  <div style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--md-primary);margin-bottom:8px;">Your Profile</div>
-  <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--md-on-surface);margin-bottom:24px;" id="sheetFullName">Dr. Sharma</div>
-  <div style="display:flex;align-items:center;border:1.5px solid var(--md-outline-variant);border-radius:12px;overflow:hidden;margin-bottom:16px;">
-    <div style="padding:12px 14px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--md-primary);background:var(--md-primary-container);border-right:1.5px solid var(--md-outline-variant);flex-shrink:0;">Dr.</div>
-    <input id="nameSheetInput" type="text" placeholder="Your name…" style="flex:1;border:none;padding:12px 14px;font-family:'Oswald',sans-serif;font-size:14px;color:var(--md-on-surface);outline:none;background:transparent;"/>
+<div class="danger-zone">
+  <div class="danger-card">
+    <div class="danger-title">⚠ Danger Zone</div>
+    <p class="danger-desc">
+      Permanently delete your data stored in this browser. This action cannot be undone.
+      All your notes, facts, PYQs, SWT checkpoints, and GT mistakes will be erased from local storage.
+    </p>
+    <div class="danger-actions">
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('notes')">🗑 Delete Notes</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('facts')">🗑 Delete Facts</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('pyq')">🗑 Delete PYQs</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('swt')">🗑 Delete SWT</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('gt')">🗑 Delete GT</button>
+      <button class="btn btn-danger" onclick="confirmDelete('all')" style="background:#7f1d1d;">💀 Delete ALL Data</button>
+    </div>
   </div>
-  <button class="m3-btn m3-btn-filled ripple-host" style="width:100%;justify-content:center;" onclick="saveSheetName()">
-    <span class="material-icons-round">check</span>Save Name
-  </button>
-  <button onclick="closeProfileSheet()" style="width:100%;margin-top:10px;padding:12px;border:none;background:none;font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--md-on-surface-variant);cursor:pointer;">Close</button>
 </div>
-<div id="sheetScrim" onclick="closeProfileSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:490;"></div>
 
-<style>
-@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-/* Dark mode */
-body.dark {
-  --md-primary:           #8ecae6;
-  --md-on-primary:        #00374f;
-  --md-primary-container: #004f71;
-  --md-on-primary-container: #c2e4f5;
-  --md-secondary:           #ff8a8a;
-  --md-on-secondary:        #5a0000;
-  --md-secondary-container: #7a0000;
-  --md-on-secondary-container: #ffdad9;
-  --md-tertiary:           #ffb786;
-  --md-on-tertiary:        #4a2000;
-  --md-tertiary-container: #6a3100;
-  --md-on-tertiary-container: #ffdcbb;
-  --md-surface:            #071c26;
-  --md-surface-dim:        #050f18;
-  --md-surface-bright:     #0d2535;
-  --md-surface-1:          rgba(142,202,230,0.06);
-  --md-surface-2:          rgba(142,202,230,0.09);
-  --md-surface-3:          rgba(142,202,230,0.12);
-  --md-on-surface:         #c8e8f5;
-  --md-on-surface-variant: #7fb3ca;
-  --md-outline:            #4a7c95;
-  --md-outline-variant:    #1e4a60;
-}
-body.dark #profileSheet {
-  background: #0d2535;
-  color: var(--md-on-surface);
-}
-body.dark #nameSheetInput {
-  color: var(--md-on-surface);
-}
-</style>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>⚠ Confirm Permanent Deletion</h3>
+    <p id="modalText">This action is irreversible. All data will be permanently deleted from your browser's local storage.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════
+     PWA INSTALL BANNER
+════════════════════════════════════════════ -->
+<div id="pwaInstallBanner" style="
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:10000;
+  background:#112219;
+  border-top:2px solid #4ade80;
+  padding:14px 20px;
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+  box-shadow:0 -4px 24px rgba(0,0,0,0.5);
+  align-items:center;
+  gap:14px;
+">
+  <img src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
+    style="width:46px;height:46px;border-radius:50%;border:2px solid #ADD8E6;object-fit:cover;flex-shrink:0;" alt=""/>
+  <div style="flex:1;min-width:0;">
+    <div style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;color:#ADD8E6;letter-spacing:2px;text-transform:uppercase;">Install App</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:12px;color:rgba(173,216,230,0.80);margin-top:2px;line-height:1.4;font-weight:400;">Add Scalpel Study Squad to your home screen for quick access &amp; offline use.</div>
+  </div>
+  <button id="pwaInstallBtn" style="background:rgba(173,216,230,0.90);color:#021b2e;border:none;border-radius:8px;padding:10px 16px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:1px;">⬇ Install</button>
+  <button id="pwaDismissBtn" style="background:none;border:none;color:rgba(173,216,230,0.55);font-size:22px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;" title="Dismiss">✕</button>
+</div>
 
 <script>
-/* ═══ TAB SWITCHING ═══ */
-function switchTab(btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  const panel = document.getElementById('panel-' + btn.dataset.panel);
-  if (panel) panel.classList.add('active');
+/* ============================================================
+   CONSTANTS & CONFIG
+============================================================ */
+const SUBJECTS = [
+  'Anatomy','Physiology','Biochemistry','Pathology','Microbiology',
+  'Pharmacology','FMT','PSM','Ophthalmology','ENT','Medicine',
+  'Surgery','OBG','Pediatrics','Anesthesia','Dermatology',
+  'Orthopedics','Psychiatry','Radiology'
+];
+
+const SECTION_LABELS = {
+  notes: 'Notes',
+  facts: 'Facts Salad',
+  pyq: 'Difficult PYQ Checkpoint',
+  swt: 'SWT Checkpoint',
+  gt: 'GT Mistakes Checkpoint'
+};
+
+const LOGO_URL = 'https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg';
+
+/* ============================================================
+   LOCAL STORAGE DATABASE
+============================================================ */
+const DB = {};
+const DB_KEYS = ['notes','facts','pyq','swt','gt'];
+
+function loadDB() {
+  DB_KEYS.forEach(k => {
+    try { DB[k] = JSON.parse(localStorage.getItem('sss_' + k) || '[]'); }
+    catch(e) { DB[k] = []; }
+  });
 }
 
-/* ═══ THEME TOGGLE ═══ */
-let dark = false;
-function toggleTheme() {
-  dark = !dark;
-  document.body.classList.toggle('dark', dark);
-  document.getElementById('themeIcon').textContent = dark ? 'light_mode' : 'dark_mode';
+function saveDB(key) {
+  localStorage.setItem('sss_' + key, JSON.stringify(DB[key]));
 }
 
-/* ═══ SNACKBAR ═══ */
-function showSnackbar(msg) {
-  const host = document.getElementById('snackbarHost');
-  host.innerHTML = `
-    <div class="snackbar">
-      <span style="flex:1;">${msg}</span>
-      <button class="snackbar-action" onclick="this.closest('.snackbar').remove()">Dismiss</button>
-    </div>`;
-  setTimeout(() => host.innerHTML = '', 3000);
-}
+loadDB();
 
-/* ═══ PROFILE SHEET ═══ */
-function toggleProfileSheet() {
-  const sheet = document.getElementById('profileSheet');
-  const scrim = document.getElementById('sheetScrim');
-  const isOpen = sheet.style.display !== 'none';
-  if (isOpen) {
-    closeProfileSheet();
+/* ============================================================
+   THEME TOGGLE
+============================================================ */
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+
+let currentTheme = localStorage.getItem('sss_theme') || 'dark';
+html.setAttribute('data-theme', currentTheme);
+themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+
+themeToggle.addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', currentTheme);
+  themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('sss_theme', currentTheme);
+});
+
+/* ============================================================
+   LOCAL NAME WIDGET
+============================================================ */
+/* ============================================================
+   PROFILE CIRCLE — POPOVER NAME WIDGET
+============================================================ */
+const nameCircle  = document.getElementById('nameCircle');
+const namePopover = document.getElementById('namePopover');
+
+function getStoredName() { return localStorage.getItem('sss_username') || ''; }
+
+function renderCircle() {
+  const raw = getStoredName();
+  if (raw) {
+    /* Show first letter only on circle */
+    nameCircle.textContent = raw.charAt(0).toUpperCase();
+    nameCircle.classList.add('has-name');
   } else {
-    sheet.style.display = 'block';
-    scrim.style.display = 'block';
-    document.getElementById('nameSheetInput').value = localStorage.getItem('sss_username') || '';
+    nameCircle.textContent = '👤';
+    nameCircle.classList.remove('has-name');
   }
 }
-function closeProfileSheet() {
-  document.getElementById('profileSheet').style.display = 'none';
-  document.getElementById('sheetScrim').style.display = 'none';
+
+function buildPopoverView() {
+  const raw = getStoredName();
+  if (raw) {
+    /* View state — show full Dr. name + Edit button */
+    namePopover.innerHTML = `
+      <div class="name-popover-label">Your Profile</div>
+      <div class="name-popover-fullname">Dr. ${escHtmlName(raw)}</div>
+      <button class="name-popover-edit" onclick="buildPopoverEdit()">✏ Edit Name</button>
+    `;
+  } else {
+    buildPopoverEdit();
+  }
 }
-function saveSheetName() {
-  const val = document.getElementById('nameSheetInput').value.trim();
-  if (!val) { showSnackbar('❌ Please enter your name.'); return; }
+
+function buildPopoverEdit() {
+  namePopover.innerHTML = `
+    <div class="name-popover-label">Enter Your Name</div>
+    <div class="name-popover-row">
+      <span class="name-popover-prefix">Dr.</span>
+      <input class="name-popover-input" id="namePopInput" type="text"
+        maxlength="30" placeholder="Your name…"
+        onkeydown="if(event.key==='Enter') savePopoverName()"/>
+    </div>
+    <button class="name-popover-save" onclick="savePopoverName()">✓ Save</button>
+  `;
+  const inp = document.getElementById('namePopInput');
+  inp.value = getStoredName();
+  /* slight delay so popover is visible first */
+  setTimeout(() => inp.focus(), 60);
+}
+
+function savePopoverName() {
+  const inp = document.getElementById('namePopInput');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val) { showToast('❌ Please enter your name.', 'error'); return; }
   localStorage.setItem('sss_username', val);
-  document.getElementById('avatarLetter').textContent = val.charAt(0).toUpperCase();
-  document.getElementById('avatarName').textContent = 'Dr. ' + val;
-  document.getElementById('sheetFullName').textContent = 'Dr. ' + val;
-  closeProfileSheet();
-  showSnackbar('✅ Name saved!');
+  renderCircle();
+  buildPopoverView();
+  showToast('✅ Name saved!');
 }
 
-/* Load stored name on init */
-const stored = localStorage.getItem('sss_username') || 'Sharma';
-document.getElementById('avatarLetter').textContent = stored.charAt(0).toUpperCase();
-document.getElementById('avatarName').textContent = 'Dr. ' + stored;
-document.getElementById('sheetFullName').textContent = 'Dr. ' + stored;
+function toggleNamePopover() {
+  const isOpen = namePopover.classList.contains('open');
+  if (isOpen) {
+    namePopover.classList.remove('open');
+  } else {
+    buildPopoverView();
+    namePopover.classList.add('open');
+  }
+}
 
-/* ═══ SEGMENTED BUTTONS ═══ */
-document.querySelectorAll('.seg-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.closest('.segmented-btn-group').querySelectorAll('.seg-btn')
-      .forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+/* Close popover when clicking outside */
+document.addEventListener('click', e => {
+  if (!document.getElementById('nameCircleWrap').contains(e.target)) {
+    namePopover.classList.remove('open');
+  }
+});
+
+function escHtmlName(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+renderCircle();
+
+/* ============================================================
+   POPULATE DROPDOWNS
+============================================================ */
+function populateSelect(el, options, includeAll = false) {
+  if (!el) return;
+  el.innerHTML = '';
+  if (includeAll) el.innerHTML = '<option value="all">All Subjects</option>';
+  options.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    el.appendChild(o);
   });
+}
+
+function initDropdowns() {
+  document.querySelectorAll('.section-subject-select').forEach(sel => {
+    populateSelect(sel, SUBJECTS);
+  });
+
+  const yearSel = document.getElementById('pyq-year');
+  if (yearSel) {
+    yearSel.innerHTML = '<option value="">Select Year</option>';
+    for (let y = 2025; y >= 2011; y--) {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      yearSel.appendChild(o);
+    }
+  }
+
+  const dlIds = [
+    'notes-dl-subject-daily','notes-dl-subject-monthly',
+    'facts-dl-subject-daily','facts-dl-subject-monthly',
+    'pyq-dl-subject-daily','pyq-dl-subject-monthly',
+    'swt-dl-subject-daily','swt-dl-subject-monthly',
+    'gt-dl-subject-daily','gt-dl-subject-monthly'
+  ];
+  dlIds.forEach(id => populateSelect(document.getElementById(id), SUBJECTS, true));
+
+  const today = new Date().toISOString().split('T')[0];
+  const thisMonth = today.substring(0, 7);
+  document.querySelectorAll('input[type="date"]').forEach(el => { if (!el.value) el.value = today; });
+  document.querySelectorAll('input[type="month"]').forEach(el => { if (!el.value) el.value = thisMonth; });
+}
+
+initDropdowns();
+
+/* ============================================================
+   TABS
+============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('panel-' + btn.dataset.tab);
+    if (panel) panel.classList.add('active');
+  });
+});
+
+function switchSubTab(btn, panelId) {
+  const parent = btn.closest('.card');
+  parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+/* ============================================================
+   IMAGE UPLOAD
+============================================================ */
+function handleImageUpload(input, previewId, dataId) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2097152) {
+    showToast('❌ Image too large. Max 2 MB allowed.', 'error');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById(dataId).value = e.target.result;
+    const preview = document.getElementById(previewId);
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============================================================
+   SAVE ENTRY
+============================================================ */
+function getTimestamp() {
+  const now = new Date();
+  return {
+    timestamp: now.toISOString(),
+    date: now.toISOString().split('T')[0],
+    month: now.toISOString().substring(0, 7),
+    displayDate: now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }),
+    displayTime: now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })
+  };
+}
+
+function saveEntry(section) {
+  const ts = getTimestamp();
+  let entry = { id: Date.now(), ...ts };
+
+  if (section === 'notes') {
+    const subject = document.getElementById('notes-subject').value;
+    const topic = document.getElementById('notes-topic').value.trim();
+    const text = document.getElementById('notes-text').value.trim();
+    if (!text) { showToast('❌ Please enter notes text.', 'error'); return; }
+    entry = { ...entry, subject, topic, text, image: document.getElementById('notes-img-data').value };
+    clearForm('notes', ['notes-topic','notes-text','notes-img-data'], ['notes-img-preview']);
+
+  } else if (section === 'facts') {
+    const subject = document.getElementById('facts-subject').value;
+    const topic = document.getElementById('facts-topic').value.trim();
+    const question = document.getElementById('facts-question').value.trim();
+    const answer = document.getElementById('facts-answer').value.trim();
+    if (!question || !answer) { showToast('❌ Question and answer required.', 'error'); return; }
+    entry = { ...entry, subject, topic, question, answer, image: document.getElementById('facts-img-data').value };
+    clearForm('facts', ['facts-topic','facts-question','facts-answer','facts-img-data'], ['facts-img-preview']);
+
+  } else if (section === 'pyq') {
+    const subject = document.getElementById('pyq-subject').value;
+    const exam = document.getElementById('pyq-exam').value;
+    const year = document.getElementById('pyq-year').value;
+    const question = document.getElementById('pyq-question').value.trim();
+    const correct = document.getElementById('pyq-correct').value.trim();
+    const wrong = document.getElementById('pyq-wrong').value.trim();
+    const reason = document.getElementById('pyq-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, exam, year, question, correct, wrong, reason, image: document.getElementById('pyq-img-data').value };
+    clearForm('pyq', ['pyq-question','pyq-correct','pyq-wrong','pyq-img-data'], ['pyq-img-preview']);
+
+  } else if (section === 'swt') {
+    const subject = document.getElementById('swt-subject').value;
+    const question = document.getElementById('swt-question').value.trim();
+    const correct = document.getElementById('swt-correct').value.trim();
+    const wrong = document.getElementById('swt-wrong').value.trim();
+    const reason = document.getElementById('swt-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, question, correct, wrong, reason, image: document.getElementById('swt-img-data').value };
+    clearForm('swt', ['swt-question','swt-correct','swt-wrong','swt-img-data'], ['swt-img-preview']);
+
+  } else if (section === 'gt') {
+    const subject = document.getElementById('gt-subject').value;
+    const exam = document.getElementById('gt-exam').value;
+    const question = document.getElementById('gt-question').value.trim();
+    const correct = document.getElementById('gt-correct').value.trim();
+    const wrong = document.getElementById('gt-wrong').value.trim();
+    const reason = document.getElementById('gt-reason').value;
+    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
+    entry = { ...entry, subject, exam, question, correct, wrong, reason, image: document.getElementById('gt-img-data').value };
+    clearForm('gt', ['gt-question','gt-correct','gt-wrong','gt-img-data'], ['gt-img-preview']);
+  }
+
+  DB[section].unshift(entry);
+  saveDB(section);
+  renderList(section);
+  if (section === 'facts') updateSlideshow();
+  showToast('✅ Saved successfully!');
+}
+
+function clearForm(section, textIds, imgIds) {
+  textIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  imgIds.forEach(id => { const el = document.getElementById(id); if (el) { el.src = ''; el.style.display = 'none'; } });
+  const fileInput = document.getElementById(section + '-img-input');
+  if (fileInput) fileInput.value = '';
+}
+
+/* ============================================================
+   RENDER LISTS
+============================================================ */
+function reasonBadge(reason) {
+  if (!reason) return '';
+  const map = {
+    'New Concept': 'badge-new',
+    'Recall gap': 'badge-recall',
+    'Silly mistake': 'badge-silly',
+    'Controversial': 'badge-contro'
+  };
+  return `<span class="badge-reason ${map[reason] || ''}">${reason}</span>`;
+}
+
+function renderList(section) {
+  const container = document.getElementById('list-' + section);
+  if (!container) return;
+  const data = DB[section];
+  if (!data.length) { container.innerHTML = '<div class="no-entries">No entries saved yet.</div>'; return; }
+
+  container.innerHTML = data.map((e, i) => {
+    let bodyHtml = '';
+    if (section === 'notes') {
+      bodyHtml = `<div class="entry-q">${escHtml(e.text)}</div>`;
+    } else {
+      bodyHtml = `<div class="entry-q">Q: ${escHtml(e.question)}</div>
+        <div class="entry-a">✅ ${escHtml(e.correct || e.answer || '')}</div>`;
+      if (e.wrong) bodyHtml += `<div style="color:var(--danger);font-size:12px;margin-top:4px;">✗ ${escHtml(e.wrong)}</div>`;
+      if (e.reason) bodyHtml += `<div style="margin-top:6px;">${reasonBadge(e.reason)}</div>`;
+    }
+    const meta = [e.subject, e.topic ? `📌 ${e.topic}` : null, e.displayDate, e.displayTime, e.exam, e.year].filter(Boolean).join(' · ');
+    return `<div class="entry-item">
+      <div class="entry-text">
+        <div class="entry-meta">${escHtml(meta)}</div>
+        ${bodyHtml}
+      </div>
+      ${e.image ? `<img class="entry-img" src="${e.image}" alt="Entry image"/>` : ''}
+      <button class="entry-delete" onclick="deleteEntry('${section}', ${e.id})" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteEntry(section, id) {
+  DB[section] = DB[section].filter(e => e.id !== id);
+  saveDB(section);
+  renderList(section);
+  if (section === 'facts') updateSlideshow();
+  showToast('Entry deleted.');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br/>');
+}
+
+DB_KEYS.forEach(k => renderList(k));
+
+/* ============================================================
+   SLIDESHOW
+============================================================ */
+let slideIndex = 0;
+let slideTimer = null;
+
+function updateSlideshow() {
+  const facts = DB.facts;
+  const card = document.getElementById('slideCard');
+  const counter = document.getElementById('slideCounter');
+
+  if (!facts.length) {
+    document.getElementById('slideContent').innerHTML = '<div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>';
+    counter.textContent = '0 / 0';
+    return;
+  }
+
+  if (slideIndex >= facts.length) slideIndex = 0;
+  if (slideIndex < 0) slideIndex = facts.length - 1;
+
+  const f = facts[slideIndex];
+  const contentEl = document.getElementById('slideContent');
+  contentEl.innerHTML = `
+    <span class="slide-badge">📚 Facts Salad</span>
+    <div class="slide-subject">${escHtml(f.subject)}</div>
+    <div class="slide-question">${escHtml(f.question)}</div>
+    <div class="slide-answer">→ ${escHtml(f.answer)}</div>
+  `;
+
+  const existImg = card.querySelector('.slide-image');
+  if (existImg) existImg.remove();
+  if (f.image) {
+    const img = document.createElement('img');
+    img.className = 'slide-image';
+    img.src = f.image;
+    img.alt = 'Fact image';
+    card.appendChild(img);
+  }
+
+  counter.textContent = `${slideIndex + 1} / ${facts.length}`;
+  void card.offsetWidth;
+  resetSlideTimer();
+}
+
+function resetSlideTimer() {
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => { slideIndex++; updateSlideshow(); }, 20000);
+}
+
+document.getElementById('slidePrev').addEventListener('click', () => { slideIndex--; updateSlideshow(); });
+document.getElementById('slideNext').addEventListener('click', () => { slideIndex++; updateSlideshow(); });
+
+updateSlideshow();
+
+/* ============================================================
+   PDF GENERATION
+============================================================ */
+let logoBase64 = null;
+
+function loadLogoBase64(callback) {
+  if (logoBase64) { callback(logoBase64); return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || 200;
+    canvas.height = img.naturalHeight || 200;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    try {
+      logoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      callback(logoBase64);
+    } catch(e) { callback(null); }
+  };
+  img.onerror = () => callback(null);
+  img.src = LOGO_URL;
+}
+
+async function downloadPDF(section, mode) {
+  const subjectKey = `${section}-dl-subject-${mode === 'daily' ? 'daily' : 'monthly'}`;
+  const subject = document.getElementById(subjectKey)?.value || 'all';
+
+  let filterDate = '';
+  let filterMonth = '';
+  let subtitleExtra = '';
+
+  if (mode === 'daily') {
+    filterDate = document.getElementById(`${section}-dl-date`)?.value || '';
+    if (!filterDate) { showToast('❌ Please select a date.', 'error'); return; }
+    const d = new Date(filterDate);
+    subtitleExtra = d.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+  } else {
+    filterMonth = document.getElementById(`${section}-dl-month`)?.value || '';
+    if (!filterMonth) { showToast('❌ Please select a month.', 'error'); return; }
+    const [y, m] = filterMonth.split('-');
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    subtitleExtra = `${monthNames[parseInt(m)-1]} ${y}`;
+  }
+
+  let data = DB[section].filter(e => {
+    const subjectMatch = subject === 'all' || e.subject === subject;
+    const dateMatch = mode === 'daily' ? e.date === filterDate : e.month === filterMonth;
+    return subjectMatch && dateMatch;
+  });
+
+  if (!data.length) {
+    showToast(`❌ No entries found for ${subject === 'all' ? 'all subjects' : subject} on ${subtitleExtra}.`, 'error');
+    return;
+  }
+
+  showToast('⏳ Generating PDF...');
+  loadLogoBase64((logo) => { generateJsPDF(section, subject, subtitleExtra, mode, data, logo); });
+}
+
+/* ============================================================
+   CORE PDF ENGINE
+============================================================ */
+function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+  const PW  = doc.internal.pageSize.getWidth();
+  const PH  = doc.internal.pageSize.getHeight();
+  const M   = 15;
+  const CW  = PW - M * 2;
+  let y = M;
+
+  const lh = (pt) => pt * 0.42 + 1.6;
+
+  function np(needed = 30) {
+    if (y + needed > PH - M - 14) {
+      doc.addPage();
+      y = M;
+      repeatHeader();
+    }
+  }
+
+  const C = {
+    green:    [26,  71,  49],
+    greenMid: [40, 100,  65],
+    gold:     [180, 120,  10],
+    goldBg:   [255, 248, 220],
+    white:    [255, 255, 255],
+    nearBlack:[15,  15,  15],
+    ansGreen: [16,  90,  50],
+    wrongRed: [180,  30,  30],
+    stripBg:  [235, 248, 240],
+    divider:  [200, 230, 210],
+    muted:    [100, 100, 100],
+    headerBg: [22,  60,  42],
+    topicRed: [200,   0,   0],
+  };
+
+  function drawAccentBar() {
+    doc.setFillColor(...C.green);
+    doc.rect(0, 0, PW, 6, 'F');
+    doc.setFillColor(...[251, 191, 36]);
+    doc.rect(0, 5.5, PW, 2, 'F');
+  }
+
+  function repeatHeader() {
+    drawAccentBar();
+    doc.setFillColor(...C.headerBg);
+    doc.rect(0, 7.5, PW, 10, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...C.white);
+    const subLabel = subject === 'all' ? 'All Subjects' : subject;
+    doc.text(
+      `SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,
+      PW / 2, 14, { align: 'center' }
+    );
+    y = 22;
+  }
+
+  /* ═══════════════════════════════════════════
+     COVER PAGE
+  ═══════════════════════════════════════════ */
+  drawAccentBar();
+  y = 10;
+
+  const logoSize = 38;
+  if (logo) {
+    try { doc.addImage(logo, 'JPEG', M, y, logoSize, logoSize, '', 'FAST'); }
+    catch(e) {}
+  }
+
+  const tx = logo ? M + logoSize + 8 : M;
+  const titleW = PW - tx - M;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(...C.green);
+  doc.text('SCALPEL STUDY SQUAD', tx, y + 11, { maxWidth: titleW });
+
+  doc.setFontSize(15);
+  doc.setTextColor(...C.gold);
+  doc.text('20th Book  —  Revision Report', tx, y + 22, { maxWidth: titleW });
+
+  doc.setFontSize(13);
+  doc.setTextColor(...C.nearBlack);
+  const dateLabel = mode === 'daily' ? `Date: ${subtitleExtra}` : `Month: ${subtitleExtra}`;
+  doc.text(dateLabel, tx, y + 32, { maxWidth: titleW });
+
+  y = Math.max(y + logoSize + 4, y + 40);
+
+  doc.setFillColor(...C.stripBg);
+  doc.setDrawColor(...C.green);
+  doc.setLineWidth(0.6);
+  doc.roundedRect(M, y, CW, 28, 3, 3, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(17);
+  doc.setTextColor(...C.green);
+  doc.text(`Subject: ${subject === 'all' ? 'All Subjects' : subject}`, M + 7, y + 11);
+
+  doc.setFontSize(14);
+  doc.setTextColor(...C.greenMid);
+  doc.text(`Section: ${SECTION_LABELS[section]}`, M + 7, y + 22);
+
+  y += 34;
+
+  doc.setFillColor(...C.green);
+  doc.rect(M, y, CW, 2, 'F');
+  y += 10;
+
+  /* ═══════════════════════════════════════════
+     ENTRIES
+  ═══════════════════════════════════════════ */
+  data.forEach((entry, idx) => {
+    np(50);
+
+    doc.setFillColor(...C.headerBg);
+    doc.rect(M, y, CW, 11, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...C.white);
+    doc.text(`Entry ${idx + 1}`, M + 4, y + 7.5);
+
+    const metaParts = [
+      entry.subject,
+      entry.topic  ? entry.topic : null,
+      entry.displayDate,
+      entry.exam   ? entry.exam  : null,
+      entry.year   ? entry.year  : null
+    ].filter(Boolean);
+    const metaStr = metaParts.join('   |   ');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(200, 230, 210);
+    doc.text(metaStr, PW - M - 3, y + 7.5, { align: 'right', maxWidth: CW - 30 });
+
+    y += 14;
+    y += 4;
+
+    const hasImg  = !!entry.image;
+    const imgW    = 70;
+    const imgH    = 62;
+    const textW   = hasImg ? CW - imgW - 6 : CW;
+    const imgX    = M + textW + 6;
+    const blockY  = y;
+
+    /* ── Topic label — bold, red, underlined, no box ── */
+    if (entry.topic) {
+      np(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...C.topicRed);
+      doc.text(entry.topic, M, y);
+      /* Draw underline beneath the text */
+      const tW = doc.getTextWidth(entry.topic);
+      doc.setDrawColor(...C.topicRed);
+      doc.setLineWidth(0.5);
+      doc.line(M, y + 1.8, M + tW, y + 1.8);
+      y += 10;
+    }
+
+    if (section === 'notes') {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...C.nearBlack);
+      const lines = doc.splitTextToSize(entry.text || '', textW - 2);
+      lines.forEach(line => {
+        np(lh(14) + 1);
+        doc.text(line, M, y);
+        y += lh(14);
+      });
+      y += 4;
+
+    } else {
+      np(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...C.green);
+      doc.text('Q:', M, y);
+      doc.setTextColor(...C.nearBlack);
+      const qLines = doc.splitTextToSize(entry.question || '', textW - 10);
+      doc.text(qLines, M + 8, y);
+      y += qLines.length * lh(14) + 4;
+
+      np(16);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...C.ansGreen);
+      doc.text('Ans:', M, y);
+      doc.setTextColor(...[20, 80, 45]);
+      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 14);
+      doc.text(aLines, M + 12, y);
+      y += aLines.length * lh(14) + 4;
+
+      if (entry.wrong) {
+        np(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.setTextColor(...C.wrongRed);
+        doc.text('Wrong:', M, y);
+        doc.setTextColor(...[160, 30, 30]);
+        const wLines = doc.splitTextToSize(entry.wrong, textW - 18);
+        doc.text(wLines, M + 16, y);
+        y += wLines.length * lh(14) + 4;
+      }
+
+      if (entry.reason) {
+        np(10);
+        doc.setFillColor(...C.goldBg);
+        doc.setDrawColor(...C.gold);
+        doc.setLineWidth(0.4);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        const rLabel = `Reason: ${entry.reason}`;
+        const rW = doc.getTextWidth(rLabel) + 10;
+        doc.roundedRect(M, y - 3.5, rW, 9, 2, 2, 'FD');
+        doc.setTextColor(...C.gold);
+        doc.text(rLabel, M + 5, y + 3);
+        y += 12;
+      }
+    }
+
+    if (hasImg) {
+      try {
+        const imgType = entry.image.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+        doc.addImage(entry.image, imgType, imgX, blockY, imgW, imgH, '', 'FAST');
+        doc.setDrawColor(...C.green);
+        doc.setLineWidth(0.5);
+        doc.rect(imgX - 0.5, blockY - 0.5, imgW + 1, imgH + 1);
+      } catch(e) {}
+      y = Math.max(y, blockY + imgH + 4);
+    }
+
+    np(8);
+    doc.setDrawColor(...C.divider);
+    doc.setLineWidth(0.5);
+    doc.line(M, y, PW - M, y);
+    y += 9;
+  });
+
+  /* ═══════════════════════════════════════════
+     FOOTER — every page
+  ═══════════════════════════════════════════ */
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...C.muted);
+    doc.text(
+      `Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject === 'all' ? 'All Subjects' : subject}  |  ${subtitleExtra}`,
+      M, PH - 7
+    );
+    doc.text(`Page ${i} / ${totalPages}`, PW - M, PH - 7, { align: 'right' });
+    doc.setDrawColor(...C.divider);
+    doc.setLineWidth(0.3);
+    doc.line(M, PH - 10, PW - M, PH - 10);
+  }
+
+  const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g, '');
+  const safeDate    = subtitleExtra.replace(/[\s,]/g, '_');
+  doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
+  showToast('✅ PDF downloaded!');
+}
+
+/* ============================================================
+   DANGER ZONE — DELETE
+============================================================ */
+let pendingDeleteTarget = null;
+
+function confirmDelete(target) {
+  pendingDeleteTarget = target;
+  const labels = {
+    notes: 'all Notes', facts: 'all Facts', pyq: 'all PYQ checkpoints',
+    swt: 'all SWT checkpoints', gt: 'all GT mistakes', all: 'ALL data'
+  };
+  document.getElementById('modalText').textContent =
+    `You are about to permanently delete ${labels[target]}. This cannot be undone.`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  pendingDeleteTarget = null;
+}
+
+function executeDelete() {
+  if (!pendingDeleteTarget) return;
+  if (pendingDeleteTarget === 'all') {
+    DB_KEYS.forEach(k => { DB[k] = []; saveDB(k); renderList(k); });
+    updateSlideshow();
+  } else {
+    DB[pendingDeleteTarget] = [];
+    saveDB(pendingDeleteTarget);
+    renderList(pendingDeleteTarget);
+    if (pendingDeleteTarget === 'facts') updateSlideshow();
+  }
+  closeModal();
+  showToast('🗑 Data deleted permanently.');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast${type === 'error' ? ' error' : ''}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* ============================================================
+   PWA — SERVICE WORKER REGISTRATION
+============================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+
+/* ============================================================
+   PWA — INSTALL BANNER
+============================================================ */
+let deferredPrompt = null;
+const installBanner = document.getElementById('pwaInstallBanner');
+const installBtn    = document.getElementById('pwaInstallBtn');
+const dismissBtn    = document.getElementById('pwaDismissBtn');
+
+/* Capture the browser's beforeinstallprompt event (Android/Chrome/Edge) */
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  /* Don't show if user already dismissed */
+  if (!localStorage.getItem('sss_pwa_dismissed')) {
+    installBanner.style.display = 'flex';
+    /* Push body up so content isn't hidden behind banner */
+    document.body.style.paddingBottom = '90px';
+  }
+});
+
+/* Install button tapped */
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    showToast('✅ App installed! Find it on your home screen.');
+  }
+  deferredPrompt = null;
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+});
+
+/* Dismiss button */
+dismissBtn.addEventListener('click', () => {
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+  localStorage.setItem('sss_pwa_dismissed', '1');
+});
+
+/* Hide banner once app is installed */
+window.addEventListener('appinstalled', () => {
+  installBanner.style.display = 'none';
+  document.body.style.paddingBottom = '';
+  deferredPrompt = null;
+  showToast('🎉 Scalpel Study Squad installed!');
 });
 </script>
 </body>
