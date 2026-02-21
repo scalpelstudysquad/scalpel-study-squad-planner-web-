@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.scalpelstudysquad.twa",
-        "sha256_cert_fingerprints": ["84:F2:ED:17:1B:6A:CF:94:2C:B1:73:17:1B:10:FE:0F:77:D0:FF:D2:9A:9B:40:F9:D5:0B:71:C0:4F:53:79:92"]
-      }
-    }]
