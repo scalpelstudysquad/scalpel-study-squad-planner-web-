@@ -66,6 +66,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
+  /* Never intercept .well-known — needed for assetlinks.json */
+  if (url.pathname.includes('/.well-known/')) return;
+
   const url = new URL(event.request.url);
 
   /* ── 1. NAVIGATION requests → Cache-first, then network ──
