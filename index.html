@@ -10,7 +10,7 @@
 <title>Scalpel Study Squad — 20th Book Revision Report</title>
 
 <link rel="manifest" href="manifest.json"/>
-<meta name="apple-mobile-web-app-title" content="Scalpel SSS"/>
+<meta name="apple-mobile-web-app-title" content="SSS 20th Book"/>
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
 <meta name="msapplication-TileColor" content="#0A1929"/>
 <meta name="msapplication-TileImage" content="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
@@ -24,7 +24,6 @@
    MATERIAL DESIGN TOKENS & THEME — NAVY · LIGHT-BLUE · WHITE
 ============================================================ */
 :root {
-  /* ── Material palette ── */
   --md-navy-900:   #0A1929;
   --md-navy-800:   #0D2137;
   --md-navy-700:   #102A4C;
@@ -50,7 +49,6 @@
   --md-green:      #2E7D32;
   --md-green-l:    #43A047;
 
-  /* ── Dark theme vars (default) ── */
   --bg-primary:    #0A1929;
   --bg-secondary:  #0D2137;
   --bg-card:       #102A4C;
@@ -71,13 +69,11 @@
   --radius:        12px;
   --radius-sm:     8px;
 
-  /* ── Material elevation (dark) ── */
   --elev-1: 0 2px 1px -1px rgba(0,0,0,.35),0 1px 1px 0 rgba(0,0,0,.25),0 1px 3px 0 rgba(0,0,0,.2);
   --elev-2: 0 3px 1px -2px rgba(0,0,0,.35),0 2px 2px 0 rgba(0,0,0,.25),0 1px 5px 0 rgba(0,0,0,.2);
   --elev-4: 0 2px 4px -1px rgba(0,0,0,.35),0 4px 5px 0 rgba(0,0,0,.25),0 1px 10px 0 rgba(0,0,0,.2);
   --elev-8: 0 5px 5px -3px rgba(0,0,0,.35),0 8px 10px 1px rgba(0,0,0,.25),0 3px 14px 2px rgba(0,0,0,.2);
 
-  /* ── Header & section colours (dark) ── */
   --header-bg:          #0D2137;
   --header-border:      rgba(79,195,247,0.18);
   --section-card-bg:    #102A4C;
@@ -110,8 +106,6 @@
   --danger-dark:   #8E0000;
   --shadow:        rgba(13,33,55,0.15);
   --tab-active:    #1565C0;
-  --radius:        12px;
-  --radius-sm:     8px;
 
   --elev-1: 0 2px 1px -1px rgba(0,0,0,.08),0 1px 1px 0 rgba(0,0,0,.06),0 1px 3px 0 rgba(0,0,0,.05);
   --elev-2: 0 3px 1px -2px rgba(0,0,0,.08),0 2px 2px 0 rgba(0,0,0,.06),0 1px 5px 0 rgba(0,0,0,.05);
@@ -132,9 +126,6 @@
   --advisory-bg:        rgba(227,242,253,0.97);
 }
 
-/* ============================================================
-   RESET & BASE
-============================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{
@@ -146,45 +137,28 @@ body{
   overflow-x:hidden;
 }
 
-/* Material background texture — very subtle dot grid */
 body::before{
   content:'';
   position:fixed;
   inset:0;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(79,195,247,0.06) 1px, transparent 0);
+  background-image:radial-gradient(circle at 1px 1px, rgba(79,195,247,0.06) 1px, transparent 0);
   background-size:28px 28px;
   pointer-events:none;
   z-index:0;
 }
 [data-theme="light"] body::before{
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(21,101,192,0.05) 1px, transparent 0);
+  background-image:radial-gradient(circle at 1px 1px, rgba(21,101,192,0.05) 1px, transparent 0);
 }
 
-/* ── Material ripple effect ── */
-@keyframes md-ripple{
-  from{transform:scale(0);opacity:.4;}
-  to{transform:scale(2.5);opacity:0;}
-}
+@keyframes md-ripple{from{transform:scale(0);opacity:.4;}to{transform:scale(2.5);opacity:0;}}
 .ripple-host{position:relative;overflow:hidden;}
-.ripple-host::after{
-  content:'';
-  position:absolute;
-  border-radius:50%;
-  transform:scale(0);
-  background:rgba(255,255,255,0.3);
-  width:100%;
-  height:100%;
-  top:0;left:0;
-  pointer-events:none;
-}
-.ripple-host:active::after{
-  animation:md-ripple 0.45s ease-out;
-}
+.ripple-host::after{content:'';position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,0.3);width:100%;height:100%;top:0;left:0;pointer-events:none;}
+.ripple-host:active::after{animation:md-ripple 0.45s ease-out;}
 
 /* ============================================================
-   APP BAR / HEADER — Material AppBar elevation-4
+   HEADER — sticky, z-index 100
+   IMPORTANT: overflow must NOT be hidden so the logo circle
+   is not clipped. Tabs use JS-calculated top offset.
 ============================================================ */
 .header{
   position:sticky;
@@ -202,11 +176,12 @@ body::before{
   padding-right: max(24px,env(safe-area-inset-right));
   padding-top:   max(12px,env(safe-area-inset-top));
   transition:background 0.3s;
+  /* overflow:visible ensures the logo circle is never clipped */
+  overflow:visible;
 }
 .header-left{display:flex;align-items:center;justify-content:flex-start;}
 .header-center{display:flex;flex-direction:column;align-items:center;justify-self:center;}
 .header-right{display:flex;align-items:center;justify-content:flex-end;}
-.header-row-top{display:contents;}
 
 .logo-wrap{display:flex;flex-direction:column;align-items:center;}
 .logo-img{
@@ -215,18 +190,11 @@ body::before{
   object-fit:cover;
   border:3px solid rgba(255,255,255,0.90);
   box-shadow:0 4px 16px rgba(0,0,0,0.35),0 0 0 5px rgba(79,195,247,0.20);
-  display:block;
-  margin:0 auto 8px;
+  display:block;margin:0 auto 8px;
   transition:box-shadow 0.3s,transform 0.3s;
 }
-.logo-img:hover{
-  box-shadow:0 6px 24px rgba(0,0,0,0.4),0 0 0 7px rgba(79,195,247,0.35);
-  transform:translateY(-2px);
-}
-[data-theme="light"] .logo-img{
-  border-color:rgba(255,255,255,0.95);
-  box-shadow:0 4px 16px rgba(0,0,0,0.18),0 0 0 5px rgba(21,101,192,0.20);
-}
+.logo-img:hover{box-shadow:0 6px 24px rgba(0,0,0,0.4),0 0 0 7px rgba(79,195,247,0.35);transform:translateY(-2px);}
+[data-theme="light"] .logo-img{border-color:rgba(255,255,255,0.95);box-shadow:0 4px 16px rgba(0,0,0,0.18),0 0 0 5px rgba(21,101,192,0.20);}
 
 .site-title{
   font-family:'Nunito',sans-serif;
@@ -253,19 +221,13 @@ body::before{
 }
 [data-theme="light"] .site-subtitle{color:rgba(255,255,255,0.80);}
 
-/* ── Material icon button ── */
 .theme-emoji-btn{
   background:rgba(255,255,255,0.10);
-  border:none;
-  border-radius:50%;
-  width:40px;height:40px;
-  font-size:19px;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:50%;
+  width:40px;height:40px;font-size:19px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:background 0.2s,transform 0.2s;
-  flex-shrink:0;
-  line-height:1;
-  padding:0;
+  flex-shrink:0;line-height:1;padding:0;
   position:relative;overflow:hidden;
 }
 .theme-emoji-btn:hover{background:rgba(255,255,255,0.20);transform:rotate(18deg) scale(1.12);}
@@ -274,162 +236,63 @@ body::before{
 [data-theme="light"] .theme-emoji-btn:hover{background:rgba(255,255,255,0.30);}
 
 /* ============================================================
-   MATERIAL INFO BAR
+   ADVISORY BAR
 ============================================================ */
 .advisory-bar{
   background:var(--advisory-bg);
   border-bottom:2px solid rgba(79,195,247,0.25);
   color:var(--text-secondary);
-  font-family:'Roboto',sans-serif;
-  font-size:13px;
-  font-weight:500;
-  text-align:center;
-  padding:10px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  line-height:1.5;
-  letter-spacing:0.3px;
+  font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;
+  text-align:center;padding:10px 20px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  line-height:1.5;letter-spacing:0.3px;
   position:relative;z-index:1;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-[data-theme="light"] .advisory-bar{
-  background:#E3F2FD;
-  color:#0D47A1;
-  border-bottom-color:rgba(21,101,192,0.25);
-}
+[data-theme="light"] .advisory-bar{background:#E3F2FD;color:#0D47A1;border-bottom-color:rgba(21,101,192,0.25);}
 .advisory-bar strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .advisory-bar strong{color:#0D47A1;}
 .advisory-icon{font-size:15px;flex-shrink:0;}
 
 /* ============================================================
-   PROFILE CIRCLE & POPOVER
+   PROFILE / NAME POPOVER
 ============================================================ */
 .name-circle-wrap{position:relative;}
 .name-circle{
-  width:42px;height:42px;
-  border-radius:50%;
+  width:42px;height:42px;border-radius:50%;
   background:rgba(255,255,255,0.15);
   border:2px solid rgba(255,255,255,0.50);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Roboto',sans-serif;
-  font-size:17px;font-weight:700;
-  color:#fff;
-  cursor:pointer;
-  flex-shrink:0;
-  user-select:none;
-  transition:all 0.2s;
-  box-shadow:var(--elev-2);
-  position:relative;overflow:hidden;
+  font-family:'Roboto',sans-serif;font-size:17px;font-weight:700;color:#fff;
+  cursor:pointer;flex-shrink:0;user-select:none;
+  transition:all 0.2s;box-shadow:var(--elev-2);position:relative;overflow:hidden;
 }
 .name-circle:hover{background:rgba(255,255,255,0.25);transform:scale(1.08);box-shadow:var(--elev-4);}
-.name-circle.has-name{
-  background:var(--md-lb-500);
-  color:#fff;
-  border-color:rgba(255,255,255,0.70);
-  font-size:17px;
-}
+.name-circle.has-name{background:var(--md-lb-500);color:#fff;border-color:rgba(255,255,255,0.70);font-size:17px;}
 [data-theme="light"] .name-circle{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.70);}
 [data-theme="light"] .name-circle.has-name{background:#FFFFFF;color:#1565C0;border-color:rgba(255,255,255,0.90);}
 
-/* Material Popover Card */
 .name-popover{
-  position:absolute;
-  top:calc(100% + 10px);
-  right:0;
-  width:240px;
-  background:var(--popover-bg);
-  border:1px solid var(--border-light);
-  border-radius:var(--radius);
-  padding:20px 16px 16px;
-  box-shadow:var(--elev-8);
-  z-index:500;
-  display:none;
-  flex-direction:column;
-  gap:12px;
+  position:absolute;top:calc(100% + 10px);right:0;width:240px;
+  background:var(--popover-bg);border:1px solid var(--border-light);
+  border-radius:var(--radius);padding:20px 16px 16px;
+  box-shadow:var(--elev-8);z-index:500;
+  display:none;flex-direction:column;gap:12px;
   animation:popIn 0.18s cubic-bezier(0.2,0,0,1);
 }
 .name-popover.open{display:flex;}
-@keyframes popIn{
-  from{opacity:0;transform:translateY(-8px) scale(0.96);}
-  to  {opacity:1;transform:translateY(0)   scale(1);}
-}
-.name-popover-label{
-  font-family:'Roboto',sans-serif;
-  font-size:10px;letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  font-weight:700;
-}
-.name-popover-fullname{
-  font-family:'Roboto',sans-serif;
-  font-size:16px;font-weight:700;
-  color:var(--text-primary);
-  letter-spacing:0.3px;
-  word-break:break-word;
-}
-.name-popover-row{
-  display:flex;align-items:center;
-  border:2px solid var(--border);
-  border-radius:var(--radius-sm);
-  overflow:hidden;
-  background:var(--bg-input);
-  transition:border-color 0.2s;
-}
+@keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+.name-popover-label{font-family:'Roboto',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;}
+.name-popover-fullname{font-family:'Roboto',sans-serif;font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:0.3px;word-break:break-word;}
+.name-popover-row{display:flex;align-items:center;border:2px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-input);transition:border-color 0.2s;}
 .name-popover-row:focus-within{border-color:var(--accent);}
-.name-popover-prefix{
-  padding:9px 10px;
-  font-family:'Roboto',sans-serif;
-  font-size:13px;font-weight:700;
-  color:var(--accent);
-  background:rgba(79,195,247,0.10);
-  border-right:1px solid var(--border);
-  white-space:nowrap;flex-shrink:0;
-}
+.name-popover-prefix{padding:9px 10px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;color:var(--accent);background:rgba(79,195,247,0.10);border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0;}
 [data-theme="light"] .name-popover-prefix{background:rgba(21,101,192,0.08);color:#1565C0;}
-.name-popover-input{
-  flex:1;
-  border:none !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  padding:9px 10px !important;
-  font-family:'Roboto',sans-serif;
-  font-size:13px;
-  color:var(--text-primary) !important;
-  outline:none;
-  min-width:0;
-  box-shadow:none !important;
-}
-.name-popover-save{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  border-radius:var(--radius-sm);
-  padding:10px 0;
-  font-family:'Roboto',sans-serif;
-  font-size:13px;font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:1.5px;
-  cursor:pointer;
-  transition:all 0.2s;
-  width:100%;
-  box-shadow:var(--elev-2);
-  position:relative;overflow:hidden;
-}
+.name-popover-input{flex:1;border:none !important;border-radius:0 !important;background:transparent !important;padding:9px 10px !important;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-primary) !important;outline:none;min-width:0;box-shadow:none !important;}
+.name-popover-save{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 0;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;width:100%;box-shadow:var(--elev-2);position:relative;overflow:hidden;}
 .name-popover-save:hover{filter:brightness(1.10);box-shadow:var(--elev-4);transform:translateY(-1px);}
 [data-theme="light"] .name-popover-save{color:#fff;}
-.name-popover-edit{
-  background:none;border:none;
-  color:var(--text-muted);
-  font-family:'Roboto',sans-serif;
-  font-size:11px;font-weight:500;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  cursor:pointer;text-align:center;
-  padding:2px 0;transition:color 0.2s;
-}
+.name-popover-edit{background:none;border:none;color:var(--text-muted);font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:center;padding:2px 0;transition:color 0.2s;}
 .name-popover-edit:hover{color:var(--accent);}
 
 /* ============================================================
@@ -438,141 +301,46 @@ body::before{
 .main{position:relative;z-index:1;}
 
 /* ============================================================
-   FACTS SLIDESHOW — Material Card
+   FACTS SLIDESHOW
 ============================================================ */
-.slideshow-section{
-  background:var(--bg-secondary);
-  border-bottom:1px solid var(--border-light);
-  padding:24px;
-  position:relative;z-index:1;
-}
-.slideshow-section h2{
-  font-family:'Roboto',sans-serif;
-  font-size:11px;letter-spacing:3px;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  text-align:center;
-  font-weight:700;
-  margin-bottom:16px;
-}
+.slideshow-section{background:var(--bg-secondary);border-bottom:1px solid var(--border-light);padding:24px;position:relative;z-index:1;}
+.slideshow-section h2{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);text-align:center;font-weight:700;margin-bottom:16px;}
 [data-theme="light"] .slideshow-section{background:#DCEEFB;}
 [data-theme="light"] .slideshow-section h2{color:#1565C0;}
 
 .slideshow-container{max-width:860px;margin:0 auto;position:relative;}
-
-.slide-card{
-  background:var(--section-card-bg);
-  border:none;
-  border-radius:var(--radius);
-  padding:28px 32px;
-  min-height:165px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:24px;
-  box-shadow:var(--elev-4);
-  position:relative;
-  overflow:hidden;
-}
-/* Material top accent line */
-.slide-card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,var(--md-primary-l),var(--md-lb-300),var(--md-lb-500));
-  background-size:200% 100%;
-  animation:shimmer 20s linear infinite;
-}
-@keyframes shimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
+.slide-card{background:var(--section-card-bg);border:none;border-radius:var(--radius);padding:28px 32px;min-height:165px;display:flex;align-items:center;justify-content:center;gap:24px;box-shadow:var(--elev-4);position:relative;overflow:hidden;}
+.slide-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--md-primary-l),var(--md-lb-300),var(--md-lb-500));background-size:200% 100%;animation:shimmer 20s linear infinite;}
+@keyframes shimmer{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 [data-theme="light"] .slide-card{background:#FFFFFF;}
 
 .slide-content{flex:1;text-align:left;}
-.slide-badge{
-  font-family:'Roboto',sans-serif;
-  font-size:10px;letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--accent);
-  font-weight:700;
-  margin-bottom:8px;display:block;
-}
-.slide-subject{
-  font-family:'Roboto',sans-serif;
-  font-size:11px;color:var(--text-muted);
-  font-weight:700;text-transform:uppercase;
-  letter-spacing:1.5px;margin-bottom:10px;
-}
-.slide-question{
-  font-family:'Roboto',sans-serif;
-  font-size:16px;font-weight:700;
-  color:var(--text-primary);
-  margin-bottom:10px;line-height:1.55;
-}
-.slide-answer{
-  font-family:'Roboto',sans-serif;
-  font-size:14px;color:var(--accent);
-  font-weight:700;line-height:1.5;
-}
-.slide-image{
-  width:120px;height:100px;
-  object-fit:cover;
-  border-radius:var(--radius-sm);
-  border:none;
-  box-shadow:var(--elev-2);
-  flex-shrink:0;
-}
-.slide-empty{
-  text-align:center;
-  color:var(--text-muted);
-  font-style:italic;
-  font-family:'Roboto',sans-serif;
-  font-size:14px;font-weight:400;
-}
+.slide-badge{font-family:'Roboto',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;display:block;}
+.slide-subject{font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.slide-question{font-family:'Roboto',sans-serif;font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:10px;line-height:1.55;}
+.slide-answer{font-family:'Roboto',sans-serif;font-size:14px;color:var(--accent);font-weight:700;line-height:1.5;}
+.slide-image{width:120px;height:100px;object-fit:cover;border-radius:var(--radius-sm);border:none;box-shadow:var(--elev-2);flex-shrink:0;}
+.slide-empty{text-align:center;color:var(--text-muted);font-style:italic;font-family:'Roboto',sans-serif;font-size:14px;font-weight:400;}
 
-.slide-nav{
-  display:flex;align-items:center;
-  justify-content:center;gap:16px;
-  margin-top:14px;
-}
-.slide-btn{
-  background:var(--section-card-bg);
-  border:none;
-  color:var(--accent);
-  border-radius:50%;
-  width:38px;height:38px;
-  cursor:pointer;font-size:16px;
-  transition:all 0.2s;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:var(--elev-2);
-  position:relative;overflow:hidden;
-}
-.slide-btn:hover{
-  background:var(--accent);color:#fff;
-  box-shadow:var(--elev-4);transform:scale(1.08);
-}
+.slide-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;}
+.slide-btn{background:var(--section-card-bg);border:none;color:var(--accent);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:16px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;box-shadow:var(--elev-2);position:relative;overflow:hidden;}
+.slide-btn:hover{background:var(--accent);color:#fff;box-shadow:var(--elev-4);transform:scale(1.08);}
 [data-theme="light"] .slide-btn{background:#FFFFFF;}
 [data-theme="light"] .slide-btn:hover{background:#1565C0;color:#fff;}
-
-.slide-counter{
-  font-family:'Roboto Mono',monospace;
-  font-size:12px;color:var(--text-muted);
-  font-weight:500;
-  min-width:60px;text-align:center;
-  letter-spacing:1px;
-}
+.slide-counter{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:500;min-width:60px;text-align:center;letter-spacing:1px;}
 
 /* ============================================================
-   MATERIAL TABS
+   TABS — sticky positioning managed by JS (syncTabsTop)
+   so the top value is always exactly = header height.
+   CSS provides a safe fallback only.
 ============================================================ */
 .tabs-wrapper{
   background:var(--bg-card);
   border-bottom:1px solid var(--border-light);
   box-shadow:var(--elev-2);
   padding:0 16px;
-  position:sticky;top:116px;
+  position:sticky;
+  top:0; /* JS overrides this immediately */
   z-index:90;
   overflow-x:auto;
   scrollbar-width:none;
@@ -580,41 +348,20 @@ body::before{
 .tabs-wrapper::-webkit-scrollbar{display:none;}
 [data-theme="light"] .tabs-wrapper{background:#1565C0;border-bottom-color:rgba(255,255,255,0.20);}
 
-.tabs-nav{
-  display:flex;
-  justify-content:center;
-  gap:0;
-  min-width:max-content;
-  margin:0 auto;
-}
+.tabs-nav{display:flex;justify-content:center;gap:0;min-width:max-content;margin:0 auto;}
 .tab-btn{
   padding:16px 20px;
-  font-family:'Roboto',sans-serif;
-  font-size:12px;letter-spacing:1.5px;
+  font-family:'Roboto',sans-serif;font-size:12px;letter-spacing:1.5px;
   text-transform:uppercase;font-weight:700;
-  color:var(--text-muted);
-  background:transparent;
-  border:none;
-  border-bottom:3px solid transparent;
-  cursor:pointer;
-  transition:all 0.22s ease;
-  white-space:nowrap;
-  border-radius:0;
-  position:relative;overflow:hidden;
+  color:var(--text-muted);background:transparent;
+  border:none;border-bottom:3px solid transparent;
+  cursor:pointer;transition:all 0.22s ease;
+  white-space:nowrap;border-radius:0;position:relative;overflow:hidden;
 }
-.tab-btn::after{
-  content:'';
-  position:absolute;
-  bottom:-1px;left:50%;
-  width:0;height:3px;
-  background:var(--tab-indicator);
-  border-radius:3px 3px 0 0;
-  transition:width 0.25s cubic-bezier(0.4,0,0.2,1),left 0.25s;
-}
+.tab-btn::after{content:'';position:absolute;bottom:-1px;left:50%;width:0;height:3px;background:var(--tab-indicator);border-radius:3px 3px 0 0;transition:width 0.25s cubic-bezier(0.4,0,0.2,1),left 0.25s;}
 .tab-btn:hover{color:var(--text-primary);background:rgba(79,195,247,0.08);}
 .tab-btn.active{color:var(--tab-active);background:rgba(79,195,247,0.08);}
 .tab-btn.active::after{width:100%;left:0;}
-
 [data-theme="light"] .tab-btn{color:rgba(255,255,255,0.65);}
 [data-theme="light"] .tab-btn:hover{color:rgba(255,255,255,0.90);background:rgba(255,255,255,0.12);}
 [data-theme="light"] .tab-btn.active{color:#FFFFFF;background:rgba(255,255,255,0.15);}
@@ -624,151 +371,63 @@ body::before{
 .tab-panel.active{display:block;}
 
 /* ============================================================
-   MATERIAL CARDS (Paper elevation)
+   CARDS
 ============================================================ */
-.card{
-  background:var(--section-card-bg);
-  border:none;
-  border-radius:var(--radius);
-  padding:24px;
-  margin-bottom:20px;
-  box-shadow:var(--elev-2);
-  position:relative;
-  overflow:hidden;
-  transition:box-shadow 0.2s;
-}
+.card{background:var(--section-card-bg);border:none;border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--elev-2);position:relative;overflow:hidden;transition:box-shadow 0.2s;}
 .card:hover{box-shadow:var(--elev-4);}
-/* Subtle left accent bar */
-.card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;bottom:0;width:4px;
-  background:linear-gradient(180deg,var(--md-primary-l),var(--md-lb-300));
-  border-radius:var(--radius) 0 0 var(--radius);
-}
+.card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--md-primary-l),var(--md-lb-300));border-radius:var(--radius) 0 0 var(--radius);}
 [data-theme="light"] .card{background:#FFFFFF;}
 
-.card-title{
-  font-family:'Roboto',sans-serif;
-  font-size:14px;letter-spacing:1.5px;
-  text-transform:uppercase;
-  color:var(--accent);
-  font-weight:700;
-  margin-bottom:20px;
-  padding-bottom:12px;
-  border-bottom:1px solid var(--border-light);
-  padding-left:12px;
-}
+.card-title{font-family:'Roboto',sans-serif;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border-light);padding-left:12px;}
 [data-theme="light"] .card-title{color:#1565C0;border-bottom-color:#BBDEFB;}
 
 /* ============================================================
-   MATERIAL FORM ELEMENTS
+   FORM ELEMENTS
 ============================================================ */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
 .form-group.full{grid-column:1/-1;}
 
-label{
-  font-family:'Roboto',sans-serif;
-  font-size:11px;letter-spacing:1.5px;
-  text-transform:uppercase;font-weight:700;
-  color:var(--input-label);
-}
+label{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--input-label);}
 
 select,input[type="text"],textarea,input[type="date"],input[type="month"]{
-  background:var(--bg-input);
-  border:2px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text-primary);
-  font-family:'Roboto',sans-serif;
-  font-size:14px;font-weight:400;
-  padding:11px 14px;
-  width:100%;
-  transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;
-  outline:none;
+  background:var(--bg-input);border:2px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text-primary);font-family:'Roboto',sans-serif;font-size:14px;font-weight:400;
+  padding:11px 14px;width:100%;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;outline:none;
 }
-[data-theme="light"] select,
-[data-theme="light"] input[type="text"],
-[data-theme="light"] textarea,
-[data-theme="light"] input[type="date"],
-[data-theme="light"] input[type="month"]{
-  background:#FAFCFF;
-  border-color:#90CAF9;
-  color:#0A1929;
-}
-select::placeholder,input::placeholder,textarea::placeholder{
-  color:var(--text-muted);font-weight:400;
-}
-[data-theme="light"] select::placeholder,
-[data-theme="light"] input::placeholder,
-[data-theme="light"] textarea::placeholder{color:#90A4AE;}
-select:focus,input:focus,textarea:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(79,195,247,0.18);
-  background:var(--bg-input);
-}
-[data-theme="light"] select:focus,
-[data-theme="light"] input:focus,
-[data-theme="light"] textarea:focus{
-  border-color:#1565C0;
-  box-shadow:0 0 0 3px rgba(21,101,192,0.12);
-}
+[data-theme="light"] select,[data-theme="light"] input[type="text"],[data-theme="light"] textarea,[data-theme="light"] input[type="date"],[data-theme="light"] input[type="month"]{background:#FAFCFF;border-color:#90CAF9;color:#0A1929;}
+select::placeholder,input::placeholder,textarea::placeholder{color:var(--text-muted);font-weight:400;}
+[data-theme="light"] select::placeholder,[data-theme="light"] input::placeholder,[data-theme="light"] textarea::placeholder{color:#90A4AE;}
+select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.18);background:var(--bg-input);}
+[data-theme="light"] select:focus,[data-theme="light"] input:focus,[data-theme="light"] textarea:focus{border-color:#1565C0;box-shadow:0 0 0 3px rgba(21,101,192,0.12);}
 textarea{resize:vertical;min-height:90px;line-height:1.65;}
 select option{background:var(--bg-card);color:var(--text-primary);}
 [data-theme="light"] select option{background:#FFFFFF;color:#0A1929;}
 
-/* ── Material image upload zone ── */
-.img-upload-area{
-  border:2px dashed var(--border);
-  border-radius:var(--radius-sm);
-  padding:22px;
-  text-align:center;
-  cursor:pointer;
-  transition:all 0.2s;
-  position:relative;
-  background:var(--bg-input);
+/* ── Image compression status label ── */
+.compress-status{
+  font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;
+  color:var(--md-green-l);letter-spacing:0.3px;
+  margin-top:5px;display:none;
 }
-.img-upload-area:hover{
-  border-color:var(--accent);
-  background:rgba(79,195,247,0.06);
-}
-[data-theme="light"] .img-upload-area{
-  border-color:#90CAF9;
-  background:#F0F7FF;
-}
-[data-theme="light"] .img-upload-area:hover{
-  border-color:#1565C0;
-  background:rgba(21,101,192,0.05);
-}
-.img-upload-area input[type="file"]{
-  position:absolute;inset:0;opacity:0;cursor:pointer;
-  width:100%;height:100%;padding:0;
-}
-.img-upload-text{
-  font-family:'Roboto',sans-serif;
-  font-size:12px;color:var(--text-muted);font-weight:400;
-}
+.compress-status.visible{display:block;}
+[data-theme="light"] .compress-status{color:#2E7D32;}
+
+.img-upload-area{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:var(--bg-input);}
+.img-upload-area:hover{border-color:var(--accent);background:rgba(79,195,247,0.06);}
+[data-theme="light"] .img-upload-area{border-color:#90CAF9;background:#F0F7FF;}
+[data-theme="light"] .img-upload-area:hover{border-color:#1565C0;background:rgba(21,101,192,0.05);}
+.img-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;padding:0;}
+.img-upload-text{font-family:'Roboto',sans-serif;font-size:12px;color:var(--text-muted);font-weight:400;}
 .img-upload-text strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .img-upload-text{color:#546E7A;}
 [data-theme="light"] .img-upload-text strong{color:#1565C0;}
 .img-preview{max-width:100%;max-height:120px;border-radius:var(--radius-sm);margin-top:10px;display:none;box-shadow:var(--elev-2);}
 
 /* ============================================================
-   MATERIAL BUTTONS
+   BUTTONS
 ============================================================ */
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:11px 24px;
-  border-radius:var(--radius-sm);
-  font-family:'Roboto',sans-serif;
-  font-size:13px;font-weight:700;
-  letter-spacing:1.5px;
-  cursor:pointer;border:none;
-  transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
-  text-transform:uppercase;
-  position:relative;overflow:hidden;
-  box-shadow:var(--elev-2);
-}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:var(--radius-sm);font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border:none;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);text-transform:uppercase;position:relative;overflow:hidden;box-shadow:var(--elev-2);}
 .btn:active{transform:scale(0.97);}
 .btn-primary{background:var(--md-primary-l);color:#fff;}
 .btn-primary:hover{background:var(--md-primary);box-shadow:var(--elev-4);transform:translateY(-1px);}
@@ -776,90 +435,42 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 .btn-gold:hover{background:var(--md-lb-900);box-shadow:var(--elev-4);transform:translateY(-1px);}
 [data-theme="light"] .btn-gold{background:#1565C0;color:#fff;}
 [data-theme="light"] .btn-gold:hover{background:#0D47A1;}
-.btn-outline{
-  background:transparent;
-  color:var(--accent);
-  border:2px solid var(--accent);
-  box-shadow:none;
-}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent);box-shadow:none;}
 .btn-outline:hover{background:rgba(79,195,247,0.10);box-shadow:none;}
 [data-theme="light"] .btn-outline{color:#1565C0;border-color:#1565C0;}
 [data-theme="light"] .btn-outline:hover{background:rgba(21,101,192,0.08);}
 .btn-danger{background:var(--danger);color:#fff;}
 .btn-danger:hover{background:var(--danger-dark);box-shadow:var(--elev-4);transform:translateY(-1px);}
 .btn-sm{padding:9px 18px;font-size:12px;}
+.btn-install{background:linear-gradient(135deg,#1976D2,#0288D1);color:#fff;}
+.btn-install:hover{background:linear-gradient(135deg,#1565C0,#0277BD);box-shadow:var(--elev-4);transform:translateY(-1px);}
 
 /* ============================================================
-   MATERIAL SUB-TABS (Outlined chips)
+   SUB TABS
 ============================================================ */
 .sub-tabs-nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.sub-tab-btn{
-  padding:8px 20px;
-  background:transparent;
-  border:2px solid var(--border);
-  border-radius:50px;
-  font-family:'Roboto',sans-serif;
-  font-size:12px;font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  cursor:pointer;
-  color:var(--text-secondary);
-  transition:all 0.2s;
-  position:relative;overflow:hidden;
-}
-.sub-tab-btn.active,.sub-tab-btn:hover{
-  background:var(--accent);
-  color:#fff;
-  border-color:var(--accent);
-  box-shadow:var(--elev-2);
-}
+.sub-tab-btn{padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:50px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;position:relative;overflow:hidden;}
+.sub-tab-btn.active,.sub-tab-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:var(--elev-2);}
 [data-theme="light"] .sub-tab-btn{border-color:#90CAF9;color:#1565C0;}
-[data-theme="light"] .sub-tab-btn.active,
-[data-theme="light"] .sub-tab-btn:hover{background:#1565C0;border-color:#1565C0;color:#fff;}
-
+[data-theme="light"] .sub-tab-btn.active,[data-theme="light"] .sub-tab-btn:hover{background:#1565C0;border-color:#1565C0;color:#fff;}
 .sub-tab-panel{display:none;}
 .sub-tab-panel.active{display:block;}
 
 /* ============================================================
    DOWNLOAD CONTROLS
 ============================================================ */
-.download-controls{
-  display:flex;
-  align-items:flex-end;
-  gap:16px;flex-wrap:wrap;
-  padding:16px;
-  background:var(--bg-input);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border-light);
-  margin-bottom:16px;
-}
+.download-controls{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:16px;background:var(--bg-input);border-radius:var(--radius-sm);border:1px solid var(--border-light);margin-bottom:16px;}
 [data-theme="light"] .download-controls{background:#EBF4FD;border-color:#B3E5FC;}
 .download-controls .form-group{margin:0;min-width:160px;}
 
 /* ============================================================
-   ENTRIES LIST — Material list items
+   ENTRIES LIST
 ============================================================ */
 .entries-list{margin-top:24px;}
-.entries-list h3{
-  font-family:'Roboto',sans-serif;
-  font-size:11px;letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  font-weight:700;margin-bottom:14px;
-}
+.entries-list h3{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:14px;}
 [data-theme="light"] .entries-list h3{color:#546E7A;}
 
-.entry-item{
-  background:var(--section-card-bg);
-  border:none;
-  border-left:4px solid var(--md-lb-300);
-  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
-  padding:16px 16px 16px 18px;
-  margin-bottom:10px;
-  display:flex;gap:14px;align-items:flex-start;
-  box-shadow:var(--elev-1);
-  transition:box-shadow 0.2s,transform 0.15s;
-}
+.entry-item{background:var(--section-card-bg);border:none;border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 16px 16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--elev-1);transition:box-shadow 0.2s,transform 0.15s;}
 .entry-item:hover{box-shadow:var(--elev-2);transform:translateX(2px);}
 [data-theme="light"] .entry-item{background:#FFFFFF;border-left-color:#1565C0;}
 .entry-text{flex:1;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-primary);line-height:1.65;}
@@ -868,30 +479,11 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 .entry-q{font-weight:700;color:var(--text-primary);margin-bottom:4px;}
 .entry-a{color:var(--md-lb-300);font-weight:700;}
 [data-theme="light"] .entry-a{color:#1565C0;}
-.entry-img{
-  width:80px;height:70px;
-  object-fit:cover;border-radius:var(--radius-sm);
-  border:none;box-shadow:var(--elev-1);
-  flex-shrink:0;
-}
-.entry-delete{
-  background:none;border:none;
-  color:var(--text-muted);cursor:pointer;
-  font-size:16px;padding:6px;
-  border-radius:50%;transition:all 0.2s;
-}
+.entry-img{width:80px;height:70px;object-fit:cover;border-radius:var(--radius-sm);border:none;box-shadow:var(--elev-1);flex-shrink:0;}
+.entry-delete{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:6px;border-radius:50%;transition:all 0.2s;}
 .entry-delete:hover{color:var(--danger);background:rgba(239,83,80,0.10);}
 
-/* ── Material Chips / Badges ── */
-.badge-reason{
-  display:inline-flex;align-items:center;
-  padding:4px 12px;
-  border-radius:50px;
-  font-family:'Roboto',sans-serif;
-  font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:0.5px;
-  gap:4px;
-}
+.badge-reason{display:inline-flex;align-items:center;padding:4px 12px;border-radius:50px;font-family:'Roboto',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;gap:4px;}
 .badge-new   {background:rgba(46,125,50,0.15);  color:#81C784;border:1px solid rgba(46,125,50,0.35);}
 .badge-recall{background:rgba(245,127,23,0.15);  color:#FFB74D;border:1px solid rgba(245,127,23,0.35);}
 .badge-silly {background:rgba(21,101,192,0.15);  color:#64B5F6;border:1px solid rgba(21,101,192,0.35);}
@@ -902,133 +494,109 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 [data-theme="light"] .badge-contro{background:#FFEBEE;color:#C62828;border-color:#EF9A9A;}
 
 /* ============================================================
-   MATERIAL DANGER ZONE
+   DANGER ZONE
 ============================================================ */
-.danger-zone{max-width:980px;margin:40px auto 60px;padding:0 24px;}
-.danger-card{
-  background:var(--danger-zone-bg);
-  border:1px solid rgba(239,83,80,0.40);
-  border-left:5px solid var(--danger);
-  border-radius:var(--radius);
-  padding:28px;
-  box-shadow:var(--elev-4);
-}
+.danger-zone{max-width:980px;margin:40px auto 0;padding:0 24px;}
+.danger-card{background:var(--danger-zone-bg);border:1px solid rgba(239,83,80,0.40);border-left:5px solid var(--danger);border-radius:var(--radius);padding:28px;box-shadow:var(--elev-4);}
 [data-theme="light"] .danger-card{background:#FFF8E1;border-color:rgba(198,40,40,0.30);border-left-color:#C62828;}
-.danger-title{
-  font-family:'Roboto',sans-serif;
-  font-size:14px;letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--danger);font-weight:700;margin-bottom:8px;
-}
+.danger-title{font-family:'Roboto',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--danger);font-weight:700;margin-bottom:8px;}
 [data-theme="light"] .danger-title{color:#C62828;}
-.danger-desc{
-  font-family:'Roboto',sans-serif;
-  font-size:13px;color:var(--text-secondary);
-  margin-bottom:20px;line-height:1.7;font-weight:400;
-}
+.danger-desc{font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7;font-weight:400;}
 [data-theme="light"] .danger-desc{color:#455A64;}
 .danger-actions{display:flex;gap:12px;flex-wrap:wrap;}
 
 /* ============================================================
-   MATERIAL SNACKBAR / TOAST
+   PWA INSTALL SECTION — always visible at bottom
 ============================================================ */
-.toast-container{
-  position:fixed;bottom:24px;right:24px;
-  z-index:9999;
-  display:flex;flex-direction:column;gap:10px;
+.pwa-install-section{
+  max-width:980px;margin:28px auto 60px;padding:0 24px;
 }
-.toast{
-  background:var(--md-navy-700);
-  border:none;
-  border-left:4px solid var(--md-lb-300);
-  border-radius:var(--radius-sm);
-  padding:14px 20px;
-  font-family:'Roboto',sans-serif;
-  font-size:13px;font-weight:500;
-  color:#E8F4FD;
-  box-shadow:var(--elev-8);
-  animation:toastIn 0.3s cubic-bezier(0.2,0,0,1),fadeOut 0.4s ease 2.6s forwards;
-  max-width:320px;
-  letter-spacing:0.2px;
+.pwa-install-card{
+  background:linear-gradient(135deg,#0D2137 0%,#102A4C 60%,#0D2137 100%);
+  border:1px solid rgba(79,195,247,0.35);
+  border-radius:var(--radius);
+  padding:28px;
+  box-shadow:var(--elev-4);
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
 }
+.pwa-install-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#1976D2,#4FC3F7,#0288D1);
+}
+[data-theme="light"] .pwa-install-card{
+  background:linear-gradient(135deg,#E3F2FD 0%,#BBDEFB 60%,#E3F2FD 100%);
+  border-color:rgba(21,101,192,0.30);
+}
+.pwa-install-icon{font-size:48px;flex-shrink:0;line-height:1;}
+.pwa-install-body{flex:1;min-width:0;}
+.pwa-install-title{
+  font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;
+  color:var(--accent);letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+[data-theme="light"] .pwa-install-title{color:#1565C0;}
+.pwa-install-name{
+  font-family:'Roboto',sans-serif;font-size:15px;font-weight:700;
+  color:var(--text-primary);margin-bottom:6px;letter-spacing:0.3px;
+}
+.pwa-install-desc{
+  font-family:'Roboto',sans-serif;font-size:13px;
+  color:var(--text-secondary);line-height:1.65;font-weight:400;
+}
+[data-theme="light"] .pwa-install-desc{color:#0D47A1;}
+.pwa-install-desc strong{color:var(--accent);font-weight:700;}
+[data-theme="light"] .pwa-install-desc strong{color:#1565C0;}
+.pwa-install-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-end;}
+.pwa-ios-tip{
+  font-family:'Roboto',sans-serif;font-size:12px;
+  color:var(--text-muted);line-height:1.5;
+  text-align:center;display:none;
+  max-width:200px;
+}
+.pwa-install-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(46,125,50,0.18);
+  border:1px solid rgba(46,125,50,0.40);
+  border-radius:50px;
+  padding:4px 12px;
+  font-family:'Roboto',sans-serif;font-size:11px;font-weight:700;
+  color:#81C784;letter-spacing:0.5px;margin-top:4px;
+}
+[data-theme="light"] .pwa-install-badge{background:#E8F5E9;color:#2E7D32;border-color:#A5D6A7;}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--md-navy-700);border:none;border-left:4px solid var(--md-lb-300);border-radius:var(--radius-sm);padding:14px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#E8F4FD;box-shadow:var(--elev-8);animation:toastIn 0.3s cubic-bezier(0.2,0,0,1),fadeOut 0.4s ease 2.6s forwards;max-width:320px;letter-spacing:0.2px;}
 .toast.error{border-left-color:var(--danger);}
 [data-theme="light"] .toast{background:#0D2137;color:#E8F4FD;}
-@keyframes toastIn{
-  from{transform:translateX(110%) translateY(8px);opacity:0;}
-  to  {transform:translateX(0) translateY(0);opacity:1;}
-}
+@keyframes toastIn{from{transform:translateX(110%) translateY(8px);opacity:0;}to{transform:translateX(0) translateY(0);opacity:1;}}
 @keyframes fadeOut{to{opacity:0;transform:translateX(110%);}}
 
 /* ============================================================
-   MATERIAL DIALOG / MODAL
+   MODAL
 ============================================================ */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.55);
-  z-index:999;
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  opacity:0;pointer-events:none;
-  transition:opacity 0.25s cubic-bezier(0.4,0,0.2,1);
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.25s cubic-bezier(0.4,0,0.2,1);}
 .modal-overlay.active{opacity:1;pointer-events:all;}
-.modal{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:32px;
-  max-width:420px;width:90%;
-  box-shadow:var(--elev-8);
-  transform:translateY(8px) scale(0.98);
-  transition:transform 0.25s cubic-bezier(0.2,0,0,1);
-}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:420px;width:90%;box-shadow:var(--elev-8);transform:translateY(8px) scale(0.98);transition:transform 0.25s cubic-bezier(0.2,0,0,1);}
 .modal-overlay.active .modal{transform:translateY(0) scale(1);}
 [data-theme="light"] .modal{background:#FFFFFF;}
-.modal h3{
-  font-family:'Roboto',sans-serif;
-  font-size:16px;letter-spacing:0.5px;
-  color:var(--danger);margin-bottom:12px;
-  text-transform:uppercase;font-weight:700;
-}
-.modal p{
-  font-family:'Roboto',sans-serif;
-  font-size:14px;color:var(--text-secondary);
-  margin-bottom:24px;line-height:1.75;font-weight:400;
-}
+.modal h3{font-family:'Roboto',sans-serif;font-size:16px;letter-spacing:0.5px;color:var(--danger);margin-bottom:12px;text-transform:uppercase;font-weight:700;}
+.modal p{font-family:'Roboto',sans-serif;font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.75;font-weight:400;}
 [data-theme="light"] .modal p{color:#455A64;}
 .modal-actions{display:flex;gap:12px;justify-content:flex-end;}
 
 /* ============================================================
-   ADVICE BANNER — Material Info Card
+   ADVICE BANNER
 ============================================================ */
-.advice-banner{
-  display:flex;align-items:flex-start;gap:14px;
-  background:rgba(79,195,247,0.10);
-  border:none;
-  border-left:4px solid var(--md-lb-300);
-  border-radius:0 var(--radius) var(--radius) 0;
-  padding:16px 18px;
-  margin-bottom:20px;
-  box-shadow:var(--elev-1);
-}
-[data-theme="light"] .advice-banner{
-  background:#E3F2FD;
-  border-left-color:#1565C0;
-}
+.advice-banner{display:flex;align-items:flex-start;gap:14px;background:rgba(79,195,247,0.10);border:none;border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;margin-bottom:20px;box-shadow:var(--elev-1);}
+[data-theme="light"] .advice-banner{background:#E3F2FD;border-left-color:#1565C0;}
 .advice-icon{font-size:26px;flex-shrink:0;line-height:1;}
-.advice-body{}
-.advice-title{
-  font-family:'Roboto',sans-serif;
-  font-size:12px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--accent);font-weight:700;margin-bottom:6px;
-}
+.advice-title{font-family:'Roboto',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
 [data-theme="light"] .advice-title{color:#1565C0;}
-.advice-text{
-  font-family:'Roboto',sans-serif;
-  font-size:13px;color:var(--text-secondary);
-  line-height:1.65;font-weight:400;
-}
+.advice-text{font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-secondary);line-height:1.65;font-weight:400;}
 [data-theme="light"] .advice-text{color:#0D47A1;}
 .advice-text strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .advice-text strong{color:#1565C0;}
@@ -1036,77 +604,45 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 /* ============================================================
    MISC
 ============================================================ */
-.topic-tag{
-  display:inline-block;
-  font-size:11px;font-weight:700;
-  color:var(--md-amber-l);
-  background:rgba(255,179,0,0.12);
-  border:1px solid rgba(255,179,0,0.30);
-  border-radius:4px;
-  padding:2px 8px;
-  margin-left:6px;
-  letter-spacing:0.3px;
-}
+.topic-tag{display:inline-block;font-size:11px;font-weight:700;color:var(--md-amber-l);background:rgba(255,179,0,0.12);border:1px solid rgba(255,179,0,0.30);border-radius:4px;padding:2px 8px;margin-left:6px;letter-spacing:0.3px;}
 [data-theme="light"] .topic-tag{color:#E65100;background:rgba(230,81,0,0.10);border-color:rgba(230,81,0,0.30);}
-
-.no-entries{
-  text-align:center;padding:36px;
-  color:var(--text-muted);
-  font-style:italic;
-  font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;
-}
+.no-entries{text-align:center;padding:36px;color:var(--text-muted);font-style:italic;font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;}
 .section-divider{height:1px;background:var(--border-light);margin:28px 0;}
 
-/* ============================================================
-   SCROLLBAR
-============================================================ */
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:var(--bg-primary);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
 
 /* ============================================================
-   RESPONSIVE — TABLET (769–1024)
+   RESPONSIVE
 ============================================================ */
-@media(min-width:1025px){
-  .tabs-wrapper{top:148px;}
-  .tab-panel{max-width:980px;}
-}
 @media(min-width:769px) and (max-width:1024px){
   .header{padding:10px 20px;}
   .logo-img{width:70px;height:70px;margin-bottom:6px;}
   .site-title{font-size:22px;}
   .site-subtitle{font-size:10px;}
-  .tabs-wrapper{top:118px;}
   .tab-btn{padding:14px 16px;font-size:10px;}
   .tab-panel{padding:22px 20px;}
   .slideshow-section{padding:18px 20px;}
   .slide-card{min-height:120px;}
 }
-
-/* ============================================================
-   RESPONSIVE — TABLET PORTRAIT (600–768)
-============================================================ */
 @media(min-width:600px) and (max-width:768px) and (orientation:portrait){
   .header{padding:10px 16px;}
   .logo-img{width:64px;height:64px;margin-bottom:5px;}
   .site-title{font-size:20px;letter-spacing:1px;}
   .site-subtitle{font-size:9.5px;}
-  .tabs-wrapper{top:112px;padding:0 12px;}
+  .tabs-wrapper{padding:0 12px;}
   .tab-btn{padding:14px 14px;font-size:10px;}
   .tab-panel{padding:20px 16px;}
   .form-row{grid-template-columns:1fr 1fr;}
 }
-
-/* ============================================================
-   RESPONSIVE — PHONE PORTRAIT (≤599)
-============================================================ */
 @media(max-width:599px) and (orientation:portrait){
   .header{grid-template-columns:40px 1fr 40px;padding:10px 12px 12px;gap:6px;}
   .logo-img{width:52px;height:52px;border-width:2px;margin-bottom:5px;}
   .site-title{font-size:15px;letter-spacing:0.5px;line-height:1.2;}
   .site-subtitle{font-size:8.5px;letter-spacing:1.5px;margin-top:3px;}
-  .tabs-wrapper{top:0;position:relative;padding:0 4px;}
+  .tabs-wrapper{padding:0 4px;}
   .tabs-nav{justify-content:flex-start;}
   .tab-btn{padding:14px 8px;font-size:8px;letter-spacing:0.5px;}
   .tab-btn::after{height:2px;}
@@ -1140,10 +676,16 @@ select option{background:var(--bg-card);color:var(--text-primary);}
   .advice-banner{padding:12px 12px;gap:10px;}
   .advice-icon{font-size:20px;}
   .advice-text{font-size:12px;}
-  .danger-zone{padding:0 12px;margin:24px auto 48px;}
+  .danger-zone{padding:0 12px;margin:24px auto 0;}
   .danger-card{padding:16px;}
   .danger-actions{flex-direction:column;gap:8px;}
   .danger-actions .btn{width:100%;justify-content:center;}
+  .pwa-install-section{padding:0 12px;margin:20px auto 48px;}
+  .pwa-install-card{padding:20px;gap:16px;}
+  .pwa-install-icon{font-size:36px;}
+  .pwa-install-title{font-size:16px;}
+  .pwa-install-actions{width:100%;align-items:stretch;}
+  .pwa-install-actions .btn{justify-content:center;}
   .modal{padding:20px 16px;}
   .toast{max-width:90vw;font-size:12px;}
 }
@@ -1155,10 +697,6 @@ select option{background:var(--bg-card);color:var(--text-primary);}
   .tab-btn{padding:12px 6px;font-size:7.5px;}
   .advisory-bar{font-size:10px;}
 }
-
-/* ============================================================
-   RESPONSIVE — LANDSCAPE (short height)
-============================================================ */
 @media(max-height:500px) and (orientation:landscape){
   .header{grid-template-columns:38px 1fr 38px;padding:6px 16px;gap:8px;}
   .logo-img{width:40px;height:40px;border-width:2px;margin-bottom:3px;}
@@ -1166,7 +704,7 @@ select option{background:var(--bg-card);color:var(--text-primary);}
   .site-subtitle{font-size:8px;letter-spacing:1.5px;margin-top:2px;}
   .theme-emoji-btn{width:32px;height:32px;font-size:15px;}
   .advisory-bar{font-size:10.5px;padding:5px 16px;}
-  .tabs-wrapper{top:0;position:relative;padding:0 8px;}
+  .tabs-wrapper{padding:0 8px;}
   .tabs-nav{justify-content:flex-start;}
   .tab-btn{padding:10px 12px;font-size:9px;letter-spacing:0.5px;}
   .slideshow-section{padding:8px 16px;}
@@ -1198,7 +736,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
 </head>
 <body>
 
-<header class="header">
+<header class="header" id="siteHeader">
   <div class="header-left">
     <button class="theme-emoji-btn ripple-host" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
   </div>
@@ -1215,9 +753,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   <div class="header-right">
     <div class="name-circle-wrap" id="nameCircleWrap">
       <div class="name-circle ripple-host" id="nameCircle" onclick="toggleNamePopover()" title="Profile">👤</div>
-      <div class="name-popover" id="namePopover">
-        <!-- filled by JS -->
-      </div>
+      <div class="name-popover" id="namePopover"></div>
     </div>
   </div>
 </header>
@@ -1243,7 +779,8 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   </div>
 </section>
 
-<div class="tabs-wrapper">
+<!-- ── TABS: top is set by syncTabsTop() in JS ── -->
+<div class="tabs-wrapper" id="tabsWrapper">
   <div class="tabs-nav">
     <button class="tab-btn active" data-tab="notes">📝 Notes</button>
     <button class="tab-btn" data-tab="facts">🥗 Facts Salad</button>
@@ -1261,10 +798,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     <div class="advice-icon">💡</div>
     <div class="advice-body">
       <div class="advice-title">Pro Tip — Organised Study</div>
-      <div class="advice-text">
-        <strong>Study a specific subject and specific topics</strong> and add notes on them in one session to get an organised PDF.
-        Entry of mixed topics gives a mixed topics PDF.
-      </div>
+      <div class="advice-text"><strong>Study a specific subject and specific topics</strong> and add notes on them in one session to get an organised PDF.</div>
     </div>
   </div>
   <div class="card">
@@ -1285,12 +819,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <textarea id="notes-text" placeholder="Type your notes here..." rows="5"></textarea>
       </div>
       <div class="form-group">
-        <label>Image (max 2 MB)</label>
+        <label>Image (max 2 MB — auto-compressed)</label>
         <div class="img-upload-area">
-          <input type="file" accept="image/*" id="notes-img-input" onchange="handleImageUpload(this,'notes-img-preview','notes-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <input type="file" accept="image/*" id="notes-img-input" onchange="handleImageUpload(this,'notes-img-preview','notes-img-data','notes-compress-status')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/><span>PNG, JPG, WEBP — max 2 MB · Auto-compressed for storage</span></div>
           <img id="notes-img-preview" class="img-preview"/>
         </div>
+        <span class="compress-status" id="notes-compress-status"></span>
         <input type="hidden" id="notes-img-data"/>
       </div>
       <button class="btn btn-primary ripple-host" onclick="saveEntry('notes')">💾 Save Note</button>
@@ -1329,10 +864,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     <div class="advice-icon">💡</div>
     <div class="advice-body">
       <div class="advice-title">Pro Tip — Organised Study</div>
-      <div class="advice-text">
-        <strong>Study a specific subject and specific topics</strong> and add facts on them in one session to get an organised PDF.
-        Entry of mixed topics gives a mixed topics PDF.
-      </div>
+      <div class="advice-text"><strong>Study a specific subject and specific topics</strong> and add facts on them in one session to get an organised PDF.</div>
     </div>
   </div>
   <div class="card">
@@ -1357,12 +889,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <textarea id="facts-answer" placeholder="Enter answer or fact..." rows="3"></textarea>
       </div>
       <div class="form-group">
-        <label>Image (max 2 MB)</label>
+        <label>Image (max 2 MB — auto-compressed)</label>
         <div class="img-upload-area">
-          <input type="file" accept="image/*" id="facts-img-input" onchange="handleImageUpload(this,'facts-img-preview','facts-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <input type="file" accept="image/*" id="facts-img-input" onchange="handleImageUpload(this,'facts-img-preview','facts-img-data','facts-compress-status')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/><span>PNG, JPG, WEBP — max 2 MB · Auto-compressed for storage</span></div>
           <img id="facts-img-preview" class="img-preview"/>
         </div>
+        <span class="compress-status" id="facts-compress-status"></span>
         <input type="hidden" id="facts-img-data"/>
       </div>
       <button class="btn btn-primary ripple-host" onclick="saveEntry('facts')">💾 Save Fact</button>
@@ -1441,12 +974,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 2 MB)</label>
+        <label>Image (max 2 MB — auto-compressed)</label>
         <div class="img-upload-area">
-          <input type="file" accept="image/*" id="pyq-img-input" onchange="handleImageUpload(this,'pyq-img-preview','pyq-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <input type="file" accept="image/*" id="pyq-img-input" onchange="handleImageUpload(this,'pyq-img-preview','pyq-img-data','pyq-compress-status')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/><span>PNG, JPG, WEBP — max 2 MB · Auto-compressed for storage</span></div>
           <img id="pyq-img-preview" class="img-preview"/>
         </div>
+        <span class="compress-status" id="pyq-compress-status"></span>
         <input type="hidden" id="pyq-img-data"/>
       </div>
       <button class="btn btn-primary ripple-host" onclick="saveEntry('pyq')">💾 Save PYQ</button>
@@ -1513,12 +1047,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 2 MB)</label>
+        <label>Image (max 2 MB — auto-compressed)</label>
         <div class="img-upload-area">
-          <input type="file" accept="image/*" id="swt-img-input" onchange="handleImageUpload(this,'swt-img-preview','swt-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <input type="file" accept="image/*" id="swt-img-input" onchange="handleImageUpload(this,'swt-img-preview','swt-img-data','swt-compress-status')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/><span>PNG, JPG, WEBP — max 2 MB · Auto-compressed for storage</span></div>
           <img id="swt-img-preview" class="img-preview"/>
         </div>
+        <span class="compress-status" id="swt-compress-status"></span>
         <input type="hidden" id="swt-img-data"/>
       </div>
       <button class="btn btn-primary ripple-host" onclick="saveEntry('swt')">💾 Save SWT</button>
@@ -1593,12 +1128,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         </div>
       </div>
       <div class="form-group">
-        <label>Image (max 2 MB)</label>
+        <label>Image (max 2 MB — auto-compressed)</label>
         <div class="img-upload-area">
-          <input type="file" accept="image/*" id="gt-img-input" onchange="handleImageUpload(this,'gt-img-preview','gt-img-data')"/>
-          <div class="img-upload-text"><strong>Click to upload</strong> or drag & drop<br/><span>PNG, JPG, WEBP — max 2 MB</span></div>
+          <input type="file" accept="image/*" id="gt-img-input" onchange="handleImageUpload(this,'gt-img-preview','gt-img-data','gt-compress-status')"/>
+          <div class="img-upload-text"><strong>Click to upload</strong> or drag &amp; drop<br/><span>PNG, JPG, WEBP — max 2 MB · Auto-compressed for storage</span></div>
           <img id="gt-img-preview" class="img-preview"/>
         </div>
+        <span class="compress-status" id="gt-compress-status"></span>
         <input type="hidden" id="gt-img-data"/>
       </div>
       <button class="btn btn-primary ripple-host" onclick="saveEntry('gt')">💾 Save GT Mistake</button>
@@ -1633,13 +1169,11 @@ body{padding-bottom:env(safe-area-inset-bottom);}
 
 </main>
 
+<!-- ── DANGER ZONE ── -->
 <div class="danger-zone">
   <div class="danger-card">
     <div class="danger-title">⚠ Danger Zone</div>
-    <p class="danger-desc">
-      Permanently delete your data stored in this browser. This action cannot be undone.
-      All your notes, facts, PYQs, SWT checkpoints, and GT mistakes will be erased from local storage.
-    </p>
+    <p class="danger-desc">Permanently delete your data stored in this browser. This action cannot be undone.</p>
     <div class="danger-actions">
       <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('notes')">🗑 Delete Notes</button>
       <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('facts')">🗑 Delete Facts</button>
@@ -1651,22 +1185,41 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3>⚠ Confirm Permanent Deletion</h3>
-    <p id="modalText">This action is irreversible. All data will be permanently deleted from your browser's local storage.</p>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm ripple-host" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger btn-sm ripple-host" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
+<!-- ═══════════════════════════════════════════
+     PWA INSTALL SECTION — always visible at bottom
+════════════════════════════════════════════ -->
+<div class="pwa-install-section" id="pwaInstallSection">
+  <div class="pwa-install-card">
+    <div class="pwa-install-icon">📲</div>
+    <div class="pwa-install-body">
+      <div class="pwa-install-title">Install App</div>
+      <div class="pwa-install-name">SSS 20th Book</div>
+      <div class="pwa-install-desc">
+        Add <strong>SSS 20th Book</strong> to your home screen for instant access, offline use,
+        and a full-screen experience — no browser bar!
+      </div>
+      <div class="pwa-install-badge" id="pwaInstalledBadge" style="display:none;">✅ App Already Installed!</div>
+    </div>
+    <div class="pwa-install-actions">
+      <!-- Android / Chrome / Edge: shown when prompt available -->
+      <button class="btn btn-install ripple-host" id="pwaMainInstallBtn" style="display:none;">
+        ⬇ Install App
+      </button>
+      <!-- iOS instructions -->
+      <div class="pwa-ios-tip" id="pwaIosTip">
+        📱 On iPhone/iPad:<br/>
+        Tap <strong>Share ↑</strong> → <strong>"Add to Home Screen"</strong>
+      </div>
+      <!-- Fallback for unsupported browsers -->
+      <div class="pwa-ios-tip" id="pwaDesktopTip" style="display:none;">
+        🖥️ On Chrome/Edge:<br/>
+        Click the <strong>⊕ Install</strong> icon in the address bar
+      </div>
     </div>
   </div>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- ═══════════════════════════════════════════
-     PWA INSTALL BANNER
-════════════════════════════════════════════ -->
+<!-- ── OLD floating banner (kept for Android auto-prompt) ── -->
 <div id="pwaInstallBanner" style="
   display:none;
   position:fixed;bottom:0;left:0;right:0;
@@ -1682,16 +1235,29 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   <img src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
     style="width:46px;height:46px;border-radius:50%;border:2px solid #4FC3F7;object-fit:cover;flex-shrink:0;" alt=""/>
   <div style="flex:1;min-width:0;">
-    <div style="font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;color:#4FC3F7;letter-spacing:2px;text-transform:uppercase;">Install App</div>
-    <div style="font-family:'Roboto',sans-serif;font-size:12px;color:rgba(144,202,249,0.85);margin-top:2px;line-height:1.45;font-weight:400;">Add Scalpel Study Squad to your home screen for quick access &amp; offline use.</div>
+    <div style="font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;color:#4FC3F7;letter-spacing:2px;text-transform:uppercase;">SSS 20th Book</div>
+    <div style="font-family:'Roboto',sans-serif;font-size:12px;color:rgba(144,202,249,0.85);margin-top:2px;line-height:1.45;font-weight:400;">Add to your home screen for quick access &amp; offline use.</div>
   </div>
   <button id="pwaInstallBtn" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:1.5px;box-shadow:0 2px 8px rgba(0,0,0,0.3);">⬇ Install</button>
   <button id="pwaDismissBtn" style="background:none;border:none;color:rgba(144,202,249,0.55);font-size:22px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;" title="Dismiss">✕</button>
 </div>
 
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>⚠ Confirm Permanent Deletion</h3>
+    <p id="modalText">This action is irreversible.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm ripple-host" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm ripple-host" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
 <script>
 /* ============================================================
-   CONSTANTS & CONFIG
+   CONSTANTS
 ============================================================ */
 const SUBJECTS = [
   'Anatomy','Physiology','Biochemistry','Pathology','Microbiology',
@@ -1699,226 +1265,205 @@ const SUBJECTS = [
   'Surgery','OBG','Pediatrics','Anesthesia','Dermatology',
   'Orthopedics','Psychiatry','Radiology'
 ];
-
 const SECTION_LABELS = {
-  notes: 'Notes',
-  facts: 'Facts Salad',
-  pyq: 'Difficult PYQ Checkpoint',
-  swt: 'SWT Checkpoint',
-  gt: 'GT Mistakes Checkpoint'
+  notes:'Notes', facts:'Facts Salad',
+  pyq:'Difficult PYQ Checkpoint', swt:'SWT Checkpoint', gt:'GT Mistakes Checkpoint'
 };
-
 const LOGO_URL = 'https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg';
 
 /* ============================================================
-   LOCAL STORAGE DATABASE
+   LOCAL STORAGE DB
 ============================================================ */
 const DB = {};
 const DB_KEYS = ['notes','facts','pyq','swt','gt'];
-
-function loadDB() {
-  DB_KEYS.forEach(k => {
-    try { DB[k] = JSON.parse(localStorage.getItem('sss_' + k) || '[]'); }
-    catch(e) { DB[k] = []; }
-  });
-}
-
-function saveDB(key) {
-  localStorage.setItem('sss_' + key, JSON.stringify(DB[key]));
-}
-
+function loadDB(){DB_KEYS.forEach(k=>{try{DB[k]=JSON.parse(localStorage.getItem('sss_'+k)||'[]');}catch(e){DB[k]=[];}});}
+function saveDB(k){localStorage.setItem('sss_'+k,JSON.stringify(DB[k]));}
 loadDB();
+
+/* ============================================================
+   SYNC TABS TOP — FIX masking issue
+   Measures actual header height and sets tabs sticky top to match.
+   Called on load, resize, and theme change.
+============================================================ */
+function syncTabsTop(){
+  const hdr = document.getElementById('siteHeader');
+  const tabs = document.getElementById('tabsWrapper');
+  if(hdr && tabs){
+    const h = hdr.getBoundingClientRect().height;
+    tabs.style.top = Math.round(h) + 'px';
+  }
+}
+// Run immediately, after fonts load, and on resize
+syncTabsTop();
+window.addEventListener('resize', syncTabsTop);
+window.addEventListener('load', syncTabsTop);
+if(document.fonts){document.fonts.ready.then(syncTabsTop);}
 
 /* ============================================================
    THEME TOGGLE
 ============================================================ */
 const html = document.documentElement;
 const themeToggle = document.getElementById('themeToggle');
-
-let currentTheme = localStorage.getItem('sss_theme') || 'dark';
-html.setAttribute('data-theme', currentTheme);
-themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-
-themeToggle.addEventListener('click', () => {
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', currentTheme);
-  themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-  localStorage.setItem('sss_theme', currentTheme);
+let currentTheme = localStorage.getItem('sss_theme')||'dark';
+html.setAttribute('data-theme',currentTheme);
+themeToggle.textContent = currentTheme==='dark'?'🌙':'☀️';
+themeToggle.addEventListener('click',()=>{
+  currentTheme = currentTheme==='dark'?'light':'dark';
+  html.setAttribute('data-theme',currentTheme);
+  themeToggle.textContent = currentTheme==='dark'?'🌙':'☀️';
+  localStorage.setItem('sss_theme',currentTheme);
+  // Re-sync after theme transition (header height may shift slightly)
+  setTimeout(syncTabsTop, 350);
 });
 
 /* ============================================================
-   LOCAL NAME WIDGET
-============================================================ */
-/* ============================================================
-   PROFILE CIRCLE — POPOVER NAME WIDGET
+   PROFILE NAME POPOVER
 ============================================================ */
 const nameCircle  = document.getElementById('nameCircle');
 const namePopover = document.getElementById('namePopover');
-
-function getStoredName() { return localStorage.getItem('sss_username') || ''; }
-
-function renderCircle() {
+function getStoredName(){return localStorage.getItem('sss_username')||'';}
+function renderCircle(){
   const raw = getStoredName();
-  if (raw) {
-    /* Show first letter only on circle */
-    nameCircle.textContent = raw.charAt(0).toUpperCase();
-    nameCircle.classList.add('has-name');
-  } else {
-    nameCircle.textContent = '👤';
-    nameCircle.classList.remove('has-name');
-  }
+  if(raw){nameCircle.textContent=raw.charAt(0).toUpperCase();nameCircle.classList.add('has-name');}
+  else{nameCircle.textContent='👤';nameCircle.classList.remove('has-name');}
 }
-
-function buildPopoverView() {
+function buildPopoverView(){
   const raw = getStoredName();
-  if (raw) {
-    /* View state — show full Dr. name + Edit button */
-    namePopover.innerHTML = `
+  if(raw){
+    namePopover.innerHTML=`
       <div class="name-popover-label">Your Profile</div>
       <div class="name-popover-fullname">Dr. ${escHtmlName(raw)}</div>
-      <button class="name-popover-edit" onclick="buildPopoverEdit()">✏ Edit Name</button>
-    `;
-  } else {
-    buildPopoverEdit();
-  }
+      <button class="name-popover-edit" onclick="buildPopoverEdit()">✏ Edit Name</button>`;
+  } else { buildPopoverEdit(); }
 }
-
-function buildPopoverEdit() {
-  namePopover.innerHTML = `
+function buildPopoverEdit(){
+  namePopover.innerHTML=`
     <div class="name-popover-label">Enter Your Name</div>
     <div class="name-popover-row">
       <span class="name-popover-prefix">Dr.</span>
-      <input class="name-popover-input" id="namePopInput" type="text"
-        maxlength="30" placeholder="Your name…"
+      <input class="name-popover-input" id="namePopInput" type="text" maxlength="30" placeholder="Your name…"
         onkeydown="if(event.key==='Enter') savePopoverName()"/>
     </div>
-    <button class="name-popover-save" onclick="savePopoverName()">✓ Save</button>
-  `;
+    <button class="name-popover-save" onclick="savePopoverName()">✓ Save</button>`;
   const inp = document.getElementById('namePopInput');
   inp.value = getStoredName();
-  /* slight delay so popover is visible first */
-  setTimeout(() => inp.focus(), 60);
+  setTimeout(()=>inp.focus(),60);
 }
-
-function savePopoverName() {
+function savePopoverName(){
   const inp = document.getElementById('namePopInput');
-  if (!inp) return;
+  if(!inp) return;
   const val = inp.value.trim();
-  if (!val) { showToast('❌ Please enter your name.', 'error'); return; }
-  localStorage.setItem('sss_username', val);
+  if(!val){showToast('❌ Please enter your name.','error');return;}
+  localStorage.setItem('sss_username',val);
   renderCircle();
   buildPopoverView();
   showToast('✅ Name saved!');
 }
-
-function toggleNamePopover() {
+function toggleNamePopover(){
   const isOpen = namePopover.classList.contains('open');
-  if (isOpen) {
-    namePopover.classList.remove('open');
-  } else {
-    buildPopoverView();
-    namePopover.classList.add('open');
-  }
+  if(isOpen){namePopover.classList.remove('open');}
+  else{buildPopoverView();namePopover.classList.add('open');}
 }
-
-/* Close popover when clicking outside */
-document.addEventListener('click', e => {
-  if (!document.getElementById('nameCircleWrap').contains(e.target)) {
+document.addEventListener('click',e=>{
+  if(!document.getElementById('nameCircleWrap').contains(e.target))
     namePopover.classList.remove('open');
-  }
 });
-
-function escHtmlName(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
+function escHtmlName(str){if(!str)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 renderCircle();
 
 /* ============================================================
    POPULATE DROPDOWNS
 ============================================================ */
-function populateSelect(el, options, includeAll = false) {
-  if (!el) return;
-  el.innerHTML = '';
-  if (includeAll) el.innerHTML = '<option value="all">All Subjects</option>';
-  options.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s; o.textContent = s;
-    el.appendChild(o);
-  });
+function populateSelect(el,options,includeAll=false){
+  if(!el)return;el.innerHTML='';
+  if(includeAll)el.innerHTML='<option value="all">All Subjects</option>';
+  options.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;el.appendChild(o);});
 }
-
-function initDropdowns() {
-  document.querySelectorAll('.section-subject-select').forEach(sel => {
-    populateSelect(sel, SUBJECTS);
-  });
-
-  const yearSel = document.getElementById('pyq-year');
-  if (yearSel) {
-    yearSel.innerHTML = '<option value="">Select Year</option>';
-    for (let y = 2025; y >= 2011; y--) {
-      const o = document.createElement('option');
-      o.value = y; o.textContent = y;
-      yearSel.appendChild(o);
-    }
-  }
-
-  const dlIds = [
-    'notes-dl-subject-daily','notes-dl-subject-monthly',
-    'facts-dl-subject-daily','facts-dl-subject-monthly',
-    'pyq-dl-subject-daily','pyq-dl-subject-monthly',
-    'swt-dl-subject-daily','swt-dl-subject-monthly',
-    'gt-dl-subject-daily','gt-dl-subject-monthly'
-  ];
-  dlIds.forEach(id => populateSelect(document.getElementById(id), SUBJECTS, true));
-
-  const today = new Date().toISOString().split('T')[0];
-  const thisMonth = today.substring(0, 7);
-  document.querySelectorAll('input[type="date"]').forEach(el => { if (!el.value) el.value = today; });
-  document.querySelectorAll('input[type="month"]').forEach(el => { if (!el.value) el.value = thisMonth; });
+function initDropdowns(){
+  document.querySelectorAll('.section-subject-select').forEach(sel=>populateSelect(sel,SUBJECTS));
+  const yearSel=document.getElementById('pyq-year');
+  if(yearSel){yearSel.innerHTML='<option value="">Select Year</option>';for(let y=2025;y>=2011;y--){const o=document.createElement('option');o.value=y;o.textContent=y;yearSel.appendChild(o);}}
+  ['notes-dl-subject-daily','notes-dl-subject-monthly','facts-dl-subject-daily','facts-dl-subject-monthly',
+   'pyq-dl-subject-daily','pyq-dl-subject-monthly','swt-dl-subject-daily','swt-dl-subject-monthly',
+   'gt-dl-subject-daily','gt-dl-subject-monthly'].forEach(id=>populateSelect(document.getElementById(id),SUBJECTS,true));
+  const today=new Date().toISOString().split('T')[0];
+  const thisMonth=today.substring(0,7);
+  document.querySelectorAll('input[type="date"]').forEach(el=>{if(!el.value)el.value=today;});
+  document.querySelectorAll('input[type="month"]').forEach(el=>{if(!el.value)el.value=thisMonth;});
 }
-
 initDropdowns();
 
 /* ============================================================
    TABS
 ============================================================ */
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
-    const panel = document.getElementById('panel-' + btn.dataset.tab);
-    if (panel) panel.classList.add('active');
+    const panel=document.getElementById('panel-'+btn.dataset.tab);
+    if(panel)panel.classList.add('active');
   });
 });
-
-function switchSubTab(btn, panelId) {
-  const parent = btn.closest('.card');
-  parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-  parent.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+function switchSubTab(btn,panelId){
+  const parent=btn.closest('.card');
+  parent.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));
+  parent.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
 
 /* ============================================================
-   IMAGE UPLOAD
+   IMAGE COMPRESSION — new core function
+   Resizes to max 1200×1200 and compresses to JPEG at 0.72 quality.
+   This typically reduces a 2MB photo to ~150-350KB in storage.
 ============================================================ */
-function handleImageUpload(input, previewId, dataId) {
+function compressImage(dataUrl, callback){
+  const MAX_DIM = 1200;
+  const QUALITY = 0.72;
+  const img = new Image();
+  img.onload = () => {
+    let w = img.width, h = img.height;
+    if(w > MAX_DIM || h > MAX_DIM){
+      const ratio = Math.min(MAX_DIM/w, MAX_DIM/h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', QUALITY));
+  };
+  img.onerror = () => callback(dataUrl); // fallback: use original
+  img.src = dataUrl;
+}
+
+/* ============================================================
+   IMAGE UPLOAD HANDLER — now with compression
+============================================================ */
+function handleImageUpload(input, previewId, dataId, statusId){
   const file = input.files[0];
-  if (!file) return;
-  if (file.size > 2097152) {
-    showToast('❌ Image too large. Max 2 MB allowed.', 'error');
-    input.value = '';
-    return;
+  if(!file) return;
+  if(file.size > 2097152){
+    showToast('❌ Image too large. Max 2 MB allowed.','error');
+    input.value='';return;
   }
+  const statusEl = document.getElementById(statusId);
+  if(statusEl){statusEl.textContent='⏳ Compressing...';statusEl.classList.add('visible');}
   const reader = new FileReader();
-  reader.onload = (e) => {
-    document.getElementById(dataId).value = e.target.result;
-    const preview = document.getElementById(previewId);
-    preview.src = e.target.result;
-    preview.style.display = 'block';
+  reader.onload = e => {
+    const originalSize = Math.round(e.target.result.length / 1024);
+    compressImage(e.target.result, compressed => {
+      const compressedSize = Math.round(compressed.length / 1024);
+      document.getElementById(dataId).value = compressed;
+      const preview = document.getElementById(previewId);
+      preview.src = compressed;
+      preview.style.display = 'block';
+      if(statusEl){
+        statusEl.textContent = `✅ Compressed: ~${originalSize} KB → ~${compressedSize} KB saved`;
+        statusEl.classList.add('visible');
+      }
+    });
   };
   reader.readAsDataURL(file);
 }
@@ -1926,635 +1471,562 @@ function handleImageUpload(input, previewId, dataId) {
 /* ============================================================
    SAVE ENTRY
 ============================================================ */
-function getTimestamp() {
-  const now = new Date();
-  return {
-    timestamp: now.toISOString(),
-    date: now.toISOString().split('T')[0],
-    month: now.toISOString().substring(0, 7),
-    displayDate: now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }),
-    displayTime: now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })
-  };
+function getTimestamp(){
+  const now=new Date();
+  return{timestamp:now.toISOString(),date:now.toISOString().split('T')[0],month:now.toISOString().substring(0,7),
+         displayDate:now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+         displayTime:now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
 }
-
-function saveEntry(section) {
-  const ts = getTimestamp();
-  let entry = { id: Date.now(), ...ts };
-
-  if (section === 'notes') {
-    const subject = document.getElementById('notes-subject').value;
-    const topic = document.getElementById('notes-topic').value.trim();
-    const text = document.getElementById('notes-text').value.trim();
-    if (!text) { showToast('❌ Please enter notes text.', 'error'); return; }
-    entry = { ...entry, subject, topic, text, image: document.getElementById('notes-img-data').value };
-    clearForm('notes', ['notes-topic','notes-text','notes-img-data'], ['notes-img-preview']);
-
-  } else if (section === 'facts') {
-    const subject = document.getElementById('facts-subject').value;
-    const topic = document.getElementById('facts-topic').value.trim();
-    const question = document.getElementById('facts-question').value.trim();
-    const answer = document.getElementById('facts-answer').value.trim();
-    if (!question || !answer) { showToast('❌ Question and answer required.', 'error'); return; }
-    entry = { ...entry, subject, topic, question, answer, image: document.getElementById('facts-img-data').value };
-    clearForm('facts', ['facts-topic','facts-question','facts-answer','facts-img-data'], ['facts-img-preview']);
-
-  } else if (section === 'pyq') {
-    const subject = document.getElementById('pyq-subject').value;
-    const exam = document.getElementById('pyq-exam').value;
-    const year = document.getElementById('pyq-year').value;
-    const question = document.getElementById('pyq-question').value.trim();
-    const correct = document.getElementById('pyq-correct').value.trim();
-    const wrong = document.getElementById('pyq-wrong').value.trim();
-    const reason = document.getElementById('pyq-reason').value;
-    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
-    entry = { ...entry, subject, exam, year, question, correct, wrong, reason, image: document.getElementById('pyq-img-data').value };
-    clearForm('pyq', ['pyq-question','pyq-correct','pyq-wrong','pyq-img-data'], ['pyq-img-preview']);
-
-  } else if (section === 'swt') {
-    const subject = document.getElementById('swt-subject').value;
-    const question = document.getElementById('swt-question').value.trim();
-    const correct = document.getElementById('swt-correct').value.trim();
-    const wrong = document.getElementById('swt-wrong').value.trim();
-    const reason = document.getElementById('swt-reason').value;
-    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
-    entry = { ...entry, subject, question, correct, wrong, reason, image: document.getElementById('swt-img-data').value };
-    clearForm('swt', ['swt-question','swt-correct','swt-wrong','swt-img-data'], ['swt-img-preview']);
-
-  } else if (section === 'gt') {
-    const subject = document.getElementById('gt-subject').value;
-    const exam = document.getElementById('gt-exam').value;
-    const question = document.getElementById('gt-question').value.trim();
-    const correct = document.getElementById('gt-correct').value.trim();
-    const wrong = document.getElementById('gt-wrong').value.trim();
-    const reason = document.getElementById('gt-reason').value;
-    if (!question || !correct) { showToast('❌ Question and correct answer required.', 'error'); return; }
-    entry = { ...entry, subject, exam, question, correct, wrong, reason, image: document.getElementById('gt-img-data').value };
-    clearForm('gt', ['gt-question','gt-correct','gt-wrong','gt-img-data'], ['gt-img-preview']);
+function saveEntry(section){
+  const ts=getTimestamp();let entry={id:Date.now(),...ts};
+  if(section==='notes'){
+    const subject=document.getElementById('notes-subject').value;
+    const topic=document.getElementById('notes-topic').value.trim();
+    const text=document.getElementById('notes-text').value.trim();
+    if(!text){showToast('❌ Please enter notes text.','error');return;}
+    entry={...entry,subject,topic,text,image:document.getElementById('notes-img-data').value};
+    clearForm('notes',['notes-topic','notes-text','notes-img-data'],['notes-img-preview'],'notes-compress-status');
+  } else if(section==='facts'){
+    const subject=document.getElementById('facts-subject').value;
+    const topic=document.getElementById('facts-topic').value.trim();
+    const question=document.getElementById('facts-question').value.trim();
+    const answer=document.getElementById('facts-answer').value.trim();
+    if(!question||!answer){showToast('❌ Question and answer required.','error');return;}
+    entry={...entry,subject,topic,question,answer,image:document.getElementById('facts-img-data').value};
+    clearForm('facts',['facts-topic','facts-question','facts-answer','facts-img-data'],['facts-img-preview'],'facts-compress-status');
+  } else if(section==='pyq'){
+    const subject=document.getElementById('pyq-subject').value;
+    const exam=document.getElementById('pyq-exam').value;
+    const year=document.getElementById('pyq-year').value;
+    const question=document.getElementById('pyq-question').value.trim();
+    const correct=document.getElementById('pyq-correct').value.trim();
+    const wrong=document.getElementById('pyq-wrong').value.trim();
+    const reason=document.getElementById('pyq-reason').value;
+    if(!question||!correct){showToast('❌ Question and correct answer required.','error');return;}
+    entry={...entry,subject,exam,year,question,correct,wrong,reason,image:document.getElementById('pyq-img-data').value};
+    clearForm('pyq',['pyq-question','pyq-correct','pyq-wrong','pyq-img-data'],['pyq-img-preview'],'pyq-compress-status');
+  } else if(section==='swt'){
+    const subject=document.getElementById('swt-subject').value;
+    const question=document.getElementById('swt-question').value.trim();
+    const correct=document.getElementById('swt-correct').value.trim();
+    const wrong=document.getElementById('swt-wrong').value.trim();
+    const reason=document.getElementById('swt-reason').value;
+    if(!question||!correct){showToast('❌ Question and correct answer required.','error');return;}
+    entry={...entry,subject,question,correct,wrong,reason,image:document.getElementById('swt-img-data').value};
+    clearForm('swt',['swt-question','swt-correct','swt-wrong','swt-img-data'],['swt-img-preview'],'swt-compress-status');
+  } else if(section==='gt'){
+    const subject=document.getElementById('gt-subject').value;
+    const exam=document.getElementById('gt-exam').value;
+    const question=document.getElementById('gt-question').value.trim();
+    const correct=document.getElementById('gt-correct').value.trim();
+    const wrong=document.getElementById('gt-wrong').value.trim();
+    const reason=document.getElementById('gt-reason').value;
+    if(!question||!correct){showToast('❌ Question and correct answer required.','error');return;}
+    entry={...entry,subject,exam,question,correct,wrong,reason,image:document.getElementById('gt-img-data').value};
+    clearForm('gt',['gt-question','gt-correct','gt-wrong','gt-img-data'],['gt-img-preview'],'gt-compress-status');
   }
-
   DB[section].unshift(entry);
   saveDB(section);
   renderList(section);
-  if (section === 'facts') updateSlideshow();
+  if(section==='facts')updateSlideshow();
   showToast('✅ Saved successfully!');
 }
 
-function clearForm(section, textIds, imgIds) {
-  textIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  imgIds.forEach(id => { const el = document.getElementById(id); if (el) { el.src = ''; el.style.display = 'none'; } });
-  const fileInput = document.getElementById(section + '-img-input');
-  if (fileInput) fileInput.value = '';
+function clearForm(section,textIds,imgIds,statusId){
+  textIds.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  imgIds.forEach(id=>{const el=document.getElementById(id);if(el){el.src='';el.style.display='none';}});
+  const fileInput=document.getElementById(section+'-img-input');
+  if(fileInput)fileInput.value='';
+  if(statusId){const s=document.getElementById(statusId);if(s){s.textContent='';s.classList.remove('visible');}}
 }
 
 /* ============================================================
    RENDER LISTS
 ============================================================ */
-function reasonBadge(reason) {
-  if (!reason) return '';
-  const map = {
-    'New Concept': 'badge-new',
-    'Recall gap': 'badge-recall',
-    'Silly mistake': 'badge-silly',
-    'Controversial': 'badge-contro'
-  };
-  return `<span class="badge-reason ${map[reason] || ''}">${reason}</span>`;
+function reasonBadge(reason){
+  if(!reason)return'';
+  const map={'New Concept':'badge-new','Recall gap':'badge-recall','Silly mistake':'badge-silly','Controversial':'badge-contro'};
+  return`<span class="badge-reason ${map[reason]||''}">${reason}</span>`;
 }
-
-function renderList(section) {
-  const container = document.getElementById('list-' + section);
-  if (!container) return;
-  const data = DB[section];
-  if (!data.length) { container.innerHTML = '<div class="no-entries">No entries saved yet.</div>'; return; }
-
-  container.innerHTML = data.map((e, i) => {
-    let bodyHtml = '';
-    if (section === 'notes') {
-      bodyHtml = `<div class="entry-q">${escHtml(e.text)}</div>`;
+function renderList(section){
+  const container=document.getElementById('list-'+section);
+  if(!container)return;
+  const data=DB[section];
+  if(!data.length){container.innerHTML='<div class="no-entries">No entries saved yet.</div>';return;}
+  container.innerHTML=data.map((e,i)=>{
+    let bodyHtml='';
+    if(section==='notes'){
+      bodyHtml=`<div class="entry-q">${escHtml(e.text)}</div>`;
     } else {
-      bodyHtml = `<div class="entry-q">Q: ${escHtml(e.question)}</div>
-        <div class="entry-a">✅ ${escHtml(e.correct || e.answer || '')}</div>`;
-      if (e.wrong) bodyHtml += `<div style="color:var(--danger);font-size:12px;margin-top:4px;">✗ ${escHtml(e.wrong)}</div>`;
-      if (e.reason) bodyHtml += `<div style="margin-top:6px;">${reasonBadge(e.reason)}</div>`;
+      bodyHtml=`<div class="entry-q">Q: ${escHtml(e.question)}</div>
+        <div class="entry-a">✅ ${escHtml(e.correct||e.answer||'')}</div>`;
+      if(e.wrong)bodyHtml+=`<div style="color:var(--danger);font-size:12px;margin-top:4px;">✗ ${escHtml(e.wrong)}</div>`;
+      if(e.reason)bodyHtml+=`<div style="margin-top:6px;">${reasonBadge(e.reason)}</div>`;
     }
-    const meta = [e.subject, e.topic ? `📌 ${e.topic}` : null, e.displayDate, e.displayTime, e.exam, e.year].filter(Boolean).join(' · ');
-    return `<div class="entry-item">
+    const meta=[e.subject,e.topic?`📌 ${e.topic}`:null,e.displayDate,e.displayTime,e.exam,e.year].filter(Boolean).join(' · ');
+    return`<div class="entry-item">
       <div class="entry-text">
         <div class="entry-meta">${escHtml(meta)}</div>
         ${bodyHtml}
       </div>
-      ${e.image ? `<img class="entry-img" src="${e.image}" alt="Entry image"/>` : ''}
-      <button class="entry-delete" onclick="deleteEntry('${section}', ${e.id})" title="Delete">✕</button>
+      ${e.image?`<img class="entry-img" src="${e.image}" alt="Entry image"/>`:''}
+      <button class="entry-delete" onclick="deleteEntry('${section}',${e.id})" title="Delete">✕</button>
     </div>`;
   }).join('');
 }
-
-function deleteEntry(section, id) {
-  DB[section] = DB[section].filter(e => e.id !== id);
-  saveDB(section);
-  renderList(section);
-  if (section === 'facts') updateSlideshow();
+function deleteEntry(section,id){
+  DB[section]=DB[section].filter(e=>e.id!==id);
+  saveDB(section);renderList(section);
+  if(section==='facts')updateSlideshow();
   showToast('Entry deleted.');
 }
-
-function escHtml(str) {
-  if (!str) return '';
+function escHtml(str){
+  if(!str)return'';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br/>');
 }
-
-DB_KEYS.forEach(k => renderList(k));
+DB_KEYS.forEach(k=>renderList(k));
 
 /* ============================================================
    SLIDESHOW
 ============================================================ */
-let slideIndex = 0;
-let slideTimer = null;
-
-function updateSlideshow() {
-  const facts = DB.facts;
-  const card = document.getElementById('slideCard');
-  const counter = document.getElementById('slideCounter');
-
-  if (!facts.length) {
-    document.getElementById('slideContent').innerHTML = '<div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>';
-    counter.textContent = '0 / 0';
-    return;
+let slideIndex=0,slideTimer=null;
+function updateSlideshow(){
+  const facts=DB.facts;
+  const card=document.getElementById('slideCard');
+  const counter=document.getElementById('slideCounter');
+  if(!facts.length){
+    document.getElementById('slideContent').innerHTML='<div class="slide-empty">No facts saved yet. Add some in the Facts Salad section below!</div>';
+    counter.textContent='0 / 0';return;
   }
-
-  if (slideIndex >= facts.length) slideIndex = 0;
-  if (slideIndex < 0) slideIndex = facts.length - 1;
-
-  const f = facts[slideIndex];
-  const contentEl = document.getElementById('slideContent');
-  contentEl.innerHTML = `
+  if(slideIndex>=facts.length)slideIndex=0;
+  if(slideIndex<0)slideIndex=facts.length-1;
+  const f=facts[slideIndex];
+  document.getElementById('slideContent').innerHTML=`
     <span class="slide-badge">📚 Facts Salad</span>
     <div class="slide-subject">${escHtml(f.subject)}</div>
     <div class="slide-question">${escHtml(f.question)}</div>
-    <div class="slide-answer">→ ${escHtml(f.answer)}</div>
-  `;
-
-  const existImg = card.querySelector('.slide-image');
-  if (existImg) existImg.remove();
-  if (f.image) {
-    const img = document.createElement('img');
-    img.className = 'slide-image';
-    img.src = f.image;
-    img.alt = 'Fact image';
+    <div class="slide-answer">→ ${escHtml(f.answer)}</div>`;
+  const existImg=card.querySelector('.slide-image');
+  if(existImg)existImg.remove();
+  if(f.image){
+    const img=document.createElement('img');
+    img.className='slide-image';img.src=f.image;img.alt='Fact image';
     card.appendChild(img);
   }
-
-  counter.textContent = `${slideIndex + 1} / ${facts.length}`;
-  void card.offsetWidth;
+  counter.textContent=`${slideIndex+1} / ${facts.length}`;
   resetSlideTimer();
 }
-
-function resetSlideTimer() {
+function resetSlideTimer(){
   clearInterval(slideTimer);
-  slideTimer = setInterval(() => { slideIndex++; updateSlideshow(); }, 20000);
+  slideTimer=setInterval(()=>{slideIndex++;updateSlideshow();},20000);
 }
-
-document.getElementById('slidePrev').addEventListener('click', () => { slideIndex--; updateSlideshow(); });
-document.getElementById('slideNext').addEventListener('click', () => { slideIndex++; updateSlideshow(); });
-
+document.getElementById('slidePrev').addEventListener('click',()=>{slideIndex--;updateSlideshow();});
+document.getElementById('slideNext').addEventListener('click',()=>{slideIndex++;updateSlideshow();});
 updateSlideshow();
 
 /* ============================================================
    PDF GENERATION
+   ► PDF subtitle now shows "Dr. [Name]'s 20th Notebook – Revision Report"
 ============================================================ */
-let logoBase64 = null;
-
-function loadLogoBase64(callback) {
-  if (logoBase64) { callback(logoBase64); return; }
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth || 200;
-    canvas.height = img.naturalHeight || 200;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    try {
-      logoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-      callback(logoBase64);
-    } catch(e) { callback(null); }
+let logoBase64=null;
+function loadLogoBase64(callback){
+  if(logoBase64){callback(logoBase64);return;}
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=img.naturalWidth||200;canvas.height=img.naturalHeight||200;
+    canvas.getContext('2d').drawImage(img,0,0);
+    try{logoBase64=canvas.toDataURL('image/jpeg',0.8);callback(logoBase64);}
+    catch(e){callback(null);}
   };
-  img.onerror = () => callback(null);
-  img.src = LOGO_URL;
+  img.onerror=()=>callback(null);
+  img.src=LOGO_URL;
 }
 
-async function downloadPDF(section, mode) {
-  const subjectKey = `${section}-dl-subject-${mode === 'daily' ? 'daily' : 'monthly'}`;
-  const subject = document.getElementById(subjectKey)?.value || 'all';
-
-  let filterDate = '';
-  let filterMonth = '';
-  let subtitleExtra = '';
-
-  if (mode === 'daily') {
-    filterDate = document.getElementById(`${section}-dl-date`)?.value || '';
-    if (!filterDate) { showToast('❌ Please select a date.', 'error'); return; }
-    const d = new Date(filterDate);
-    subtitleExtra = d.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+async function downloadPDF(section,mode){
+  const subjectKey=`${section}-dl-subject-${mode==='daily'?'daily':'monthly'}`;
+  const subject=document.getElementById(subjectKey)?.value||'all';
+  let filterDate='',filterMonth='',subtitleExtra='';
+  if(mode==='daily'){
+    filterDate=document.getElementById(`${section}-dl-date`)?.value||'';
+    if(!filterDate){showToast('❌ Please select a date.','error');return;}
+    const d=new Date(filterDate);
+    subtitleExtra=d.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
   } else {
-    filterMonth = document.getElementById(`${section}-dl-month`)?.value || '';
-    if (!filterMonth) { showToast('❌ Please select a month.', 'error'); return; }
-    const [y, m] = filterMonth.split('-');
-    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    subtitleExtra = `${monthNames[parseInt(m)-1]} ${y}`;
+    filterMonth=document.getElementById(`${section}-dl-month`)?.value||'';
+    if(!filterMonth){showToast('❌ Please select a month.','error');return;}
+    const[y,m]=filterMonth.split('-');
+    const mNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    subtitleExtra=`${mNames[parseInt(m)-1]} ${y}`;
   }
-
-  let data = DB[section].filter(e => {
-    const subjectMatch = subject === 'all' || e.subject === subject;
-    const dateMatch = mode === 'daily' ? e.date === filterDate : e.month === filterMonth;
-    return subjectMatch && dateMatch;
+  let data=DB[section].filter(e=>{
+    const subMatch=subject==='all'||e.subject===subject;
+    const dateMatch=mode==='daily'?e.date===filterDate:e.month===filterMonth;
+    return subMatch&&dateMatch;
   });
-
-  if (!data.length) {
-    showToast(`❌ No entries found for ${subject === 'all' ? 'all subjects' : subject} on ${subtitleExtra}.`, 'error');
-    return;
-  }
-
+  if(!data.length){showToast(`❌ No entries found for ${subject==='all'?'all subjects':subject} on ${subtitleExtra}.`,'error');return;}
   showToast('⏳ Generating PDF...');
-  loadLogoBase64((logo) => { generateJsPDF(section, subject, subtitleExtra, mode, data, logo); });
+  loadLogoBase64(logo=>generateJsPDF(section,subject,subtitleExtra,mode,data,logo));
 }
 
-/* ============================================================
-   CORE PDF ENGINE
-============================================================ */
-function generateJsPDF(section, subject, subtitleExtra, mode, data, logo) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+function generateJsPDF(section,subject,subtitleExtra,mode,data,logo){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  const PW=doc.internal.pageSize.getWidth();
+  const PH=doc.internal.pageSize.getHeight();
+  const M=15,CW=PW-M*2;
+  let y=M;
+  const lh=pt=>pt*0.42+1.6;
 
-  const PW  = doc.internal.pageSize.getWidth();
-  const PH  = doc.internal.pageSize.getHeight();
-  const M   = 15;
-  const CW  = PW - M * 2;
-  let y = M;
+  /* ── User name for PDF subtitle ── */
+  const storedName = localStorage.getItem('sss_username')||'';
+  const pdfSubtitle = storedName
+    ? `Dr. ${storedName}'s 20th Notebook \u2014 Revision Report`
+    : '20th Book \u2014 Revision Report';
 
-  const lh = (pt) => pt * 0.42 + 1.6;
+  function np(needed=30){
+    if(y+needed>PH-M-14){doc.addPage();y=M;repeatHeader();}
+  }
+  const C={
+    green:[26,71,49],greenMid:[40,100,65],gold:[180,120,10],goldBg:[255,248,220],
+    white:[255,255,255],nearBlack:[15,15,15],ansGreen:[16,90,50],wrongRed:[180,30,30],
+    stripBg:[235,248,240],divider:[200,230,210],muted:[100,100,100],
+    headerBg:[22,60,42],topicRed:[200,0,0]
+  };
+  function drawAccentBar(){
+    doc.setFillColor(...C.green);doc.rect(0,0,PW,6,'F');
+    doc.setFillColor(...[251,191,36]);doc.rect(0,5.5,PW,2,'F');
+  }
+  function repeatHeader(){
+    drawAccentBar();
+    doc.setFillColor(...C.headerBg);doc.rect(0,7.5,PW,10,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.white);
+    const subLabel=subject==='all'?'All Subjects':subject;
+    doc.text(`SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,PW/2,14,{align:'center'});
+    y=22;
+  }
 
-  function np(needed = 30) {
-    if (y + needed > PH - M - 14) {
-      doc.addPage();
-      y = M;
-      repeatHeader();
+  /* ── COVER PAGE ── */
+  drawAccentBar();y=10;
+  const logoSize=38;
+  if(logo){try{doc.addImage(logo,'JPEG',M,y,logoSize,logoSize,'','FAST');}catch(e){}}
+  const tx=logo?M+logoSize+8:M;const titleW=PW-tx-M;
+
+  doc.setFont('helvetica','bold');doc.setFontSize(24);doc.setTextColor(...C.green);
+  doc.text('SCALPEL STUDY SQUAD',tx,y+11,{maxWidth:titleW});
+
+  /* ── Dynamic subtitle with Dr. Name ── */
+  doc.setFontSize(13);doc.setTextColor(...C.gold);
+  doc.text(pdfSubtitle,tx,y+22,{maxWidth:titleW});
+
+  doc.setFontSize(12);doc.setTextColor(...C.nearBlack);
+  const dateLabel=mode==='daily'?`Date: ${subtitleExtra}`:`Month: ${subtitleExtra}`;
+  doc.text(dateLabel,tx,y+33,{maxWidth:titleW});
+
+  y=Math.max(y+logoSize+4,y+42);
+
+  doc.setFillColor(...C.stripBg);doc.setDrawColor(...C.green);doc.setLineWidth(0.6);
+  doc.roundedRect(M,y,CW,28,3,3,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(17);doc.setTextColor(...C.green);
+  doc.text(`Subject: ${subject==='all'?'All Subjects':subject}`,M+7,y+11);
+  doc.setFontSize(14);doc.setTextColor(...C.greenMid);
+  doc.text(`Section: ${SECTION_LABELS[section]}`,M+7,y+22);
+  y+=34;
+
+  doc.setFillColor(...C.green);doc.rect(M,y,CW,2,'F');y+=10;
+
+  /* ──────────────────────────────────────────────────────────
+     flowText — renders text that fills beside the image first,
+     then continues at full column width below the image.
+     Words are re-wrapped each line so every pixel of width is used.
+
+     rawText    : string to render
+     fontSize   : pt
+     mainColor  : [r,g,b]
+     prefix     : short label e.g. 'Q:' or null
+     prefixMM   : horizontal space the prefix occupies in mm
+     prefixColor: [r,g,b] for the prefix label
+     narrowW    : available width while beside the image (mm)
+     imgEndY    : y coordinate where image bottom ends — below this use CW
+  ────────────────────────────────────────────────────────── */
+  function flowText(rawText, fontSize, mainColor, prefix, prefixMM, prefixColor, narrowW, imgEndY){
+    if(!rawText && !rawText===0) return;
+    const text = String(rawText||'');
+    if(!text.trim()) return;
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(fontSize);
+    const lineH = lh(fontSize);
+
+    // Split full text into words for dynamic re-wrapping
+    const words = text.split(/\s+/).filter(Boolean);
+    let currentLine = '';
+    let isFirstLine = true;
+
+    function getAvailW(){
+      // below image → full column; beside image → narrow
+      return (y >= imgEndY) ? CW - 2 : narrowW - 2;
+    }
+    function getIndent(){
+      // first line gets prefix indent; subsequent lines align with text start
+      return (isFirstLine && prefix) ? prefixMM : 0;
+    }
+
+    function flushLine(line){
+      if(!line.trim()) return;
+      np(lineH + 1);
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(fontSize);
+      if(isFirstLine && prefix){
+        doc.setTextColor(...prefixColor);
+        doc.text(prefix, M, y);
+        doc.setTextColor(...mainColor);
+        doc.text(line, M + prefixMM, y);
+      } else {
+        doc.setTextColor(...mainColor);
+        doc.text(line, M, y);
+      }
+      y += lineH;
+      isFirstLine = false;
+    }
+
+    for(let i = 0; i <= words.length; i++){
+      const word = words[i]; // undefined on last iteration → flush
+      const availW = getAvailW();
+      const indent = getIndent();
+      const testLine = currentLine ? currentLine + ' ' + (word||'') : (word||'');
+
+      // Check if adding this word exceeds available width
+      const testW = doc.getTextWidth(testLine);
+      const maxW  = availW - indent;
+
+      if(word === undefined || testW > maxW){
+        // Flush current line
+        flushLine(currentLine);
+        currentLine = word || '';
+      } else {
+        currentLine = testLine;
+      }
     }
   }
 
-  const C = {
-    green:    [26,  71,  49],
-    greenMid: [40, 100,  65],
-    gold:     [180, 120,  10],
-    goldBg:   [255, 248, 220],
-    white:    [255, 255, 255],
-    nearBlack:[15,  15,  15],
-    ansGreen: [16,  90,  50],
-    wrongRed: [180,  30,  30],
-    stripBg:  [235, 248, 240],
-    divider:  [200, 230, 210],
-    muted:    [100, 100, 100],
-    headerBg: [22,  60,  42],
-    topicRed: [200,   0,   0],
-  };
-
-  function drawAccentBar() {
-    doc.setFillColor(...C.green);
-    doc.rect(0, 0, PW, 6, 'F');
-    doc.setFillColor(...[251, 191, 36]);
-    doc.rect(0, 5.5, PW, 2, 'F');
-  }
-
-  function repeatHeader() {
-    drawAccentBar();
-    doc.setFillColor(...C.headerBg);
-    doc.rect(0, 7.5, PW, 10, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...C.white);
-    const subLabel = subject === 'all' ? 'All Subjects' : subject;
-    doc.text(
-      `SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,
-      PW / 2, 14, { align: 'center' }
-    );
-    y = 22;
-  }
-
-  /* ═══════════════════════════════════════════
-     COVER PAGE
-  ═══════════════════════════════════════════ */
-  drawAccentBar();
-  y = 10;
-
-  const logoSize = 38;
-  if (logo) {
-    try { doc.addImage(logo, 'JPEG', M, y, logoSize, logoSize, '', 'FAST'); }
-    catch(e) {}
-  }
-
-  const tx = logo ? M + logoSize + 8 : M;
-  const titleW = PW - tx - M;
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
-  doc.setTextColor(...C.green);
-  doc.text('SCALPEL STUDY SQUAD', tx, y + 11, { maxWidth: titleW });
-
-  doc.setFontSize(15);
-  doc.setTextColor(...C.gold);
-  doc.text('20th Book  —  Revision Report', tx, y + 22, { maxWidth: titleW });
-
-  doc.setFontSize(13);
-  doc.setTextColor(...C.nearBlack);
-  const dateLabel = mode === 'daily' ? `Date: ${subtitleExtra}` : `Month: ${subtitleExtra}`;
-  doc.text(dateLabel, tx, y + 32, { maxWidth: titleW });
-
-  y = Math.max(y + logoSize + 4, y + 40);
-
-  doc.setFillColor(...C.stripBg);
-  doc.setDrawColor(...C.green);
-  doc.setLineWidth(0.6);
-  doc.roundedRect(M, y, CW, 28, 3, 3, 'FD');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(17);
-  doc.setTextColor(...C.green);
-  doc.text(`Subject: ${subject === 'all' ? 'All Subjects' : subject}`, M + 7, y + 11);
-
-  doc.setFontSize(14);
-  doc.setTextColor(...C.greenMid);
-  doc.text(`Section: ${SECTION_LABELS[section]}`, M + 7, y + 22);
-
-  y += 34;
-
-  doc.setFillColor(...C.green);
-  doc.rect(M, y, CW, 2, 'F');
-  y += 10;
-
-  /* ═══════════════════════════════════════════
-     ENTRIES
-  ═══════════════════════════════════════════ */
-  data.forEach((entry, idx) => {
+  /* ── ENTRIES ── */
+  data.forEach((entry,idx)=>{
     np(50);
 
-    doc.setFillColor(...C.headerBg);
-    doc.rect(M, y, CW, 11, 'F');
+    // Entry header bar
+    doc.setFillColor(...C.headerBg);doc.rect(M,y,CW,11,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.white);
+    doc.text(`Entry ${idx+1}`,M+4,y+7.5);
+    const metaParts=[entry.subject,entry.topic||null,entry.displayDate,entry.exam||null,entry.year||null].filter(Boolean);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(200,230,210);
+    doc.text(metaParts.join('   |   '),PW-M-3,y+7.5,{align:'right',maxWidth:CW-30});
+    y+=14; y+=4;
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(...C.white);
-    doc.text(`Entry ${idx + 1}`, M + 4, y + 7.5);
-
-    const metaParts = [
-      entry.subject,
-      entry.topic  ? entry.topic : null,
-      entry.displayDate,
-      entry.exam   ? entry.exam  : null,
-      entry.year   ? entry.year  : null
-    ].filter(Boolean);
-    const metaStr = metaParts.join('   |   ');
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(200, 230, 210);
-    doc.text(metaStr, PW - M - 3, y + 7.5, { align: 'right', maxWidth: CW - 30 });
-
-    y += 14;
-    y += 4;
-
-    const hasImg  = !!entry.image;
-    const imgW    = 70;
-    const imgH    = 62;
-    const textW   = hasImg ? CW - imgW - 6 : CW;
-    const imgX    = M + textW + 6;
+    const hasImg = !!entry.image;
+    const imgW   = 70, imgH = 62;
+    // narrowW: column width beside the image; imgEndY: y where image bottom falls
+    const narrowW = hasImg ? CW - imgW - 6 : CW;
+    const imgX    = M + narrowW + 6;
     const blockY  = y;
+    const imgEndY = blockY + imgH; // text expands to full CW below this line
 
-    /* ── Topic label — bold, red, underlined, no box ── */
-    if (entry.topic) {
+    // Topic label (red, underlined) — always at full width, before image zone
+    if(entry.topic){
       np(14);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(13);
-      doc.setTextColor(...C.topicRed);
-      doc.text(entry.topic, M, y);
-      /* Draw underline beneath the text */
-      const tW = doc.getTextWidth(entry.topic);
-      doc.setDrawColor(...C.topicRed);
-      doc.setLineWidth(0.5);
-      doc.line(M, y + 1.8, M + tW, y + 1.8);
-      y += 10;
+      doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.topicRed);
+      doc.text(entry.topic,M,y);
+      const tW=doc.getTextWidth(entry.topic);
+      doc.setDrawColor(...C.topicRed);doc.setLineWidth(0.5);doc.line(M,y+1.8,M+tW,y+1.8);
+      y+=10;
     }
 
-    if (section === 'notes') {
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.setTextColor(...C.nearBlack);
-      const lines = doc.splitTextToSize(entry.text || '', textW - 2);
-      lines.forEach(line => {
-        np(lh(14) + 1);
-        doc.text(line, M, y);
-        y += lh(14);
-      });
-      y += 4;
-
+    // ── Render content using flowText so text wraps around then below image ──
+    if(section==='notes'){
+      flowText(entry.text, 14, C.nearBlack, null, 0, C.nearBlack, narrowW, imgEndY);
+      y+=4;
     } else {
-      np(20);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.setTextColor(...C.green);
-      doc.text('Q:', M, y);
-      doc.setTextColor(...C.nearBlack);
-      const qLines = doc.splitTextToSize(entry.question || '', textW - 10);
-      doc.text(qLines, M + 8, y);
-      y += qLines.length * lh(14) + 4;
+      // Question
+      flowText(entry.question, 14, C.nearBlack, 'Q:', 9, C.green, narrowW, imgEndY);
+      y+=3;
 
-      np(16);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.setTextColor(...C.ansGreen);
-      doc.text('Ans:', M, y);
-      doc.setTextColor(...[20, 80, 45]);
-      const aLines = doc.splitTextToSize(entry.correct || entry.answer || '', textW - 14);
-      doc.text(aLines, M + 12, y);
-      y += aLines.length * lh(14) + 4;
+      // Answer / correct
+      flowText(entry.correct||entry.answer||'', 14, [20,80,45], 'Ans:', 13, C.ansGreen, narrowW, imgEndY);
+      y+=3;
 
-      if (entry.wrong) {
-        np(14);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(14);
-        doc.setTextColor(...C.wrongRed);
-        doc.text('Wrong:', M, y);
-        doc.setTextColor(...[160, 30, 30]);
-        const wLines = doc.splitTextToSize(entry.wrong, textW - 18);
-        doc.text(wLines, M + 16, y);
-        y += wLines.length * lh(14) + 4;
+      // Wrong answer
+      if(entry.wrong){
+        flowText(entry.wrong, 13, [160,30,30], 'Wrong:', 17, C.wrongRed, narrowW, imgEndY);
+        y+=3;
       }
 
-      if (entry.reason) {
-        np(10);
-        doc.setFillColor(...C.goldBg);
-        doc.setDrawColor(...C.gold);
-        doc.setLineWidth(0.4);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
-        const rLabel = `Reason: ${entry.reason}`;
-        const rW = doc.getTextWidth(rLabel) + 10;
-        doc.roundedRect(M, y - 3.5, rW, 9, 2, 2, 'FD');
-        doc.setTextColor(...C.gold);
-        doc.text(rLabel, M + 5, y + 3);
-        y += 12;
+      // Reason chip — place at current y, expanding to full width if below image
+      if(entry.reason){
+        np(12);
+        doc.setFillColor(...C.goldBg);doc.setDrawColor(...C.gold);doc.setLineWidth(0.4);
+        doc.setFont('helvetica','bold');doc.setFontSize(12);
+        const rLabel=`Reason: ${entry.reason}`;
+        const rW=doc.getTextWidth(rLabel)+10;
+        doc.roundedRect(M,y-3.5,rW,9,2,2,'FD');
+        doc.setTextColor(...C.gold);doc.text(rLabel,M+5,y+3);
+        y+=12;
       }
     }
 
-    if (hasImg) {
-      try {
-        const imgType = entry.image.startsWith('data:image/png') ? 'PNG' : 'JPEG';
-        doc.addImage(entry.image, imgType, imgX, blockY, imgW, imgH, '', 'FAST');
-        doc.setDrawColor(...C.green);
-        doc.setLineWidth(0.5);
-        doc.rect(imgX - 0.5, blockY - 0.5, imgW + 1, imgH + 1);
-      } catch(e) {}
-      y = Math.max(y, blockY + imgH + 4);
+    // Place image at blockY on the right; ensure y is at least below image bottom
+    if(hasImg){
+      try{
+        const imgType=entry.image.startsWith('data:image/png')?'PNG':'JPEG';
+        doc.addImage(entry.image,imgType,imgX,blockY,imgW,imgH,'','FAST');
+        doc.setDrawColor(...C.green);doc.setLineWidth(0.5);
+        doc.rect(imgX-0.5,blockY-0.5,imgW+1,imgH+1);
+      }catch(e){}
+      // Only push y down if text ended ABOVE image bottom (image is taller than all text)
+      y=Math.max(y,blockY+imgH+4);
     }
 
     np(8);
-    doc.setDrawColor(...C.divider);
-    doc.setLineWidth(0.5);
-    doc.line(M, y, PW - M, y);
-    y += 9;
+    doc.setDrawColor(...C.divider);doc.setLineWidth(0.5);doc.line(M,y,PW-M,y);y+=9;
   });
 
-  /* ═══════════════════════════════════════════
-     FOOTER — every page
-  ═══════════════════════════════════════════ */
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
+  /* ── FOOTERS ── */
+  const totalPages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=totalPages;i++){
     doc.setPage(i);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...C.muted);
-    doc.text(
-      `Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject === 'all' ? 'All Subjects' : subject}  |  ${subtitleExtra}`,
-      M, PH - 7
-    );
-    doc.text(`Page ${i} / ${totalPages}`, PW - M, PH - 7, { align: 'right' });
-    doc.setDrawColor(...C.divider);
-    doc.setLineWidth(0.3);
-    doc.line(M, PH - 10, PW - M, PH - 10);
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.muted);
+    doc.text(`Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject==='all'?'All Subjects':subject}  |  ${subtitleExtra}`,M,PH-7);
+    doc.text(`Page ${i} / ${totalPages}`,PW-M,PH-7,{align:'right'});
+    doc.setDrawColor(...C.divider);doc.setLineWidth(0.3);doc.line(M,PH-10,PW-M,PH-10);
   }
 
-  const safeSubject = (subject === 'all' ? 'AllSubjects' : subject).replace(/\s/g, '');
-  const safeDate    = subtitleExtra.replace(/[\s,]/g, '_');
+  const safeSubject=(subject==='all'?'AllSubjects':subject).replace(/\s/g,'');
+  const safeDate=subtitleExtra.replace(/[\s,]/g,'_');
   doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
   showToast('✅ PDF downloaded!');
 }
 
 /* ============================================================
-   DANGER ZONE — DELETE
+   DANGER ZONE
 ============================================================ */
-let pendingDeleteTarget = null;
-
-function confirmDelete(target) {
-  pendingDeleteTarget = target;
-  const labels = {
-    notes: 'all Notes', facts: 'all Facts', pyq: 'all PYQ checkpoints',
-    swt: 'all SWT checkpoints', gt: 'all GT mistakes', all: 'ALL data'
-  };
-  document.getElementById('modalText').textContent =
-    `You are about to permanently delete ${labels[target]}. This cannot be undone.`;
+let pendingDeleteTarget=null;
+function confirmDelete(target){
+  pendingDeleteTarget=target;
+  const labels={notes:'all Notes',facts:'all Facts',pyq:'all PYQ checkpoints',swt:'all SWT checkpoints',gt:'all GT mistakes',all:'ALL data'};
+  document.getElementById('modalText').textContent=`You are about to permanently delete ${labels[target]}. This cannot be undone.`;
   document.getElementById('modalOverlay').classList.add('active');
 }
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('active');
-  pendingDeleteTarget = null;
+function closeModal(){document.getElementById('modalOverlay').classList.remove('active');pendingDeleteTarget=null;}
+function executeDelete(){
+  if(!pendingDeleteTarget)return;
+  if(pendingDeleteTarget==='all'){DB_KEYS.forEach(k=>{DB[k]=[];saveDB(k);renderList(k);});updateSlideshow();}
+  else{DB[pendingDeleteTarget]=[];saveDB(pendingDeleteTarget);renderList(pendingDeleteTarget);if(pendingDeleteTarget==='facts')updateSlideshow();}
+  closeModal();showToast('🗑 Data deleted permanently.');
 }
-
-function executeDelete() {
-  if (!pendingDeleteTarget) return;
-  if (pendingDeleteTarget === 'all') {
-    DB_KEYS.forEach(k => { DB[k] = []; saveDB(k); renderList(k); });
-    updateSlideshow();
-  } else {
-    DB[pendingDeleteTarget] = [];
-    saveDB(pendingDeleteTarget);
-    renderList(pendingDeleteTarget);
-    if (pendingDeleteTarget === 'facts') updateSlideshow();
-  }
-  closeModal();
-  showToast('🗑 Data deleted permanently.');
-}
-
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeModal();
-});
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
 /* ============================================================
    TOAST
 ============================================================ */
-function showToast(msg, type = 'success') {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast${type === 'error' ? ' error' : ''}`;
-  toast.textContent = msg;
+function showToast(msg,type='success'){
+  const container=document.getElementById('toastContainer');
+  const toast=document.createElement('div');
+  toast.className=`toast${type==='error'?' error':''}`;
+  toast.textContent=msg;
   container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+  setTimeout(()=>toast.remove(),3000);
 }
 
 /* ============================================================
-   PWA — SERVICE WORKER REGISTRATION
+   PWA — SERVICE WORKER
 ============================================================ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.warn('[SW] Registration failed:', err));
+      .then(reg=>console.log('[SW] Registered:',reg.scope))
+      .catch(err=>console.warn('[SW] Registration failed:',err));
   });
 }
 
 /* ============================================================
-   PWA — INSTALL BANNER
+   PWA INSTALL — unified logic
+   • Android/Chrome/Edge: shows "Install App" button in the card
+   • iOS Safari: shows "Add to Home Screen" tip automatically
+   • Desktop: shows address-bar tip
+   • Already installed: shows "Already Installed" badge
 ============================================================ */
-let deferredPrompt = null;
-const installBanner = document.getElementById('pwaInstallBanner');
-const installBtn    = document.getElementById('pwaInstallBtn');
-const dismissBtn    = document.getElementById('pwaDismissBtn');
+let deferredPrompt=null;
+const pwaMainInstallBtn = document.getElementById('pwaMainInstallBtn');
+const pwaInstalledBadge = document.getElementById('pwaInstalledBadge');
+const pwaIosTip         = document.getElementById('pwaIosTip');
+const pwaDesktopTip     = document.getElementById('pwaDesktopTip');
 
-/* Capture the browser's beforeinstallprompt event (Android/Chrome/Edge) */
-window.addEventListener('beforeinstallprompt', e => {
+function isIos(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
+function isInStandaloneMode(){return window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone;}
+
+function initPwaCard(){
+  if(isInStandaloneMode()){
+    // Already running as installed app
+    pwaInstalledBadge.style.display='inline-flex';
+    pwaMainInstallBtn.style.display='none';
+    pwaIosTip.style.display='none';
+    pwaDesktopTip.style.display='none';
+  } else if(isIos()){
+    // iOS — can't auto-prompt, show tip
+    pwaIosTip.style.display='block';
+    pwaMainInstallBtn.style.display='none';
+  } else {
+    // Android/Chrome/Desktop — button shown when prompt available (see beforeinstallprompt)
+    // Show desktop tip as fallback until prompt fires
+    pwaDesktopTip.style.display='block';
+  }
+}
+initPwaCard();
+
+window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();
-  deferredPrompt = e;
-
-  /* Don't show if user already dismissed */
-  if (!localStorage.getItem('sss_pwa_dismissed')) {
-    installBanner.style.display = 'flex';
-    /* Push body up so content isn't hidden behind banner */
-    document.body.style.paddingBottom = '90px';
+  deferredPrompt=e;
+  // Show the install button in our card
+  pwaMainInstallBtn.style.display='flex';
+  pwaDesktopTip.style.display='none';
+  // Also show old floating banner if not dismissed
+  const installBanner=document.getElementById('pwaInstallBanner');
+  if(!localStorage.getItem('sss_pwa_dismissed')){
+    installBanner.style.display='flex';
   }
 });
 
-/* Install button tapped */
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
+pwaMainInstallBtn.addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
   deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    showToast('✅ App installed! Find it on your home screen.');
+  const{outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted'){
+    showToast('✅ SSS 20th Book installed!');
+    pwaMainInstallBtn.style.display='none';
+    pwaInstalledBadge.style.display='inline-flex';
   }
-  deferredPrompt = null;
-  installBanner.style.display = 'none';
-  document.body.style.paddingBottom = '';
+  deferredPrompt=null;
+  document.getElementById('pwaInstallBanner').style.display='none';
 });
 
-/* Dismiss button */
-dismissBtn.addEventListener('click', () => {
-  installBanner.style.display = 'none';
-  document.body.style.paddingBottom = '';
-  localStorage.setItem('sss_pwa_dismissed', '1');
+/* Old floating banner buttons */
+document.getElementById('pwaInstallBtn').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted')showToast('✅ SSS 20th Book installed!');
+  deferredPrompt=null;
+  document.getElementById('pwaInstallBanner').style.display='none';
 });
-
-/* Hide banner once app is installed */
-window.addEventListener('appinstalled', () => {
-  installBanner.style.display = 'none';
-  document.body.style.paddingBottom = '';
-  deferredPrompt = null;
-  showToast('🎉 Scalpel Study Squad installed!');
+document.getElementById('pwaDismissBtn').addEventListener('click',()=>{
+  document.getElementById('pwaInstallBanner').style.display='none';
+  localStorage.setItem('sss_pwa_dismissed','1');
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('pwaInstallBanner').style.display='none';
+  deferredPrompt=null;
+  pwaMainInstallBtn.style.display='none';
+  pwaInstalledBadge.style.display='inline-flex';
+  showToast('🎉 SSS 20th Book installed on your home screen!');
 });
 </script>
 </body>
