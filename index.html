@@ -1643,6 +1643,16 @@ function loadLogoBase64(callback){
   img.src=LOGO_URL;
 }
 
+/* ── Preload image natural dimensions (px) from a base64 dataURL ── */
+function preloadImageDims(dataUrl){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>resolve({w:img.naturalWidth||1,h:img.naturalHeight||1});
+    img.onerror=()=>resolve({w:1,h:1});
+    img.src=dataUrl;
+  });
+}
+
 async function downloadPDF(section,mode){
   const subjectKey=`${section}-dl-subject-${mode==='daily'?'daily':'monthly'}`;
   const subject=document.getElementById(subjectKey)?.value||'all';
@@ -1665,66 +1675,91 @@ async function downloadPDF(section,mode){
     return subMatch&&dateMatch;
   });
   if(!data.length){showToast(`❌ No entries found for ${subject==='all'?'all subjects':subject} on ${subtitleExtra}.`,'error');return;}
+
   showToast('⏳ Generating PDF...');
-  loadLogoBase64(logo=>generateJsPDF(section,subject,subtitleExtra,mode,data,logo));
+
+  /* Preload real pixel dimensions for every image so PDF can use true aspect ratio */
+  const dimMap={};
+  await Promise.all(
+    data.filter(e=>e.image).map(e=>
+      preloadImageDims(e.image).then(dims=>{ dimMap[e.id]=dims; })
+    )
+  );
+
+  loadLogoBase64(logo=>generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap));
 }
 
-function generateJsPDF(section,subject,subtitleExtra,mode,data,logo){
+/* ============================================================
+   PDF ENGINE
+   Image layout rules (based on actual pixel aspect ratio):
+   ┌─────────────────────────────────────────────────────────┐
+   │ LANDSCAPE (w > h × 1.2) → WIDE layout                  │
+   │   Image spans full column width, true aspect ratio      │
+   │   All text (Q/Ans/Wrong/Reason) printed BELOW image     │
+   │                                                         │
+   │ PORTRAIT / SQUARE (w ≤ h × 1.2) → SIDE layout          │
+   │   Image fixed 68 mm wide on the RIGHT, aspect correct   │
+   │   Text flows LEFT beside image, continues BELOW at CW   │
+   └─────────────────────────────────────────────────────────┘
+   Neither layout ever crops or distorts the image.
+============================================================ */
+function generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap){
   const{jsPDF}=window.jspdf;
   const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
   const PW=doc.internal.pageSize.getWidth();
   const PH=doc.internal.pageSize.getHeight();
-  const M=15,CW=PW-M*2;
+  const M=15, CW=PW-M*2; // CW ≈ 180 mm
   let y=M;
   const lh=pt=>pt*0.42+1.6;
 
   /* ── User name for PDF subtitle ── */
-  const storedName = localStorage.getItem('sss_username')||'';
-  const pdfSubtitle = storedName
+  const storedName=localStorage.getItem('sss_username')||'';
+  const pdfSubtitle=storedName
     ? `Dr. ${storedName}'s 20th Notebook \u2014 Revision Report`
     : '20th Book \u2014 Revision Report';
 
+  /* ── Page-break guard ── */
   function np(needed=30){
     if(y+needed>PH-M-14){doc.addPage();y=M;repeatHeader();}
   }
+
   const C={
     green:[26,71,49],greenMid:[40,100,65],gold:[180,120,10],goldBg:[255,248,220],
     white:[255,255,255],nearBlack:[15,15,15],ansGreen:[16,90,50],wrongRed:[180,30,30],
     stripBg:[235,248,240],divider:[200,230,210],muted:[100,100,100],
     headerBg:[22,60,42],topicRed:[200,0,0]
   };
+
   function drawAccentBar(){
     doc.setFillColor(...C.green);doc.rect(0,0,PW,6,'F');
-    doc.setFillColor(...[251,191,36]);doc.rect(0,5.5,PW,2,'F');
+    doc.setFillColor(251,191,36);doc.rect(0,5.5,PW,2,'F');
   }
   function repeatHeader(){
     drawAccentBar();
     doc.setFillColor(...C.headerBg);doc.rect(0,7.5,PW,10,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.white);
     const subLabel=subject==='all'?'All Subjects':subject;
-    doc.text(`SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,PW/2,14,{align:'center'});
+    doc.text(
+      `SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,
+      PW/2,14,{align:'center'}
+    );
     y=22;
   }
 
   /* ── COVER PAGE ── */
-  drawAccentBar();y=10;
+  drawAccentBar(); y=10;
   const logoSize=38;
   if(logo){try{doc.addImage(logo,'JPEG',M,y,logoSize,logoSize,'','FAST');}catch(e){}}
-  const tx=logo?M+logoSize+8:M;const titleW=PW-tx-M;
+  const tx=logo?M+logoSize+8:M; const titleW=PW-tx-M;
 
   doc.setFont('helvetica','bold');doc.setFontSize(24);doc.setTextColor(...C.green);
   doc.text('SCALPEL STUDY SQUAD',tx,y+11,{maxWidth:titleW});
-
-  /* ── Dynamic subtitle with Dr. Name ── */
   doc.setFontSize(13);doc.setTextColor(...C.gold);
   doc.text(pdfSubtitle,tx,y+22,{maxWidth:titleW});
-
   doc.setFontSize(12);doc.setTextColor(...C.nearBlack);
-  const dateLabel=mode==='daily'?`Date: ${subtitleExtra}`:`Month: ${subtitleExtra}`;
-  doc.text(dateLabel,tx,y+33,{maxWidth:titleW});
+  doc.text(mode==='daily'?`Date: ${subtitleExtra}`:`Month: ${subtitleExtra}`,tx,y+33,{maxWidth:titleW});
 
   y=Math.max(y+logoSize+4,y+42);
-
   doc.setFillColor(...C.stripBg);doc.setDrawColor(...C.green);doc.setLineWidth(0.6);
   doc.roundedRect(M,y,CW,28,3,3,'FD');
   doc.setFont('helvetica','bold');doc.setFontSize(17);doc.setTextColor(...C.green);
@@ -1732,135 +1767,67 @@ function generateJsPDF(section,subject,subtitleExtra,mode,data,logo){
   doc.setFontSize(14);doc.setTextColor(...C.greenMid);
   doc.text(`Section: ${SECTION_LABELS[section]}`,M+7,y+22);
   y+=34;
-
   doc.setFillColor(...C.green);doc.rect(M,y,CW,2,'F');y+=10;
 
-  /* ──────────────────────────────────────────────────────────
-     flowText — renders text that fills beside the image first,
-     then continues at full column width below the image.
-     Words are re-wrapped each line so every pixel of width is used.
-
-     rawText    : string to render
-     fontSize   : pt
-     mainColor  : [r,g,b]
-     prefix     : short label e.g. 'Q:' or null
-     prefixMM   : horizontal space the prefix occupies in mm
-     prefixColor: [r,g,b] for the prefix label
-     narrowW    : available width while beside the image (mm)
-     imgEndY    : y coordinate where image bottom ends — below this use CW
-  ────────────────────────────────────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+     flowText — word-wrapping text renderer that is aware of
+     the image zone.
+     • While y < imgEndY  → renders in narrowW (beside image)
+     • While y >= imgEndY → renders in CW     (below image)
+     Works for both SIDE and WIDE layouts:
+       WIDE: pass narrowW=CW, imgEndY=imageBottomY so text
+             always uses full width but still respects page flow
+       SIDE: pass narrowW=textColW, imgEndY=imageBottomY
+  ══════════════════════════════════════════════════════════ */
   function flowText(rawText, fontSize, mainColor, prefix, prefixMM, prefixColor, narrowW, imgEndY){
-    if(!rawText && !rawText===0) return;
-    const text = String(rawText||'');
-    if(!text.trim()) return;
-
+    const text=String(rawText||'').trim();
+    if(!text) return;
     doc.setFont('helvetica','bold');
     doc.setFontSize(fontSize);
-    const lineH = lh(fontSize);
+    const lineH=lh(fontSize);
+    const words=text.split(/\s+/).filter(Boolean);
+    let line='', firstLine=true;
 
-    // Split full text into words for dynamic re-wrapping
-    const words = text.split(/\s+/).filter(Boolean);
-    let currentLine = '';
-    let isFirstLine = true;
+    function availW(){ return (y>=imgEndY?CW:narrowW)-2; }
+    function xStart(fl){ return fl&&prefix ? M+prefixMM : M; }
 
-    function getAvailW(){
-      // below image → full column; beside image → narrow
-      return (y >= imgEndY) ? CW - 2 : narrowW - 2;
-    }
-    function getIndent(){
-      // first line gets prefix indent; subsequent lines align with text start
-      return (isFirstLine && prefix) ? prefixMM : 0;
-    }
-
-    function flushLine(line){
-      if(!line.trim()) return;
-      np(lineH + 1);
-      doc.setFont('helvetica','bold');
-      doc.setFontSize(fontSize);
-      if(isFirstLine && prefix){
-        doc.setTextColor(...prefixColor);
-        doc.text(prefix, M, y);
-        doc.setTextColor(...mainColor);
-        doc.text(line, M + prefixMM, y);
+    function flush(ln){
+      if(!ln.trim()) return;
+      np(lineH+1);
+      doc.setFont('helvetica','bold');doc.setFontSize(fontSize);
+      if(firstLine&&prefix){
+        doc.setTextColor(...prefixColor);doc.text(prefix,M,y);
+        doc.setTextColor(...mainColor);doc.text(ln,M+prefixMM,y);
       } else {
-        doc.setTextColor(...mainColor);
-        doc.text(line, M, y);
+        doc.setTextColor(...mainColor);doc.text(ln,xStart(false),y);
       }
-      y += lineH;
-      isFirstLine = false;
+      y+=lineH; firstLine=false;
     }
 
-    for(let i = 0; i <= words.length; i++){
-      const word = words[i]; // undefined on last iteration → flush
-      const availW = getAvailW();
-      const indent = getIndent();
-      const testLine = currentLine ? currentLine + ' ' + (word||'') : (word||'');
-
-      // Check if adding this word exceeds available width
-      const testW = doc.getTextWidth(testLine);
-      const maxW  = availW - indent;
-
-      if(word === undefined || testW > maxW){
-        // Flush current line
-        flushLine(currentLine);
-        currentLine = word || '';
-      } else {
-        currentLine = testLine;
-      }
+    for(let i=0;i<=words.length;i++){
+      const w=words[i];
+      const test=line?line+' '+(w||''):(w||'');
+      const maxW=availW()-(firstLine&&prefix?prefixMM:0);
+      if(w===undefined||doc.getTextWidth(test)>maxW){
+        flush(line); line=w||'';
+      } else { line=test; }
     }
   }
 
-  /* ── ENTRIES ── */
-  data.forEach((entry,idx)=>{
-    np(50);
-
-    // Entry header bar
-    doc.setFillColor(...C.headerBg);doc.rect(M,y,CW,11,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.white);
-    doc.text(`Entry ${idx+1}`,M+4,y+7.5);
-    const metaParts=[entry.subject,entry.topic||null,entry.displayDate,entry.exam||null,entry.year||null].filter(Boolean);
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(200,230,210);
-    doc.text(metaParts.join('   |   '),PW-M-3,y+7.5,{align:'right',maxWidth:CW-30});
-    y+=14; y+=4;
-
-    const hasImg = !!entry.image;
-    const imgW   = 70, imgH = 62;
-    // narrowW: column width beside the image; imgEndY: y where image bottom falls
-    const narrowW = hasImg ? CW - imgW - 6 : CW;
-    const imgX    = M + narrowW + 6;
-    const blockY  = y;
-    const imgEndY = blockY + imgH; // text expands to full CW below this line
-
-    // Topic label (red, underlined) — always at full width, before image zone
-    if(entry.topic){
-      np(14);
-      doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.topicRed);
-      doc.text(entry.topic,M,y);
-      const tW=doc.getTextWidth(entry.topic);
-      doc.setDrawColor(...C.topicRed);doc.setLineWidth(0.5);doc.line(M,y+1.8,M+tW,y+1.8);
-      y+=10;
-    }
-
-    // ── Render content using flowText so text wraps around then below image ──
+  /* ══════════════════════════════════════════════════════════
+     renderText — renders all text fields for an entry.
+     narrowW and imgEndY control flow-text behaviour.
+  ══════════════════════════════════════════════════════════ */
+  function renderText(entry, narrowW, imgEndY){
     if(section==='notes'){
-      flowText(entry.text, 14, C.nearBlack, null, 0, C.nearBlack, narrowW, imgEndY);
+      flowText(entry.text,14,C.nearBlack,null,0,C.nearBlack,narrowW,imgEndY);
       y+=4;
     } else {
-      // Question
-      flowText(entry.question, 14, C.nearBlack, 'Q:', 9, C.green, narrowW, imgEndY);
-      y+=3;
-
-      // Answer / correct
-      flowText(entry.correct||entry.answer||'', 14, [20,80,45], 'Ans:', 13, C.ansGreen, narrowW, imgEndY);
-      y+=3;
-
-      // Wrong answer
+      flowText(entry.question,14,C.nearBlack,'Q:',9,C.green,narrowW,imgEndY); y+=3;
+      flowText(entry.correct||entry.answer||'',14,[20,80,45],'Ans:',13,C.ansGreen,narrowW,imgEndY); y+=3;
       if(entry.wrong){
-        flowText(entry.wrong, 13, [160,30,30], 'Wrong:', 17, C.wrongRed, narrowW, imgEndY);
-        y+=3;
+        flowText(entry.wrong,13,[160,30,30],'Wrong:',17,C.wrongRed,narrowW,imgEndY); y+=3;
       }
-
-      // Reason chip — place at current y, expanding to full width if below image
       if(entry.reason){
         np(12);
         doc.setFillColor(...C.goldBg);doc.setDrawColor(...C.gold);doc.setLineWidth(0.4);
@@ -1872,29 +1839,115 @@ function generateJsPDF(section,subject,subtitleExtra,mode,data,logo){
         y+=12;
       }
     }
+  }
 
-    // Place image at blockY on the right; ensure y is at least below image bottom
-    if(hasImg){
-      try{
-        const imgType=entry.image.startsWith('data:image/png')?'PNG':'JPEG';
-        doc.addImage(entry.image,imgType,imgX,blockY,imgW,imgH,'','FAST');
-        doc.setDrawColor(...C.green);doc.setLineWidth(0.5);
-        doc.rect(imgX-0.5,blockY-0.5,imgW+1,imgH+1);
-      }catch(e){}
-      // Only push y down if text ended ABOVE image bottom (image is taller than all text)
-      y=Math.max(y,blockY+imgH+4);
+  /* ══════════════════════════════════════════════════════════
+     placeImage — draws image with green border.
+     x, y, w, h all in mm. Never distorts.
+  ══════════════════════════════════════════════════════════ */
+  function placeImage(dataUrl, x, imgY, w, h){
+    try{
+      const imgType=dataUrl.startsWith('data:image/png')?'PNG':'JPEG';
+      doc.addImage(dataUrl,imgType,x,imgY,w,h,'','FAST');
+      doc.setDrawColor(...C.green);doc.setLineWidth(0.7);
+      doc.rect(x-0.5,imgY-0.5,w+1,h+1);
+    }catch(e){}
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     calcImageSize — returns {w_mm, h_mm} maintaining aspect
+     ratio, capped to provided max bounds.
+  ══════════════════════════════════════════════════════════ */
+  function calcImageSize(pxW, pxH, maxW, maxH){
+    const aspect=pxW/pxH;
+    let w=maxW, h=maxW/aspect;
+    if(h>maxH){ h=maxH; w=maxH*aspect; }
+    return {w:Math.round(w*10)/10, h:Math.round(h*10)/10};
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     ENTRY LOOP
+  ══════════════════════════════════════════════════════════ */
+  data.forEach((entry,idx)=>{
+    np(55);
+
+    /* ── Entry header bar ── */
+    doc.setFillColor(...C.headerBg);doc.rect(M,y,CW,11,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.white);
+    doc.text(`Entry ${idx+1}`,M+4,y+7.5);
+    const metaParts=[entry.subject,entry.topic||null,entry.displayDate,entry.exam||null,entry.year||null].filter(Boolean);
+    doc.setFontSize(9);doc.setTextColor(200,230,210);
+    doc.text(metaParts.join('   |   '),PW-M-3,y+7.5,{align:'right',maxWidth:CW-36});
+    y+=15;
+
+    /* ── Topic label (red underlined) ── */
+    if(entry.topic){
+      np(14);
+      doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.topicRed);
+      doc.text(entry.topic,M,y);
+      const tW=doc.getTextWidth(entry.topic);
+      doc.setDrawColor(...C.topicRed);doc.setLineWidth(0.5);doc.line(M,y+1.8,M+tW,y+1.8);
+      y+=10;
     }
 
+    const hasImg=!!entry.image;
+
+    if(!hasImg){
+      /* ── NO IMAGE: simple full-width text ── */
+      renderText(entry, CW, Infinity);
+
+    } else {
+      /* ── HAS IMAGE: determine layout by aspect ratio ── */
+      const dims = dimMap[entry.id]||{w:4,h:3};
+      const aspect = dims.w / dims.h;
+
+      /* LANDSCAPE (wider than 1.2× height) → WIDE layout */
+      if(aspect > 1.2){
+        /* Scale image to full column width, preserve ratio, max 115mm tall */
+        const sz = calcImageSize(dims.w, dims.h, CW, 115);
+        /* Centre image horizontally */
+        const imgX = M + (CW - sz.w) / 2;
+        np(sz.h + 6);
+        const imgY = y;
+        placeImage(entry.image, imgX, imgY, sz.w, sz.h);
+        y = imgY + sz.h + 6;
+        /* All text below image at full width */
+        renderText(entry, CW, Infinity);
+
+      } else {
+        /* PORTRAIT / SQUARE → SIDE layout */
+        /* Image on the right, 68mm wide max, preserve ratio, max 110mm tall */
+        const sz = calcImageSize(dims.w, dims.h, 68, 110);
+        const imgX = M + CW - sz.w;       // flush to right margin
+        const textColW = CW - sz.w - 6;   // text column left of image
+        const blockY = y;
+        const imgEndY = blockY + sz.h;    // below this → full width text
+
+        /* Render text: flows beside image first, then full width below */
+        renderText(entry, textColW, imgEndY);
+
+        /* Draw image aligned to blockY on the right */
+        placeImage(entry.image, imgX, blockY, sz.w, sz.h);
+
+        /* Ensure we're below image bottom before divider */
+        y = Math.max(y, imgEndY + 4);
+      }
+    }
+
+    /* ── Entry divider ── */
     np(8);
     doc.setDrawColor(...C.divider);doc.setLineWidth(0.5);doc.line(M,y,PW-M,y);y+=9;
   });
 
-  /* ── FOOTERS ── */
+  /* ── FOOTERS on every page ── */
   const totalPages=doc.internal.getNumberOfPages();
   for(let i=1;i<=totalPages;i++){
     doc.setPage(i);
     doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.muted);
-    doc.text(`Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject==='all'?'All Subjects':subject}  |  ${subtitleExtra}`,M,PH-7);
+    doc.text(
+      `Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject==='all'?'All Subjects':subject}  |  ${subtitleExtra}`,
+      M,PH-7
+    );
     doc.text(`Page ${i} / ${totalPages}`,PW-M,PH-7,{align:'right'});
     doc.setDrawColor(...C.divider);doc.setLineWidth(0.3);doc.line(M,PH-10,PW-M,PH-10);
   }
