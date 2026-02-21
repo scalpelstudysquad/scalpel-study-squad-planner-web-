@@ -1,31 +1,33 @@
 /* ============================================================
    SERVICE WORKER — Scalpel Study Squad 20th Book
-   Strategy: Cache-first for static assets, network-first for
-   everything else. localStorage data is NOT touched by SW.
-   Updating the CACHE_VERSION below forces a fresh cache on
-   next visit — user data in localStorage is always preserved.
+   FIX v2:
+   ✅ Removed mode:'cors' for same-origin URLs (was breaking install)
+   ✅ Removed external CDN/font URLs from PRECACHE_URLS (was crashing install on slow networks)
+   ✅ Network-first for external resources (fonts, CDN, GitHub images)
+   ✅ Cache-first for local files (index.html, manifest.json)
+   ✅ localStorage data is NEVER touched by SW
 ============================================================ */
 
-const CACHE_VERSION = 'sss-v1';
+const CACHE_VERSION = 'sss-v2';
 const STATIC_CACHE  = CACHE_VERSION + '-static';
 
-/* Files to cache on install */
+/* Only cache LOCAL files during install — external URLs are too fragile */
 const PRECACHE_URLS = [
   './',
   './index.html',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500&family=Nunito:wght@700;900&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+  './manifest.json'
 ];
 
-/* ── Install: pre-cache static shell ── */
+/* ── Install: pre-cache local shell only ── */
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
-      .then(cache => cache.addAll(PRECACHE_URLS.map(url => {
-        return new Request(url, { mode: 'cors' });
-      })).catch(() => cache.addAll(['./index.html'])))
+      .then(cache => cache.addAll(PRECACHE_URLS))  /* plain strings, no cors mode */
       .then(() => self.skipWaiting())
+      .catch(err => {
+        console.warn('[SW] Install cache failed:', err);
+        return self.skipWaiting(); /* still activate even if caching fails */
+      })
   );
 });
 
@@ -42,39 +44,59 @@ self.addEventListener('activate', event => {
   );
 });
 
-/* ── Fetch: cache-first for same-origin, network-first for CDN ── */
+/* ── Fetch handler ── */
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-
-  /* Always go network for non-GET requests */
+  /* Ignore non-GET requests entirely */
   if (event.request.method !== 'GET') return;
 
-  /* Cache-first strategy for same-origin files (index.html, manifest) */
+  const url = new URL(event.request.url);
+
+  /* ── Same-origin: Cache-first, fall back to network, then offline shell ── */
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(event.request).then(cached => {
         if (cached) return cached;
+
         return fetch(event.request).then(response => {
-          if (!response || response.status !== 200) return response;
+          /* Only cache valid responses */
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
           const clone = response.clone();
           caches.open(STATIC_CACHE).then(c => c.put(event.request, clone));
           return response;
-        }).catch(() => caches.match('./index.html'));
+        }).catch(() => {
+          /* Offline fallback: serve index.html for navigation requests */
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+          /* For other requests (e.g. sub-resources), return nothing gracefully */
+          return new Response('', { status: 408, statusText: 'Offline' });
+        });
       })
     );
     return;
   }
 
-  /* Network-first for external CDN (fonts, jspdf, GitHub images) */
+  /* ── External (fonts, CDN, GitHub images): Network-first, cache as backup ── */
   event.respondWith(
     fetch(event.request).then(response => {
-      if (!response || response.status !== 200 || response.type === 'opaque') {
+      /* Only cache opaque-safe, successful responses */
+      if (!response || response.status !== 200) {
+        return response;
+      }
+      /* Don't cache opaque responses — they can corrupt the cache quota */
+      if (response.type === 'opaque') {
         return response;
       }
       const clone = response.clone();
       caches.open(STATIC_CACHE).then(c => c.put(event.request, clone));
       return response;
-    }).catch(() => caches.match(event.request))
+    }).catch(() => {
+      /* Offline: serve whatever we have cached for this external URL */
+      return caches.match(event.request).then(cached => {
+        return cached || new Response('', { status: 408, statusText: 'Offline' });
+      });
+    })
   );
 });
-
