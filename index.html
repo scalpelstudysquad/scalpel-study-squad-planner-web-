@@ -11,9 +11,9 @@
 
 <link rel="manifest" href="manifest.json"/>
 <meta name="apple-mobile-web-app-title" content="SSS 20th Book"/>
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
+<link rel="apple-touch-icon" href="./icon-192.png"/>
 <meta name="msapplication-TileColor" content="#0A1929"/>
-<meta name="msapplication-TileImage" content="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"/>
+<meta name="msapplication-TileImage" content="./icon-192.png"/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
@@ -21,7 +21,7 @@
 
 <style>
 /* ============================================================
-   MATERIAL DESIGN TOKENS & THEME — NAVY · LIGHT-BLUE · WHITE
+   MATERIAL DESIGN TOKENS & THEME
 ============================================================ */
 :root {
   --md-navy-900:   #0A1929;
@@ -42,10 +42,6 @@
   --md-white:      #FFFFFF;
   --md-offwhite:   #F0F7FF;
   --md-surface1:   #EBF4FD;
-  --md-red:        #C62828;
-  --md-red-l:      #EF5350;
-  --md-amber:      #F57F17;
-  --md-amber-l:    #FFB300;
   --md-green:      #2E7D32;
   --md-green-l:    #43A047;
 
@@ -58,7 +54,6 @@
   --accent:        #4FC3F7;
   --accent-dim:    #29B6F6;
   --accent-gold:   #FFB300;
-  --accent-gold-dim:#F57F17;
   --text-primary:  #E8F4FD;
   --text-secondary:#90CAF9;
   --text-muted:    #4A7FA5;
@@ -81,7 +76,6 @@
   --danger-zone-bg:     #1A0A0A;
   --subtitle-color:     #4FC3F7;
   --tab-box-bg:         rgba(21,101,192,0.35);
-  --tab-box-active-bg:  rgba(3,169,244,0.25);
   --tab-indicator:      #4FC3F7;
   --input-label:        rgba(144,202,249,0.80);
   --popover-bg:         #0D2137;
@@ -98,7 +92,6 @@
   --accent:        #1565C0;
   --accent-dim:    #0D47A1;
   --accent-gold:   #E65100;
-  --accent-gold-dim:#BF360C;
   --text-primary:  #0A1929;
   --text-secondary:#0D47A1;
   --text-muted:    #1565C0;
@@ -117,10 +110,8 @@
   --section-card-bg:    #FFFFFF;
   --section-text:       #0A1929;
   --danger-zone-bg:     #FFF3E0;
-  --subtitle-color:     #B3E5FC;
-  --tab-box-bg:         rgba(21,101,192,0.08);
-  --tab-box-active-bg:  rgba(21,101,192,0.15);
-  --tab-indicator:      #1565C0;
+  --subtitle-color:     rgba(255,255,255,0.80);
+  --tab-indicator:      #FFFFFF;
   --input-label:        #1565C0;
   --popover-bg:         #FFFFFF;
   --advisory-bg:        rgba(227,242,253,0.97);
@@ -136,34 +127,93 @@ body{
   transition:background 0.3s,color 0.3s;
   overflow-x:hidden;
 }
-
 body::before{
   content:'';
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background-image:radial-gradient(circle at 1px 1px, rgba(79,195,247,0.06) 1px, transparent 0);
   background-size:28px 28px;
-  pointer-events:none;
-  z-index:0;
+  pointer-events:none;z-index:0;
 }
 [data-theme="light"] body::before{
   background-image:radial-gradient(circle at 1px 1px, rgba(21,101,192,0.05) 1px, transparent 0);
 }
 
-@keyframes md-ripple{from{transform:scale(0);opacity:.4;}to{transform:scale(2.5);opacity:0;}}
-.ripple-host{position:relative;overflow:hidden;}
-.ripple-host::after{content:'';position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,0.3);width:100%;height:100%;top:0;left:0;pointer-events:none;}
-.ripple-host:active::after{animation:md-ripple 0.45s ease-out;}
+/* ============================================================
+   SPLASH SCREEN — fills screen with header blue, then
+   the logo+title+subtitle fly up to the real header
+============================================================ */
+#splashScreen{
+  position:fixed;inset:0;
+  z-index:99999;
+  background:#0D2137; /* exact same as --header-bg */
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  /* background fades separately via JS inline style */
+}
+
+/* The group that animates as one unit */
+#splashGroup{
+  display:flex;flex-direction:column;
+  align-items:center;
+  gap:0;
+  will-change:transform,opacity;
+  transform-origin:center center;
+}
+
+@keyframes splashLogoZoom{
+  0%  {transform:scale(0.1);opacity:0;}
+  55% {transform:scale(1.10);opacity:1;}
+  78% {transform:scale(0.95);opacity:1;}
+  100%{transform:scale(1);   opacity:1;}
+}
+#splashLogo{
+  width:130px;height:130px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,0.92);
+  box-shadow:
+    0 0 0 10px rgba(79,195,247,0.18),
+    0 12px 40px rgba(0,0,0,0.55);
+  opacity:0;
+  animation:splashLogoZoom 1.15s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+  margin-bottom:26px;
+  display:block;
+}
+
+#splashName{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(22px,5.5vw,36px);
+  font-weight:900;
+  color:#FFFFFF;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-shadow:0 2px 18px rgba(79,195,247,0.55);
+  text-align:center;
+  white-space:nowrap;
+  opacity:0;
+  min-height:1.3em;
+}
+#splashName.typing{opacity:1;}
+
+#splashSubtitle{
+  font-family:'Roboto',sans-serif;
+  font-size:clamp(11px,2.2vw,15px);
+  color:#4FC3F7;
+  letter-spacing:3.5px;
+  text-transform:uppercase;
+  font-weight:500;
+  opacity:0;
+  margin-top:10px;
+  transition:opacity 0.5s ease;
+  text-align:center;
+}
+#splashSubtitle.show{opacity:1;}
 
 /* ============================================================
-   HEADER — sticky, z-index 100
-   IMPORTANT: overflow must NOT be hidden so the logo circle
-   is not clipped. Tabs use JS-calculated top offset.
+   HEADER
 ============================================================ */
 .header{
-  position:sticky;
-  top:0;
-  z-index:100;
+  position:sticky;top:0;z-index:100;
   background:var(--header-bg);
   border-bottom:1px solid var(--header-border);
   box-shadow:var(--elev-4);
@@ -176,7 +226,6 @@ body::before{
   padding-right: max(24px,env(safe-area-inset-right));
   padding-top:   max(12px,env(safe-area-inset-top));
   transition:background 0.3s;
-  /* overflow:visible ensures the logo circle is never clipped */
   overflow:visible;
 }
 .header-left{display:flex;align-items:center;justify-content:flex-start;}
@@ -186,8 +235,7 @@ body::before{
 .logo-wrap{display:flex;flex-direction:column;align-items:center;}
 .logo-img{
   width:84px;height:84px;
-  border-radius:50%;
-  object-fit:cover;
+  border-radius:50%;object-fit:cover;
   border:3px solid rgba(255,255,255,0.90);
   box-shadow:0 4px 16px rgba(0,0,0,0.35),0 0 0 5px rgba(79,195,247,0.20);
   display:block;margin:0 auto 8px;
@@ -199,41 +247,28 @@ body::before{
 .site-title{
   font-family:'Nunito',sans-serif;
   font-size:clamp(17px,2.8vw,28px);
-  font-weight:900;
-  color:#FFFFFF;
+  font-weight:900;color:#FFFFFF;
   letter-spacing:1.5px;
   text-shadow:0 2px 8px rgba(0,0,0,0.35);
-  text-align:center;
-  text-transform:uppercase;
-  line-height:1.15;
+  text-align:center;text-transform:uppercase;line-height:1.15;
 }
-[data-theme="light"] .site-title{color:#FFFFFF;text-shadow:0 1px 6px rgba(0,0,0,0.25);}
-
 .site-subtitle{
   font-family:'Roboto',sans-serif;
   font-size:clamp(9px,1.1vw,12px);
   color:var(--subtitle-color);
-  letter-spacing:3px;
-  text-transform:uppercase;
-  font-weight:500;
-  margin-top:4px;
-  text-align:center;
+  letter-spacing:3px;text-transform:uppercase;font-weight:500;
+  margin-top:4px;text-align:center;
 }
-[data-theme="light"] .site-subtitle{color:rgba(255,255,255,0.80);}
 
 .theme-emoji-btn{
-  background:rgba(255,255,255,0.10);
-  border:none;border-radius:50%;
-  width:40px;height:40px;font-size:19px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background 0.2s,transform 0.2s;
-  flex-shrink:0;line-height:1;padding:0;
+  background:rgba(255,255,255,0.10);border:none;border-radius:50%;
+  width:40px;height:40px;font-size:19px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s,transform 0.2s;flex-shrink:0;padding:0;
   position:relative;overflow:hidden;
 }
 .theme-emoji-btn:hover{background:rgba(255,255,255,0.20);transform:rotate(18deg) scale(1.12);}
-.theme-emoji-btn:active{background:rgba(255,255,255,0.30);}
 [data-theme="light"] .theme-emoji-btn{background:rgba(255,255,255,0.18);}
-[data-theme="light"] .theme-emoji-btn:hover{background:rgba(255,255,255,0.30);}
 
 /* ============================================================
    ADVISORY BAR
@@ -252,10 +287,9 @@ body::before{
 [data-theme="light"] .advisory-bar{background:#E3F2FD;color:#0D47A1;border-bottom-color:rgba(21,101,192,0.25);}
 .advisory-bar strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .advisory-bar strong{color:#0D47A1;}
-.advisory-icon{font-size:15px;flex-shrink:0;}
 
 /* ============================================================
-   PROFILE / NAME POPOVER
+   PROFILE POPOVER
 ============================================================ */
 .name-circle-wrap{position:relative;}
 .name-circle{
@@ -263,12 +297,13 @@ body::before{
   background:rgba(255,255,255,0.15);
   border:2px solid rgba(255,255,255,0.50);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Roboto',sans-serif;font-size:17px;font-weight:700;color:#fff;
+  font-size:17px;font-weight:700;color:#fff;
   cursor:pointer;flex-shrink:0;user-select:none;
-  transition:all 0.2s;box-shadow:var(--elev-2);position:relative;overflow:hidden;
+  transition:all 0.2s;box-shadow:var(--elev-2);
+  position:relative;overflow:hidden;
 }
 .name-circle:hover{background:rgba(255,255,255,0.25);transform:scale(1.08);box-shadow:var(--elev-4);}
-.name-circle.has-name{background:var(--md-lb-500);color:#fff;border-color:rgba(255,255,255,0.70);font-size:17px;}
+.name-circle.has-name{background:var(--md-lb-500);color:#fff;border-color:rgba(255,255,255,0.70);}
 [data-theme="light"] .name-circle{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.70);}
 [data-theme="light"] .name-circle.has-name{background:#FFFFFF;color:#1565C0;border-color:rgba(255,255,255,0.90);}
 
@@ -282,17 +317,16 @@ body::before{
 }
 .name-popover.open{display:flex;}
 @keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
-.name-popover-label{font-family:'Roboto',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;}
-.name-popover-fullname{font-family:'Roboto',sans-serif;font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:0.3px;word-break:break-word;}
+.name-popover-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;}
+.name-popover-fullname{font-size:16px;font-weight:700;color:var(--text-primary);word-break:break-word;}
 .name-popover-row{display:flex;align-items:center;border:2px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-input);transition:border-color 0.2s;}
 .name-popover-row:focus-within{border-color:var(--accent);}
-.name-popover-prefix{padding:9px 10px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;color:var(--accent);background:rgba(79,195,247,0.10);border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0;}
+.name-popover-prefix{padding:9px 10px;font-size:13px;font-weight:700;color:var(--accent);background:rgba(79,195,247,0.10);border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0;}
 [data-theme="light"] .name-popover-prefix{background:rgba(21,101,192,0.08);color:#1565C0;}
-.name-popover-input{flex:1;border:none !important;border-radius:0 !important;background:transparent !important;padding:9px 10px !important;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-primary) !important;outline:none;min-width:0;box-shadow:none !important;}
-.name-popover-save{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 0;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;width:100%;box-shadow:var(--elev-2);position:relative;overflow:hidden;}
+.name-popover-input{flex:1;border:none !important;border-radius:0 !important;background:transparent !important;padding:9px 10px !important;font-size:13px;color:var(--text-primary) !important;outline:none;min-width:0;box-shadow:none !important;}
+.name-popover-save{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 0;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;transition:all 0.2s;width:100%;box-shadow:var(--elev-2);position:relative;overflow:hidden;}
 .name-popover-save:hover{filter:brightness(1.10);box-shadow:var(--elev-4);transform:translateY(-1px);}
-[data-theme="light"] .name-popover-save{color:#fff;}
-.name-popover-edit{background:none;border:none;color:var(--text-muted);font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:center;padding:2px 0;transition:color 0.2s;}
+.name-popover-edit{background:none;border:none;color:var(--text-muted);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-align:center;padding:2px 0;transition:color 0.2s;}
 .name-popover-edit:hover{color:var(--accent);}
 
 /* ============================================================
@@ -301,26 +335,26 @@ body::before{
 .main{position:relative;z-index:1;}
 
 /* ============================================================
-   FACTS SLIDESHOW
+   SLIDESHOW
 ============================================================ */
 .slideshow-section{background:var(--bg-secondary);border-bottom:1px solid var(--border-light);padding:24px;position:relative;z-index:1;}
-.slideshow-section h2{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);text-align:center;font-weight:700;margin-bottom:16px;}
+.slideshow-section h2{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);text-align:center;font-weight:700;margin-bottom:16px;}
 [data-theme="light"] .slideshow-section{background:#DCEEFB;}
 [data-theme="light"] .slideshow-section h2{color:#1565C0;}
 
 .slideshow-container{max-width:860px;margin:0 auto;position:relative;}
-.slide-card{background:var(--section-card-bg);border:none;border-radius:var(--radius);padding:28px 32px;min-height:165px;display:flex;align-items:center;justify-content:center;gap:24px;box-shadow:var(--elev-4);position:relative;overflow:hidden;}
+.slide-card{background:var(--section-card-bg);border-radius:var(--radius);padding:28px 32px;min-height:165px;display:flex;align-items:center;justify-content:center;gap:24px;box-shadow:var(--elev-4);position:relative;overflow:hidden;}
 .slide-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--md-primary-l),var(--md-lb-300),var(--md-lb-500));background-size:200% 100%;animation:shimmer 20s linear infinite;}
 @keyframes shimmer{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 [data-theme="light"] .slide-card{background:#FFFFFF;}
 
 .slide-content{flex:1;text-align:left;}
-.slide-badge{font-family:'Roboto',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;display:block;}
-.slide-subject{font-family:'Roboto',sans-serif;font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
-.slide-question{font-family:'Roboto',sans-serif;font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:10px;line-height:1.55;}
-.slide-answer{font-family:'Roboto',sans-serif;font-size:14px;color:var(--accent);font-weight:700;line-height:1.5;}
-.slide-image{width:120px;height:100px;object-fit:cover;border-radius:var(--radius-sm);border:none;box-shadow:var(--elev-2);flex-shrink:0;}
-.slide-empty{text-align:center;color:var(--text-muted);font-style:italic;font-family:'Roboto',sans-serif;font-size:14px;font-weight:400;}
+.slide-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;display:block;}
+.slide-subject{font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.slide-question{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:10px;line-height:1.55;}
+.slide-answer{font-size:14px;color:var(--accent);font-weight:700;line-height:1.5;}
+.slide-image{width:120px;height:100px;object-fit:cover;border-radius:var(--radius-sm);box-shadow:var(--elev-2);flex-shrink:0;}
+.slide-empty{text-align:center;color:var(--text-muted);font-style:italic;font-size:14px;}
 
 .slide-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;}
 .slide-btn{background:var(--section-card-bg);border:none;color:var(--accent);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:16px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;box-shadow:var(--elev-2);position:relative;overflow:hidden;}
@@ -330,33 +364,24 @@ body::before{
 .slide-counter{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:500;min-width:60px;text-align:center;letter-spacing:1px;}
 
 /* ============================================================
-   TABS — sticky positioning managed by JS (syncTabsTop)
-   so the top value is always exactly = header height.
-   CSS provides a safe fallback only.
+   TABS
 ============================================================ */
 .tabs-wrapper{
   background:var(--bg-card);
   border-bottom:1px solid var(--border-light);
   box-shadow:var(--elev-2);
   padding:0 16px;
-  position:sticky;
-  top:0; /* JS overrides this immediately */
-  z-index:90;
-  overflow-x:auto;
-  scrollbar-width:none;
+  position:sticky;top:0;z-index:90;
+  overflow-x:auto;scrollbar-width:none;
 }
 .tabs-wrapper::-webkit-scrollbar{display:none;}
 [data-theme="light"] .tabs-wrapper{background:#1565C0;border-bottom-color:rgba(255,255,255,0.20);}
 
 .tabs-nav{display:flex;justify-content:center;gap:0;min-width:max-content;margin:0 auto;}
 .tab-btn{
-  padding:16px 20px;
-  font-family:'Roboto',sans-serif;font-size:12px;letter-spacing:1.5px;
-  text-transform:uppercase;font-weight:700;
-  color:var(--text-muted);background:transparent;
-  border:none;border-bottom:3px solid transparent;
-  cursor:pointer;transition:all 0.22s ease;
-  white-space:nowrap;border-radius:0;position:relative;overflow:hidden;
+  padding:16px 20px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;
+  color:var(--text-muted);background:transparent;border:none;border-bottom:3px solid transparent;
+  cursor:pointer;transition:all 0.22s ease;white-space:nowrap;border-radius:0;position:relative;overflow:hidden;
 }
 .tab-btn::after{content:'';position:absolute;bottom:-1px;left:50%;width:0;height:3px;background:var(--tab-indicator);border-radius:3px 3px 0 0;transition:width 0.25s cubic-bezier(0.4,0,0.2,1),left 0.25s;}
 .tab-btn:hover{color:var(--text-primary);background:rgba(79,195,247,0.08);}
@@ -373,54 +398,43 @@ body::before{
 /* ============================================================
    CARDS
 ============================================================ */
-.card{background:var(--section-card-bg);border:none;border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--elev-2);position:relative;overflow:hidden;transition:box-shadow 0.2s;}
+.card{background:var(--section-card-bg);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--elev-2);position:relative;overflow:hidden;transition:box-shadow 0.2s;}
 .card:hover{box-shadow:var(--elev-4);}
 .card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--md-primary-l),var(--md-lb-300));border-radius:var(--radius) 0 0 var(--radius);}
 [data-theme="light"] .card{background:#FFFFFF;}
-
-.card-title{font-family:'Roboto',sans-serif;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border-light);padding-left:12px;}
+.card-title{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border-light);padding-left:12px;}
 [data-theme="light"] .card-title{color:#1565C0;border-bottom-color:#BBDEFB;}
 
 /* ============================================================
-   FORM ELEMENTS
+   FORMS
 ============================================================ */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
 .form-group.full{grid-column:1/-1;}
-
-label{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--input-label);}
-
+label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--input-label);}
 select,input[type="text"],textarea,input[type="date"],input[type="month"]{
   background:var(--bg-input);border:2px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text-primary);font-family:'Roboto',sans-serif;font-size:14px;font-weight:400;
-  padding:11px 14px;width:100%;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;outline:none;
+  color:var(--text-primary);font-family:'Roboto',sans-serif;font-size:14px;
+  padding:11px 14px;width:100%;transition:border-color 0.2s,box-shadow 0.2s;outline:none;
 }
-[data-theme="light"] select,[data-theme="light"] input[type="text"],[data-theme="light"] textarea,[data-theme="light"] input[type="date"],[data-theme="light"] input[type="month"]{background:#FAFCFF;border-color:#90CAF9;color:#0A1929;}
-select::placeholder,input::placeholder,textarea::placeholder{color:var(--text-muted);font-weight:400;}
-[data-theme="light"] select::placeholder,[data-theme="light"] input::placeholder,[data-theme="light"] textarea::placeholder{color:#90A4AE;}
-select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.18);background:var(--bg-input);}
+[data-theme="light"] select,[data-theme="light"] input[type="text"],[data-theme="light"] textarea,
+[data-theme="light"] input[type="date"],[data-theme="light"] input[type="month"]{background:#FAFCFF;border-color:#90CAF9;color:#0A1929;}
+select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.18);}
 [data-theme="light"] select:focus,[data-theme="light"] input:focus,[data-theme="light"] textarea:focus{border-color:#1565C0;box-shadow:0 0 0 3px rgba(21,101,192,0.12);}
 textarea{resize:vertical;min-height:90px;line-height:1.65;}
 select option{background:var(--bg-card);color:var(--text-primary);}
 [data-theme="light"] select option{background:#FFFFFF;color:#0A1929;}
 
-/* ── Image compression status label ── */
-.compress-status{
-  font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;
-  color:var(--md-green-l);letter-spacing:0.3px;
-  margin-top:5px;display:none;
-}
+.compress-status{font-size:11px;font-weight:500;color:var(--md-green-l);margin-top:5px;display:none;}
 .compress-status.visible{display:block;}
-[data-theme="light"] .compress-status{color:#2E7D32;}
 
 .img-upload-area{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:var(--bg-input);}
 .img-upload-area:hover{border-color:var(--accent);background:rgba(79,195,247,0.06);}
 [data-theme="light"] .img-upload-area{border-color:#90CAF9;background:#F0F7FF;}
 [data-theme="light"] .img-upload-area:hover{border-color:#1565C0;background:rgba(21,101,192,0.05);}
 .img-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;padding:0;}
-.img-upload-text{font-family:'Roboto',sans-serif;font-size:12px;color:var(--text-muted);font-weight:400;}
+.img-upload-text{font-size:12px;color:var(--text-muted);}
 .img-upload-text strong{color:var(--accent);font-weight:700;}
-[data-theme="light"] .img-upload-text{color:#546E7A;}
 [data-theme="light"] .img-upload-text strong{color:#1565C0;}
 .img-preview{max-width:100%;max-height:120px;border-radius:var(--radius-sm);margin-top:10px;display:none;box-shadow:var(--elev-2);}
 
@@ -436,7 +450,7 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 [data-theme="light"] .btn-gold{background:#1565C0;color:#fff;}
 [data-theme="light"] .btn-gold:hover{background:#0D47A1;}
 .btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent);box-shadow:none;}
-.btn-outline:hover{background:rgba(79,195,247,0.10);box-shadow:none;}
+.btn-outline:hover{background:rgba(79,195,247,0.10);}
 [data-theme="light"] .btn-outline{color:#1565C0;border-color:#1565C0;}
 [data-theme="light"] .btn-outline:hover{background:rgba(21,101,192,0.08);}
 .btn-danger{background:var(--danger);color:#fff;}
@@ -449,7 +463,7 @@ select option{background:var(--bg-card);color:var(--text-primary);}
    SUB TABS
 ============================================================ */
 .sub-tabs-nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.sub-tab-btn{padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:50px;font-family:'Roboto',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;position:relative;overflow:hidden;}
+.sub-tab-btn{padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:50px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;}
 .sub-tab-btn.active,.sub-tab-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:var(--elev-2);}
 [data-theme="light"] .sub-tab-btn{border-color:#90CAF9;color:#1565C0;}
 [data-theme="light"] .sub-tab-btn.active,[data-theme="light"] .sub-tab-btn:hover{background:#1565C0;border-color:#1565C0;color:#fff;}
@@ -464,30 +478,29 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 .download-controls .form-group{margin:0;min-width:160px;}
 
 /* ============================================================
-   ENTRIES LIST
+   ENTRY LIST
 ============================================================ */
 .entries-list{margin-top:24px;}
-.entries-list h3{font-family:'Roboto',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:14px;}
+.entries-list h3{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:14px;}
 [data-theme="light"] .entries-list h3{color:#546E7A;}
-
-.entry-item{background:var(--section-card-bg);border:none;border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 16px 16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--elev-1);transition:box-shadow 0.2s,transform 0.15s;}
+.entry-item{background:var(--section-card-bg);border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 16px 16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--elev-1);transition:box-shadow 0.2s,transform 0.15s;}
 .entry-item:hover{box-shadow:var(--elev-2);transform:translateX(2px);}
 [data-theme="light"] .entry-item{background:#FFFFFF;border-left-color:#1565C0;}
-.entry-text{flex:1;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-primary);line-height:1.65;}
-.entry-meta{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:400;letter-spacing:0.3px;}
+.entry-text{flex:1;font-size:13px;color:var(--text-primary);line-height:1.65;}
+.entry-meta{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
 [data-theme="light"] .entry-meta{color:#546E7A;}
 .entry-q{font-weight:700;color:var(--text-primary);margin-bottom:4px;}
 .entry-a{color:var(--md-lb-300);font-weight:700;}
 [data-theme="light"] .entry-a{color:#1565C0;}
-.entry-img{width:80px;height:70px;object-fit:cover;border-radius:var(--radius-sm);border:none;box-shadow:var(--elev-1);flex-shrink:0;}
+.entry-img{width:80px;height:70px;object-fit:cover;border-radius:var(--radius-sm);box-shadow:var(--elev-1);flex-shrink:0;}
 .entry-delete{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:6px;border-radius:50%;transition:all 0.2s;}
 .entry-delete:hover{color:var(--danger);background:rgba(239,83,80,0.10);}
 
-.badge-reason{display:inline-flex;align-items:center;padding:4px 12px;border-radius:50px;font-family:'Roboto',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;gap:4px;}
+.badge-reason{display:inline-flex;align-items:center;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;gap:4px;}
 .badge-new   {background:rgba(46,125,50,0.15);  color:#81C784;border:1px solid rgba(46,125,50,0.35);}
-.badge-recall{background:rgba(245,127,23,0.15);  color:#FFB74D;border:1px solid rgba(245,127,23,0.35);}
-.badge-silly {background:rgba(21,101,192,0.15);  color:#64B5F6;border:1px solid rgba(21,101,192,0.35);}
-.badge-contro{background:rgba(198,40,40,0.15);   color:#EF9A9A;border:1px solid rgba(198,40,40,0.35);}
+.badge-recall{background:rgba(245,127,23,0.15); color:#FFB74D;border:1px solid rgba(245,127,23,0.35);}
+.badge-silly {background:rgba(21,101,192,0.15); color:#64B5F6;border:1px solid rgba(21,101,192,0.35);}
+.badge-contro{background:rgba(198,40,40,0.15);  color:#EF9A9A;border:1px solid rgba(198,40,40,0.35);}
 [data-theme="light"] .badge-new   {background:#E8F5E9;color:#388E3C;border-color:#A5D6A7;}
 [data-theme="light"] .badge-recall{background:#FFF3E0;color:#E65100;border-color:#FFCC02;}
 [data-theme="light"] .badge-silly {background:#E3F2FD;color:#1565C0;border-color:#90CAF9;}
@@ -499,77 +512,42 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 .danger-zone{max-width:980px;margin:40px auto 0;padding:0 24px;}
 .danger-card{background:var(--danger-zone-bg);border:1px solid rgba(239,83,80,0.40);border-left:5px solid var(--danger);border-radius:var(--radius);padding:28px;box-shadow:var(--elev-4);}
 [data-theme="light"] .danger-card{background:#FFF8E1;border-color:rgba(198,40,40,0.30);border-left-color:#C62828;}
-.danger-title{font-family:'Roboto',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--danger);font-weight:700;margin-bottom:8px;}
+.danger-title{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--danger);font-weight:700;margin-bottom:8px;}
 [data-theme="light"] .danger-title{color:#C62828;}
-.danger-desc{font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7;font-weight:400;}
+.danger-desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7;}
 [data-theme="light"] .danger-desc{color:#455A64;}
 .danger-actions{display:flex;gap:12px;flex-wrap:wrap;}
 
 /* ============================================================
-   PWA INSTALL SECTION — always visible at bottom
+   PWA INSTALL
 ============================================================ */
-.pwa-install-section{
-  max-width:980px;margin:28px auto 60px;padding:0 24px;
-}
+.pwa-install-section{max-width:980px;margin:28px auto 60px;padding:0 24px;}
 .pwa-install-card{
   background:linear-gradient(135deg,#0D2137 0%,#102A4C 60%,#0D2137 100%);
-  border:1px solid rgba(79,195,247,0.35);
-  border-radius:var(--radius);
-  padding:28px;
-  box-shadow:var(--elev-4);
-  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-  position:relative;overflow:hidden;
+  border:1px solid rgba(79,195,247,0.35);border-radius:var(--radius);padding:28px;box-shadow:var(--elev-4);
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;
 }
-.pwa-install-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,#1976D2,#4FC3F7,#0288D1);
-}
-[data-theme="light"] .pwa-install-card{
-  background:linear-gradient(135deg,#E3F2FD 0%,#BBDEFB 60%,#E3F2FD 100%);
-  border-color:rgba(21,101,192,0.30);
-}
+.pwa-install-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1976D2,#4FC3F7,#0288D1);}
+[data-theme="light"] .pwa-install-card{background:linear-gradient(135deg,#E3F2FD 0%,#BBDEFB 60%,#E3F2FD 100%);border-color:rgba(21,101,192,0.30);}
 .pwa-install-icon{font-size:48px;flex-shrink:0;line-height:1;}
 .pwa-install-body{flex:1;min-width:0;}
-.pwa-install-title{
-  font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;
-  color:var(--accent);letter-spacing:1px;text-transform:uppercase;
-  margin-bottom:6px;
-}
+.pwa-install-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
 [data-theme="light"] .pwa-install-title{color:#1565C0;}
-.pwa-install-name{
-  font-family:'Roboto',sans-serif;font-size:15px;font-weight:700;
-  color:var(--text-primary);margin-bottom:6px;letter-spacing:0.3px;
-}
-.pwa-install-desc{
-  font-family:'Roboto',sans-serif;font-size:13px;
-  color:var(--text-secondary);line-height:1.65;font-weight:400;
-}
+.pwa-install-name{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:6px;}
+.pwa-install-desc{font-size:13px;color:var(--text-secondary);line-height:1.65;}
 [data-theme="light"] .pwa-install-desc{color:#0D47A1;}
 .pwa-install-desc strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .pwa-install-desc strong{color:#1565C0;}
 .pwa-install-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-items:flex-end;}
-.pwa-ios-tip{
-  font-family:'Roboto',sans-serif;font-size:12px;
-  color:var(--text-muted);line-height:1.5;
-  text-align:center;display:none;
-  max-width:200px;
-}
-.pwa-install-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(46,125,50,0.18);
-  border:1px solid rgba(46,125,50,0.40);
-  border-radius:50px;
-  padding:4px 12px;
-  font-family:'Roboto',sans-serif;font-size:11px;font-weight:700;
-  color:#81C784;letter-spacing:0.5px;margin-top:4px;
-}
+.pwa-ios-tip{font-size:12px;color:var(--text-muted);line-height:1.5;text-align:center;display:none;max-width:200px;}
+.pwa-install-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(46,125,50,0.18);border:1px solid rgba(46,125,50,0.40);border-radius:50px;padding:4px 12px;font-size:11px;font-weight:700;color:#81C784;letter-spacing:0.5px;margin-top:4px;}
 [data-theme="light"] .pwa-install-badge{background:#E8F5E9;color:#2E7D32;border-color:#A5D6A7;}
 
 /* ============================================================
    TOAST
 ============================================================ */
 .toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
-.toast{background:var(--md-navy-700);border:none;border-left:4px solid var(--md-lb-300);border-radius:var(--radius-sm);padding:14px 20px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#E8F4FD;box-shadow:var(--elev-8);animation:toastIn 0.3s cubic-bezier(0.2,0,0,1),fadeOut 0.4s ease 2.6s forwards;max-width:320px;letter-spacing:0.2px;}
+.toast{background:var(--md-navy-700);border-left:4px solid var(--md-lb-300);border-radius:var(--radius-sm);padding:14px 20px;font-size:13px;font-weight:500;color:#E8F4FD;box-shadow:var(--elev-8);animation:toastIn 0.3s cubic-bezier(0.2,0,0,1),fadeOut 0.4s ease 2.6s forwards;max-width:320px;}
 .toast.error{border-left-color:var(--danger);}
 [data-theme="light"] .toast{background:#0D2137;color:#E8F4FD;}
 @keyframes toastIn{from{transform:translateX(110%) translateY(8px);opacity:0;}to{transform:translateX(0) translateY(0);opacity:1;}}
@@ -578,25 +556,25 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 /* ============================================================
    MODAL
 ============================================================ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.25s cubic-bezier(0.4,0,0.2,1);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.25s;}
 .modal-overlay.active{opacity:1;pointer-events:all;}
 .modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:420px;width:90%;box-shadow:var(--elev-8);transform:translateY(8px) scale(0.98);transition:transform 0.25s cubic-bezier(0.2,0,0,1);}
 .modal-overlay.active .modal{transform:translateY(0) scale(1);}
 [data-theme="light"] .modal{background:#FFFFFF;}
-.modal h3{font-family:'Roboto',sans-serif;font-size:16px;letter-spacing:0.5px;color:var(--danger);margin-bottom:12px;text-transform:uppercase;font-weight:700;}
-.modal p{font-family:'Roboto',sans-serif;font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.75;font-weight:400;}
+.modal h3{font-size:16px;letter-spacing:0.5px;color:var(--danger);margin-bottom:12px;text-transform:uppercase;font-weight:700;}
+.modal p{font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.75;}
 [data-theme="light"] .modal p{color:#455A64;}
 .modal-actions{display:flex;gap:12px;justify-content:flex-end;}
 
 /* ============================================================
    ADVICE BANNER
 ============================================================ */
-.advice-banner{display:flex;align-items:flex-start;gap:14px;background:rgba(79,195,247,0.10);border:none;border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;margin-bottom:20px;box-shadow:var(--elev-1);}
+.advice-banner{display:flex;align-items:flex-start;gap:14px;background:rgba(79,195,247,0.10);border-left:4px solid var(--md-lb-300);border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;margin-bottom:20px;box-shadow:var(--elev-1);}
 [data-theme="light"] .advice-banner{background:#E3F2FD;border-left-color:#1565C0;}
 .advice-icon{font-size:26px;flex-shrink:0;line-height:1;}
-.advice-title{font-family:'Roboto',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
+.advice-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;}
 [data-theme="light"] .advice-title{color:#1565C0;}
-.advice-text{font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-secondary);line-height:1.65;font-weight:400;}
+.advice-text{font-size:13px;color:var(--text-secondary);line-height:1.65;}
 [data-theme="light"] .advice-text{color:#0D47A1;}
 .advice-text strong{color:var(--accent);font-weight:700;}
 [data-theme="light"] .advice-text strong{color:#1565C0;}
@@ -604,11 +582,8 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 /* ============================================================
    MISC
 ============================================================ */
-.topic-tag{display:inline-block;font-size:11px;font-weight:700;color:var(--md-amber-l);background:rgba(255,179,0,0.12);border:1px solid rgba(255,179,0,0.30);border-radius:4px;padding:2px 8px;margin-left:6px;letter-spacing:0.3px;}
-[data-theme="light"] .topic-tag{color:#E65100;background:rgba(230,81,0,0.10);border-color:rgba(230,81,0,0.30);}
-.no-entries{text-align:center;padding:36px;color:var(--text-muted);font-style:italic;font-family:'Roboto',sans-serif;font-size:13px;font-weight:400;}
-.section-divider{height:1px;background:var(--border-light);margin:28px 0;}
-
+.topic-tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent-gold);background:rgba(255,179,0,0.12);border:1px solid rgba(255,179,0,0.30);border-radius:4px;padding:2px 8px;margin-left:6px;}
+.no-entries{text-align:center;padding:36px;color:var(--text-muted);font-style:italic;font-size:13px;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:var(--bg-primary);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
@@ -617,26 +592,6 @@ select option{background:var(--bg-card);color:var(--text-primary);}
 /* ============================================================
    RESPONSIVE
 ============================================================ */
-@media(min-width:769px) and (max-width:1024px){
-  .header{padding:10px 20px;}
-  .logo-img{width:70px;height:70px;margin-bottom:6px;}
-  .site-title{font-size:22px;}
-  .site-subtitle{font-size:10px;}
-  .tab-btn{padding:14px 16px;font-size:10px;}
-  .tab-panel{padding:22px 20px;}
-  .slideshow-section{padding:18px 20px;}
-  .slide-card{min-height:120px;}
-}
-@media(min-width:600px) and (max-width:768px) and (orientation:portrait){
-  .header{padding:10px 16px;}
-  .logo-img{width:64px;height:64px;margin-bottom:5px;}
-  .site-title{font-size:20px;letter-spacing:1px;}
-  .site-subtitle{font-size:9.5px;}
-  .tabs-wrapper{padding:0 12px;}
-  .tab-btn{padding:14px 14px;font-size:10px;}
-  .tab-panel{padding:20px 16px;}
-  .form-row{grid-template-columns:1fr 1fr;}
-}
 @media(max-width:599px) and (orientation:portrait){
   .header{grid-template-columns:40px 1fr 40px;padding:10px 12px 12px;gap:6px;}
   .logo-img{width:52px;height:52px;border-width:2px;margin-bottom:5px;}
@@ -645,100 +600,76 @@ select option{background:var(--bg-card);color:var(--text-primary);}
   .tabs-wrapper{padding:0 4px;}
   .tabs-nav{justify-content:flex-start;}
   .tab-btn{padding:14px 8px;font-size:8px;letter-spacing:0.5px;}
-  .tab-btn::after{height:2px;}
-  .advisory-bar{font-size:11px;padding:7px 12px;}
-  .slideshow-section{padding:14px 12px;}
-  .slideshow-section h2{font-size:10px;letter-spacing:1px;margin-bottom:10px;}
-  .slide-card{padding:14px;min-height:115px;flex-direction:column;gap:10px;}
-  .slide-image{width:100%;height:85px;}
-  .slide-question{font-size:14px;}
-  .slide-answer{font-size:13px;}
   .tab-panel{padding:14px 12px;}
   .card{padding:14px 12px;margin-bottom:14px;}
-  .card-title{font-size:11px;letter-spacing:1px;margin-bottom:12px;}
   .form-row{grid-template-columns:1fr;}
-  .form-group{margin-bottom:12px;}
-  label{font-size:10px;}
-  select,input[type="text"],textarea,input[type="date"],input[type="month"]{font-size:13px;padding:9px 11px;}
-  textarea{min-height:78px;}
-  .img-upload-area{padding:12px;}
-  .img-upload-text{font-size:11px;}
-  .btn{padding:10px 16px;font-size:12px;}
-  .btn-sm{padding:8px 12px;font-size:11px;}
-  .sub-tabs-nav{gap:6px;}
-  .sub-tab-btn{padding:8px 12px;font-size:11px;}
   .download-controls{flex-direction:column;gap:10px;padding:12px;}
   .download-controls .form-group{min-width:unset;width:100%;}
   .entry-item{flex-wrap:wrap;padding:12px;}
   .entry-img{width:100%;height:100px;}
-  .entry-text{font-size:12px;}
-  .entry-meta{font-size:10px;}
-  .advice-banner{padding:12px 12px;gap:10px;}
-  .advice-icon{font-size:20px;}
-  .advice-text{font-size:12px;}
   .danger-zone{padding:0 12px;margin:24px auto 0;}
   .danger-card{padding:16px;}
-  .danger-actions{flex-direction:column;gap:8px;}
+  .danger-actions{flex-direction:column;}
   .danger-actions .btn{width:100%;justify-content:center;}
   .pwa-install-section{padding:0 12px;margin:20px auto 48px;}
   .pwa-install-card{padding:20px;gap:16px;}
-  .pwa-install-icon{font-size:36px;}
-  .pwa-install-title{font-size:16px;}
   .pwa-install-actions{width:100%;align-items:stretch;}
   .pwa-install-actions .btn{justify-content:center;}
-  .modal{padding:20px 16px;}
-  .toast{max-width:90vw;font-size:12px;}
+  #splashLogo{width:100px;height:100px;}
+  #splashName{font-size:20px;}
+  #splashSubtitle{font-size:11px;letter-spacing:2px;}
 }
-@media(max-width:380px) and (orientation:portrait){
+@media(max-width:380px){
   .header{grid-template-columns:36px 1fr 36px;padding:8px 10px 10px;}
   .logo-img{width:44px;height:44px;}
-  .site-title{font-size:13px;letter-spacing:0.3px;}
-  .site-subtitle{font-size:7.5px;letter-spacing:1px;}
+  .site-title{font-size:13px;}
   .tab-btn{padding:12px 6px;font-size:7.5px;}
-  .advisory-bar{font-size:10px;}
+  #splashLogo{width:80px;height:80px;}
+  #splashName{font-size:17px;}
 }
 @media(max-height:500px) and (orientation:landscape){
   .header{grid-template-columns:38px 1fr 38px;padding:6px 16px;gap:8px;}
   .logo-img{width:40px;height:40px;border-width:2px;margin-bottom:3px;}
   .site-title{font-size:14px;letter-spacing:0.5px;}
   .site-subtitle{font-size:8px;letter-spacing:1.5px;margin-top:2px;}
-  .theme-emoji-btn{width:32px;height:32px;font-size:15px;}
-  .advisory-bar{font-size:10.5px;padding:5px 16px;}
   .tabs-wrapper{padding:0 8px;}
   .tabs-nav{justify-content:flex-start;}
-  .tab-btn{padding:10px 12px;font-size:9px;letter-spacing:0.5px;}
+  .tab-btn{padding:10px 12px;font-size:9px;}
   .slideshow-section{padding:8px 16px;}
   .slideshow-section h2{display:none;}
   .slide-card{min-height:80px;padding:10px 16px;}
-  .slide-question{font-size:13px;}
-  .slide-answer{font-size:12px;}
-  .slide-image{width:80px;height:65px;}
-  .tab-panel{padding:10px 14px;}
-  .card{padding:12px 14px;margin-bottom:12px;}
   .form-row{grid-template-columns:1fr 1fr;}
-  .form-group{margin-bottom:8px;}
-  label{font-size:10px;}
-  textarea{min-height:58px;}
-  .download-controls{flex-direction:row;flex-wrap:wrap;gap:8px;padding:10px;}
-  .download-controls .form-group{min-width:130px;}
-  .danger-actions{flex-wrap:wrap;gap:8px;}
+  #splashLogo{width:70px;height:70px;}
+  #splashName{font-size:16px;}
 }
-
-body{padding-bottom:env(safe-area-inset-bottom);}
 @media(hover:none) and (pointer:coarse){
   .btn,.tab-btn,.sub-tab-btn,.slide-btn,
   select,input[type="date"],input[type="month"]{min-height:44px;}
-  .name-circle{width:44px;height:44px;font-size:18px;}
-  .name-popover-save{padding:13px 0;font-size:13px;}
+  .name-circle{width:44px;height:44px;}
   .entry-delete{padding:9px;font-size:18px;}
 }
+body{padding-bottom:env(safe-area-inset-bottom);}
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════
+     SPLASH SCREEN
+════════════════════════════════════════════ -->
+<div id="splashScreen">
+  <div id="splashGroup">
+    <img id="splashLogo"
+      src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
+      alt="Scalpel Study Squad"/>
+    <div id="splashName"></div>
+    <div id="splashSubtitle">20th Book — Revision Report</div>
+  </div>
+</div>
+
+<!-- REAL HEADER — always present, revealed when splash background fades -->
 <header class="header" id="siteHeader">
   <div class="header-left">
-    <button class="theme-emoji-btn ripple-host" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+    <button class="theme-emoji-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
   </div>
   <div class="header-center">
     <div class="logo-wrap">
@@ -752,14 +683,14 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   </div>
   <div class="header-right">
     <div class="name-circle-wrap" id="nameCircleWrap">
-      <div class="name-circle ripple-host" id="nameCircle" onclick="toggleNamePopover()" title="Profile">👤</div>
+      <div class="name-circle" id="nameCircle" onclick="toggleNamePopover()" title="Profile">👤</div>
       <div class="name-popover" id="namePopover"></div>
     </div>
   </div>
 </header>
 
 <div class="advisory-bar">
-  <span class="advisory-icon">⚠</span>
+  <span>⚠</span>
   <span>Data is saved <strong>only on this device</strong> — use this website on one device only for best results.</span>
 </div>
 
@@ -772,14 +703,13 @@ body{padding-bottom:env(safe-area-inset-bottom);}
       </div>
     </div>
     <div class="slide-nav">
-      <button class="slide-btn ripple-host" id="slidePrev" title="Previous">&#8592;</button>
+      <button class="slide-btn" id="slidePrev" title="Previous">&#8592;</button>
       <span class="slide-counter" id="slideCounter">0 / 0</span>
-      <button class="slide-btn ripple-host" id="slideNext" title="Next">&#8594;</button>
+      <button class="slide-btn" id="slideNext" title="Next">&#8594;</button>
     </div>
   </div>
 </section>
 
-<!-- ── TABS: top is set by syncTabsTop() in JS ── -->
 <div class="tabs-wrapper" id="tabsWrapper">
   <div class="tabs-nav">
     <button class="tab-btn active" data-tab="notes">📝 Notes</button>
@@ -828,27 +758,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <span class="compress-status" id="notes-compress-status"></span>
         <input type="hidden" id="notes-img-data"/>
       </div>
-      <button class="btn btn-primary ripple-host" onclick="saveEntry('notes')">💾 Save Note</button>
+      <button class="btn btn-primary" onclick="saveEntry('notes')">💾 Save Note</button>
     </form>
   </div>
   <div class="card">
     <div class="card-title">📥 Download Notes PDF</div>
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active ripple-host" onclick="switchSubTab(this,'notes-daily')">By Date</button>
-      <button class="sub-tab-btn ripple-host" onclick="switchSubTab(this,'notes-monthly')">By Month</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'notes-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'notes-monthly')">By Month</button>
     </div>
     <div class="sub-tab-panel active" id="notes-daily">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="notes-dl-subject-daily"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="notes-dl-date"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('notes','daily')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','daily')">⬇ Download PDF</button>
       </div>
     </div>
     <div class="sub-tab-panel" id="notes-monthly">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="notes-dl-subject-monthly"></select></div>
         <div class="form-group"><label>Month</label><input type="month" id="notes-dl-month"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('notes','monthly')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('notes','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
@@ -898,27 +828,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <span class="compress-status" id="facts-compress-status"></span>
         <input type="hidden" id="facts-img-data"/>
       </div>
-      <button class="btn btn-primary ripple-host" onclick="saveEntry('facts')">💾 Save Fact</button>
+      <button class="btn btn-primary" onclick="saveEntry('facts')">💾 Save Fact</button>
     </form>
   </div>
   <div class="card">
     <div class="card-title">📥 Download Facts PDF</div>
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active ripple-host" onclick="switchSubTab(this,'facts-daily')">By Date</button>
-      <button class="sub-tab-btn ripple-host" onclick="switchSubTab(this,'facts-monthly')">By Month</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'facts-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'facts-monthly')">By Month</button>
     </div>
     <div class="sub-tab-panel active" id="facts-daily">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="facts-dl-subject-daily"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="facts-dl-date"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('facts','daily')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','daily')">⬇ Download PDF</button>
       </div>
     </div>
     <div class="sub-tab-panel" id="facts-monthly">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="facts-dl-subject-monthly"></select></div>
         <div class="form-group"><label>Month</label><input type="month" id="facts-dl-month"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('facts','monthly')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('facts','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
@@ -983,27 +913,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <span class="compress-status" id="pyq-compress-status"></span>
         <input type="hidden" id="pyq-img-data"/>
       </div>
-      <button class="btn btn-primary ripple-host" onclick="saveEntry('pyq')">💾 Save PYQ</button>
+      <button class="btn btn-primary" onclick="saveEntry('pyq')">💾 Save PYQ</button>
     </form>
   </div>
   <div class="card">
     <div class="card-title">📥 Download PYQ PDF</div>
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active ripple-host" onclick="switchSubTab(this,'pyq-daily')">By Date</button>
-      <button class="sub-tab-btn ripple-host" onclick="switchSubTab(this,'pyq-monthly')">By Month</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'pyq-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'pyq-monthly')">By Month</button>
     </div>
     <div class="sub-tab-panel active" id="pyq-daily">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-daily"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="pyq-dl-date"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('pyq','daily')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','daily')">⬇ Download PDF</button>
       </div>
     </div>
     <div class="sub-tab-panel" id="pyq-monthly">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="pyq-dl-subject-monthly"></select></div>
         <div class="form-group"><label>Month</label><input type="month" id="pyq-dl-month"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('pyq','monthly')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('pyq','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
@@ -1056,27 +986,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <span class="compress-status" id="swt-compress-status"></span>
         <input type="hidden" id="swt-img-data"/>
       </div>
-      <button class="btn btn-primary ripple-host" onclick="saveEntry('swt')">💾 Save SWT</button>
+      <button class="btn btn-primary" onclick="saveEntry('swt')">💾 Save SWT</button>
     </form>
   </div>
   <div class="card">
     <div class="card-title">📥 Download SWT PDF</div>
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active ripple-host" onclick="switchSubTab(this,'swt-daily')">By Date</button>
-      <button class="sub-tab-btn ripple-host" onclick="switchSubTab(this,'swt-monthly')">By Month</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'swt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'swt-monthly')">By Month</button>
     </div>
     <div class="sub-tab-panel active" id="swt-daily">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="swt-dl-subject-daily"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="swt-dl-date"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('swt','daily')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','daily')">⬇ Download PDF</button>
       </div>
     </div>
     <div class="sub-tab-panel" id="swt-monthly">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="swt-dl-subject-monthly"></select></div>
         <div class="form-group"><label>Month</label><input type="month" id="swt-dl-month"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('swt','monthly')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('swt','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
@@ -1137,27 +1067,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <span class="compress-status" id="gt-compress-status"></span>
         <input type="hidden" id="gt-img-data"/>
       </div>
-      <button class="btn btn-primary ripple-host" onclick="saveEntry('gt')">💾 Save GT Mistake</button>
+      <button class="btn btn-primary" onclick="saveEntry('gt')">💾 Save GT Mistake</button>
     </form>
   </div>
   <div class="card">
     <div class="card-title">📥 Download GT PDF</div>
     <div class="sub-tabs-nav">
-      <button class="sub-tab-btn active ripple-host" onclick="switchSubTab(this,'gt-daily')">By Date</button>
-      <button class="sub-tab-btn ripple-host" onclick="switchSubTab(this,'gt-monthly')">By Month</button>
+      <button class="sub-tab-btn active" onclick="switchSubTab(this,'gt-daily')">By Date</button>
+      <button class="sub-tab-btn" onclick="switchSubTab(this,'gt-monthly')">By Month</button>
     </div>
     <div class="sub-tab-panel active" id="gt-daily">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="gt-dl-subject-daily"></select></div>
         <div class="form-group"><label>Date</label><input type="date" id="gt-dl-date"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('gt','daily')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','daily')">⬇ Download PDF</button>
       </div>
     </div>
     <div class="sub-tab-panel" id="gt-monthly">
       <div class="download-controls">
         <div class="form-group"><label>Subject</label><select id="gt-dl-subject-monthly"></select></div>
         <div class="form-group"><label>Month</label><input type="month" id="gt-dl-month"/></div>
-        <button class="btn btn-gold btn-sm ripple-host" onclick="downloadPDF('gt','monthly')">⬇ Download PDF</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadPDF('gt','monthly')">⬇ Download PDF</button>
       </div>
     </div>
   </div>
@@ -1175,19 +1105,17 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     <div class="danger-title">⚠ Danger Zone</div>
     <p class="danger-desc">Permanently delete your data stored in this browser. This action cannot be undone.</p>
     <div class="danger-actions">
-      <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('notes')">🗑 Delete Notes</button>
-      <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('facts')">🗑 Delete Facts</button>
-      <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('pyq')">🗑 Delete PYQs</button>
-      <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('swt')">🗑 Delete SWT</button>
-      <button class="btn btn-danger btn-sm ripple-host" onclick="confirmDelete('gt')">🗑 Delete GT</button>
-      <button class="btn btn-danger ripple-host" onclick="confirmDelete('all')" style="background:#7f1d1d;">💀 Delete ALL Data</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('notes')">🗑 Delete Notes</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('facts')">🗑 Delete Facts</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('pyq')">🗑 Delete PYQs</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('swt')">🗑 Delete SWT</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('gt')">🗑 Delete GT</button>
+      <button class="btn btn-danger" onclick="confirmDelete('all')" style="background:#7f1d1d;">💀 Delete ALL Data</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PWA INSTALL SECTION — always visible at bottom
-════════════════════════════════════════════ -->
+<!-- ── PWA INSTALL ── -->
 <div class="pwa-install-section" id="pwaInstallSection">
   <div class="pwa-install-card">
     <div class="pwa-install-icon">📲</div>
@@ -1201,45 +1129,27 @@ body{padding-bottom:env(safe-area-inset-bottom);}
       <div class="pwa-install-badge" id="pwaInstalledBadge" style="display:none;">✅ App Already Installed!</div>
     </div>
     <div class="pwa-install-actions">
-      <!-- Android / Chrome / Edge: shown when prompt available -->
-      <button class="btn btn-install ripple-host" id="pwaMainInstallBtn" style="display:none;">
-        ⬇ Install App
-      </button>
-      <!-- iOS instructions -->
+      <button class="btn btn-install" id="pwaMainInstallBtn" style="display:none;">⬇ Install App</button>
       <div class="pwa-ios-tip" id="pwaIosTip">
-        📱 On iPhone/iPad:<br/>
-        Tap <strong>Share ↑</strong> → <strong>"Add to Home Screen"</strong>
+        📱 On iPhone/iPad:<br/>Tap <strong>Share ↑</strong> → <strong>"Add to Home Screen"</strong>
       </div>
-      <!-- Fallback for unsupported browsers -->
       <div class="pwa-ios-tip" id="pwaDesktopTip" style="display:none;">
-        🖥️ On Chrome/Edge:<br/>
-        Click the <strong>⊕ Install</strong> icon in the address bar
+        🖥️ On Chrome/Edge:<br/>Click the <strong>⊕ Install</strong> icon in the address bar
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── OLD floating banner (kept for Android auto-prompt) ── -->
-<div id="pwaInstallBanner" style="
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  z-index:10000;
-  background:#0D2137;
-  border-top:3px solid #29B6F6;
-  padding:14px 20px;
-  padding-bottom:max(14px,env(safe-area-inset-bottom));
-  box-shadow:0 -4px 24px rgba(0,0,0,0.45);
-  align-items:center;
-  gap:14px;
-">
+<!-- ── OLD floating banner ── -->
+<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10000;background:#0D2137;border-top:3px solid #29B6F6;padding:14px 20px;padding-bottom:max(14px,env(safe-area-inset-bottom));box-shadow:0 -4px 24px rgba(0,0,0,0.45);align-items:center;gap:14px;">
   <img src="https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg"
     style="width:46px;height:46px;border-radius:50%;border:2px solid #4FC3F7;object-fit:cover;flex-shrink:0;" alt=""/>
   <div style="flex:1;min-width:0;">
-    <div style="font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;color:#4FC3F7;letter-spacing:2px;text-transform:uppercase;">SSS 20th Book</div>
-    <div style="font-family:'Roboto',sans-serif;font-size:12px;color:rgba(144,202,249,0.85);margin-top:2px;line-height:1.45;font-weight:400;">Add to your home screen for quick access &amp; offline use.</div>
+    <div style="font-size:13px;font-weight:700;color:#4FC3F7;letter-spacing:2px;text-transform:uppercase;">SSS 20th Book</div>
+    <div style="font-size:12px;color:rgba(144,202,249,0.85);margin-top:2px;line-height:1.45;">Add to your home screen for quick access &amp; offline use.</div>
   </div>
-  <button id="pwaInstallBtn" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-family:'Roboto',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:1.5px;box-shadow:0 2px 8px rgba(0,0,0,0.3);">⬇ Install</button>
-  <button id="pwaDismissBtn" style="background:none;border:none;color:rgba(144,202,249,0.55);font-size:22px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;" title="Dismiss">✕</button>
+  <button id="pwaInstallBtn" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1.5px;">⬇ Install</button>
+  <button id="pwaDismissBtn" style="background:none;border:none;color:rgba(144,202,249,0.55);font-size:22px;cursor:pointer;padding:4px;" title="Dismiss">✕</button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -1247,8 +1157,8 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     <h3>⚠ Confirm Permanent Deletion</h3>
     <p id="modalText">This action is irreversible.</p>
     <div class="modal-actions">
-      <button class="btn btn-outline btn-sm ripple-host" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger btn-sm ripple-host" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="modalConfirmBtn" onclick="executeDelete()">Delete Permanently</button>
     </div>
   </div>
 </div>
@@ -1272,6 +1182,130 @@ const SECTION_LABELS = {
 const LOGO_URL = 'https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg';
 
 /* ============================================================
+   ★ SPLASH SCREEN ANIMATION
+   Flow:
+   1. Splash fills screen with #0D2137 (same as header bg)
+   2. Logo zooms in from tiny → natural size (CSS keyframe)
+   3. Title types out character by character
+   4. Subtitle fades in
+   5. flyToHeader() fires:
+      • Measures exact pixel positions of splash group & real header logo
+      • Translates + scales the splash group to land on the header
+      • Simultaneously fades the blue background to transparent
+      • After transition: removes splash, page is fully revealed
+============================================================ */
+(function(){
+  const splash    = document.getElementById('splashScreen');
+  const group     = document.getElementById('splashGroup');
+  const nameEl    = document.getElementById('splashName');
+  const subtitle  = document.getElementById('splashSubtitle');
+  const FULL_NAME = 'Scalpel Study Squad';
+  let charIdx = 0;
+
+  /* ── Step 5: fly group to header, dissolve background ── */
+  function flyToHeader(){
+    const targetLogo = document.getElementById('logoImg');
+
+    /* Measure bounding rects */
+    const groupRect  = group.getBoundingClientRect();
+    const targetRect = targetLogo.getBoundingClientRect();
+
+    /* Centers */
+    const gCX = groupRect.left  + groupRect.width  / 2;
+    const gCY = groupRect.top   + groupRect.height / 2;
+    const tCX = targetRect.left + targetRect.width  / 2;
+    const tCY = targetRect.top  + targetRect.height / 2;
+
+    /* Translation needed */
+    const dx = tCX - gCX;
+    const dy = tCY - gCY;
+
+    /* Scale: splash logo 130px → header logo 84px */
+    const splashLogoSize = window.innerWidth <= 380 ? 80 :
+                           window.innerWidth <= 599 ? 100 : 130;
+    const headerLogoSize = window.innerWidth <= 380 ? 44 :
+                           window.innerWidth <= 599 ? 52 : 84;
+    const scale = headerLogoSize / splashLogoSize;
+
+    /* 1) Fly the group to header position & shrink it */
+    group.style.transition = 'transform 0.90s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.55s ease 0.30s';
+    group.style.transform  = `translate(${dx}px, ${dy}px) scale(${scale})`;
+    group.style.opacity    = '0';
+
+    /* 2) Fade the navy background to transparent in sync */
+    splash.style.transition      = 'background-color 0.95s ease 0.05s';
+    splash.style.backgroundColor = 'transparent';
+
+    /* 3) Remove splash entirely after animation completes */
+    setTimeout(() => {
+      splash.style.display = 'none';
+    }, 1050);
+  }
+
+  /* ── Step 4: subtitle fades in, then trigger fly ── */
+  function showSubtitleThenFly(){
+    subtitle.classList.add('show');
+    setTimeout(flyToHeader, 700); /* brief pause so user sees subtitle */
+  }
+
+  /* ── Step 3: typewriter ── */
+  function typeLetter(){
+    if(charIdx < FULL_NAME.length){
+      nameEl.textContent = FULL_NAME.slice(0, ++charIdx);
+      setTimeout(typeLetter, charIdx === 1 ? 110 : 68);
+    } else {
+      /* Typing done → show subtitle → fly */
+      showSubtitleThenFly();
+    }
+  }
+
+  /* ── Step 2: start typewriter after logo zoom ── */
+  setTimeout(() => {
+    nameEl.classList.add('typing');
+    typeLetter();
+  }, 1380); /* logo zoom takes ~1.35s (0.25s delay + 1.1s duration) */
+
+  /* ── Safety net: if something stalls, force-hide after 7s ── */
+  setTimeout(() => {
+    if(splash.style.display !== 'none'){
+      splash.style.display = 'none';
+    }
+  }, 7000);
+})();
+
+/* ============================================================
+   SYNC TABS TOP
+============================================================ */
+function syncTabsTop(){
+  const hdr  = document.getElementById('siteHeader');
+  const tabs = document.getElementById('tabsWrapper');
+  if(hdr && tabs){
+    tabs.style.top = Math.round(hdr.getBoundingClientRect().height) + 'px';
+  }
+}
+syncTabsTop();
+window.addEventListener('resize', syncTabsTop);
+window.addEventListener('load',   syncTabsTop);
+if(document.fonts){ document.fonts.ready.then(syncTabsTop); }
+
+/* ============================================================
+   THEME TOGGLE
+============================================================ */
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const systemDark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+let currentTheme  = localStorage.getItem('sss_theme') || (systemDark ? 'dark' : 'light');
+html.setAttribute('data-theme', currentTheme);
+themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+themeToggle.addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', currentTheme);
+  themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('sss_theme', currentTheme);
+  setTimeout(syncTabsTop, 350);
+});
+
+/* ============================================================
    LOCAL STORAGE DB
 ============================================================ */
 const DB = {};
@@ -1281,54 +1315,18 @@ function saveDB(k){localStorage.setItem('sss_'+k,JSON.stringify(DB[k]));}
 loadDB();
 
 /* ============================================================
-   SYNC TABS TOP — FIX masking issue
-   Measures actual header height and sets tabs sticky top to match.
-   Called on load, resize, and theme change.
-============================================================ */
-function syncTabsTop(){
-  const hdr = document.getElementById('siteHeader');
-  const tabs = document.getElementById('tabsWrapper');
-  if(hdr && tabs){
-    const h = hdr.getBoundingClientRect().height;
-    tabs.style.top = Math.round(h) + 'px';
-  }
-}
-// Run immediately, after fonts load, and on resize
-syncTabsTop();
-window.addEventListener('resize', syncTabsTop);
-window.addEventListener('load', syncTabsTop);
-if(document.fonts){document.fonts.ready.then(syncTabsTop);}
-
-/* ============================================================
-   THEME TOGGLE
-============================================================ */
-const html = document.documentElement;
-const themeToggle = document.getElementById('themeToggle');
-let currentTheme = localStorage.getItem('sss_theme')||'dark';
-html.setAttribute('data-theme',currentTheme);
-themeToggle.textContent = currentTheme==='dark'?'🌙':'☀️';
-themeToggle.addEventListener('click',()=>{
-  currentTheme = currentTheme==='dark'?'light':'dark';
-  html.setAttribute('data-theme',currentTheme);
-  themeToggle.textContent = currentTheme==='dark'?'🌙':'☀️';
-  localStorage.setItem('sss_theme',currentTheme);
-  // Re-sync after theme transition (header height may shift slightly)
-  setTimeout(syncTabsTop, 350);
-});
-
-/* ============================================================
    PROFILE NAME POPOVER
 ============================================================ */
 const nameCircle  = document.getElementById('nameCircle');
 const namePopover = document.getElementById('namePopover');
 function getStoredName(){return localStorage.getItem('sss_username')||'';}
 function renderCircle(){
-  const raw = getStoredName();
+  const raw=getStoredName();
   if(raw){nameCircle.textContent=raw.charAt(0).toUpperCase();nameCircle.classList.add('has-name');}
   else{nameCircle.textContent='👤';nameCircle.classList.remove('has-name');}
 }
 function buildPopoverView(){
-  const raw = getStoredName();
+  const raw=getStoredName();
   if(raw){
     namePopover.innerHTML=`
       <div class="name-popover-label">Your Profile</div>
@@ -1345,22 +1343,20 @@ function buildPopoverEdit(){
         onkeydown="if(event.key==='Enter') savePopoverName()"/>
     </div>
     <button class="name-popover-save" onclick="savePopoverName()">✓ Save</button>`;
-  const inp = document.getElementById('namePopInput');
-  inp.value = getStoredName();
+  const inp=document.getElementById('namePopInput');
+  inp.value=getStoredName();
   setTimeout(()=>inp.focus(),60);
 }
 function savePopoverName(){
-  const inp = document.getElementById('namePopInput');
-  if(!inp) return;
-  const val = inp.value.trim();
+  const inp=document.getElementById('namePopInput');
+  if(!inp)return;
+  const val=inp.value.trim();
   if(!val){showToast('❌ Please enter your name.','error');return;}
   localStorage.setItem('sss_username',val);
-  renderCircle();
-  buildPopoverView();
-  showToast('✅ Name saved!');
+  renderCircle();buildPopoverView();showToast('✅ Name saved!');
 }
 function toggleNamePopover(){
-  const isOpen = namePopover.classList.contains('open');
+  const isOpen=namePopover.classList.contains('open');
   if(isOpen){namePopover.classList.remove('open');}
   else{buildPopoverView();namePopover.classList.add('open');}
 }
@@ -1368,7 +1364,7 @@ document.addEventListener('click',e=>{
   if(!document.getElementById('nameCircleWrap').contains(e.target))
     namePopover.classList.remove('open');
 });
-function escHtmlName(str){if(!str)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escHtmlName(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 renderCircle();
 
 /* ============================================================
@@ -1414,55 +1410,37 @@ function switchSubTab(btn,panelId){
 }
 
 /* ============================================================
-   IMAGE COMPRESSION — new core function
-   Resizes to max 1200×1200 and compresses to JPEG at 0.72 quality.
-   This typically reduces a 2MB photo to ~150-350KB in storage.
+   IMAGE COMPRESSION
 ============================================================ */
 function compressImage(dataUrl, callback){
-  const MAX_DIM = 1200;
-  const QUALITY = 0.72;
-  const img = new Image();
-  img.onload = () => {
-    let w = img.width, h = img.height;
-    if(w > MAX_DIM || h > MAX_DIM){
-      const ratio = Math.min(MAX_DIM/w, MAX_DIM/h);
-      w = Math.round(w * ratio);
-      h = Math.round(h * ratio);
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    callback(canvas.toDataURL('image/jpeg', QUALITY));
+  const MAX_DIM=1200, QUALITY=0.72;
+  const img=new Image();
+  img.onload=()=>{
+    let w=img.width,h=img.height;
+    if(w>MAX_DIM||h>MAX_DIM){const r=Math.min(MAX_DIM/w,MAX_DIM/h);w=Math.round(w*r);h=Math.round(h*r);}
+    const canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    callback(canvas.toDataURL('image/jpeg',QUALITY));
   };
-  img.onerror = () => callback(dataUrl); // fallback: use original
-  img.src = dataUrl;
+  img.onerror=()=>callback(dataUrl);
+  img.src=dataUrl;
 }
-
-/* ============================================================
-   IMAGE UPLOAD HANDLER — now with compression
-============================================================ */
-function handleImageUpload(input, previewId, dataId, statusId){
-  const file = input.files[0];
-  if(!file) return;
-  if(file.size > 2097152){
-    showToast('❌ Image too large. Max 2 MB allowed.','error');
-    input.value='';return;
-  }
-  const statusEl = document.getElementById(statusId);
+function handleImageUpload(input,previewId,dataId,statusId){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>2097152){showToast('❌ Image too large. Max 2 MB allowed.','error');input.value='';return;}
+  const statusEl=document.getElementById(statusId);
   if(statusEl){statusEl.textContent='⏳ Compressing...';statusEl.classList.add('visible');}
-  const reader = new FileReader();
-  reader.onload = e => {
-    const originalSize = Math.round(e.target.result.length / 1024);
-    compressImage(e.target.result, compressed => {
-      const compressedSize = Math.round(compressed.length / 1024);
-      document.getElementById(dataId).value = compressed;
-      const preview = document.getElementById(previewId);
-      preview.src = compressed;
-      preview.style.display = 'block';
-      if(statusEl){
-        statusEl.textContent = `✅ Compressed: ~${originalSize} KB → ~${compressedSize} KB saved`;
-        statusEl.classList.add('visible');
-      }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const originalSize=Math.round(e.target.result.length/1024);
+    compressImage(e.target.result,compressed=>{
+      const compressedSize=Math.round(compressed.length/1024);
+      document.getElementById(dataId).value=compressed;
+      const preview=document.getElementById(previewId);
+      preview.src=compressed;preview.style.display='block';
+      if(statusEl){statusEl.textContent=`✅ Compressed: ~${originalSize}KB → ~${compressedSize}KB`;statusEl.classList.add('visible');}
     });
   };
   reader.readAsDataURL(file);
@@ -1474,8 +1452,8 @@ function handleImageUpload(input, previewId, dataId, statusId){
 function getTimestamp(){
   const now=new Date();
   return{timestamp:now.toISOString(),date:now.toISOString().split('T')[0],month:now.toISOString().substring(0,7),
-         displayDate:now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
-         displayTime:now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
+    displayDate:now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+    displayTime:now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
 }
 function saveEntry(section){
   const ts=getTimestamp();let entry={id:Date.now(),...ts};
@@ -1525,13 +1503,10 @@ function saveEntry(section){
     entry={...entry,subject,exam,question,correct,wrong,reason,image:document.getElementById('gt-img-data').value};
     clearForm('gt',['gt-question','gt-correct','gt-wrong','gt-img-data'],['gt-img-preview'],'gt-compress-status');
   }
-  DB[section].unshift(entry);
-  saveDB(section);
-  renderList(section);
+  DB[section].unshift(entry);saveDB(section);renderList(section);
   if(section==='facts')updateSlideshow();
   showToast('✅ Saved successfully!');
 }
-
 function clearForm(section,textIds,imgIds,statusId){
   textIds.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   imgIds.forEach(id=>{const el=document.getElementById(id);if(el){el.src='';el.style.display='none';}});
@@ -1566,8 +1541,7 @@ function renderList(section){
     const meta=[e.subject,e.topic?`📌 ${e.topic}`:null,e.displayDate,e.displayTime,e.exam,e.year].filter(Boolean).join(' · ');
     return`<div class="entry-item">
       <div class="entry-text">
-        <div class="entry-meta">${escHtml(meta)}</div>
-        ${bodyHtml}
+        <div class="entry-meta">${escHtml(meta)}</div>${bodyHtml}
       </div>
       ${e.image?`<img class="entry-img" src="${e.image}" alt="Entry image"/>`:''}
       <button class="entry-delete" onclick="deleteEntry('${section}',${e.id})" title="Delete">✕</button>
@@ -1575,10 +1549,8 @@ function renderList(section){
   }).join('');
 }
 function deleteEntry(section,id){
-  DB[section]=DB[section].filter(e=>e.id!==id);
-  saveDB(section);renderList(section);
-  if(section==='facts')updateSlideshow();
-  showToast('Entry deleted.');
+  DB[section]=DB[section].filter(e=>e.id!==id);saveDB(section);renderList(section);
+  if(section==='facts')updateSlideshow();showToast('Entry deleted.');
 }
 function escHtml(str){
   if(!str)return'';
@@ -1610,8 +1582,7 @@ function updateSlideshow(){
   if(existImg)existImg.remove();
   if(f.image){
     const img=document.createElement('img');
-    img.className='slide-image';img.src=f.image;img.alt='Fact image';
-    card.appendChild(img);
+    img.className='slide-image';img.src=f.image;img.alt='Fact image';card.appendChild(img);
   }
   counter.textContent=`${slideIndex+1} / ${facts.length}`;
   resetSlideTimer();
@@ -1626,7 +1597,6 @@ updateSlideshow();
 
 /* ============================================================
    PDF GENERATION
-   ► PDF subtitle now shows "Dr. [Name]'s 20th Notebook – Revision Report"
 ============================================================ */
 let logoBase64=null;
 function loadLogoBase64(callback){
@@ -1642,8 +1612,6 @@ function loadLogoBase64(callback){
   img.onerror=()=>callback(null);
   img.src=LOGO_URL;
 }
-
-/* ── Preload image natural dimensions (px) from a base64 dataURL ── */
 function preloadImageDims(dataUrl){
   return new Promise(resolve=>{
     const img=new Image();
@@ -1652,7 +1620,6 @@ function preloadImageDims(dataUrl){
     img.src=dataUrl;
   });
 }
-
 async function downloadPDF(section,mode){
   const subjectKey=`${section}-dl-subject-${mode==='daily'?'daily':'monthly'}`;
   const subject=document.getElementById(subjectKey)?.value||'all';
@@ -1675,90 +1642,50 @@ async function downloadPDF(section,mode){
     return subMatch&&dateMatch;
   });
   if(!data.length){showToast(`❌ No entries found for ${subject==='all'?'all subjects':subject} on ${subtitleExtra}.`,'error');return;}
-
   showToast('⏳ Generating PDF...');
-
-  /* Preload real pixel dimensions for every image so PDF can use true aspect ratio */
   const dimMap={};
-  await Promise.all(
-    data.filter(e=>e.image).map(e=>
-      preloadImageDims(e.image).then(dims=>{ dimMap[e.id]=dims; })
-    )
-  );
-
+  await Promise.all(data.filter(e=>e.image).map(e=>preloadImageDims(e.image).then(dims=>{dimMap[e.id]=dims;})));
   loadLogoBase64(logo=>generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap));
 }
-
-/* ============================================================
-   PDF ENGINE
-   Image layout rules (based on actual pixel aspect ratio):
-   ┌─────────────────────────────────────────────────────────┐
-   │ LANDSCAPE (w > h × 1.2) → WIDE layout                  │
-   │   Image spans full column width, true aspect ratio      │
-   │   All text (Q/Ans/Wrong/Reason) printed BELOW image     │
-   │                                                         │
-   │ PORTRAIT / SQUARE (w ≤ h × 1.2) → SIDE layout          │
-   │   Image fixed 68 mm wide on the RIGHT, aspect correct   │
-   │   Text flows LEFT beside image, continues BELOW at CW   │
-   └─────────────────────────────────────────────────────────┘
-   Neither layout ever crops or distorts the image.
-============================================================ */
 function generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap){
   const{jsPDF}=window.jspdf;
   const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
   const PW=doc.internal.pageSize.getWidth();
   const PH=doc.internal.pageSize.getHeight();
-  const M=15, CW=PW-M*2; // CW ≈ 180 mm
+  const M=15, CW=PW-M*2;
   let y=M;
   const lh=pt=>pt*0.42+1.6;
-
-  /* ── User name for PDF subtitle ── */
   const storedName=localStorage.getItem('sss_username')||'';
-  const pdfSubtitle=storedName
-    ? `Dr. ${storedName}'s 20th Notebook \u2014 Revision Report`
-    : '20th Book \u2014 Revision Report';
+  const pdfSubtitle=storedName?`Dr. ${storedName}'s 20th Notebook \u2014 Revision Report`:'20th Book \u2014 Revision Report';
 
-  /* ── Page-break guard ── */
   function np(needed=30){
     if(y+needed>PH-M-14){doc.addPage();y=M;repeatHeader();}
   }
-
   const C={
     green:[26,71,49],greenMid:[40,100,65],gold:[180,120,10],goldBg:[255,248,220],
     white:[255,255,255],nearBlack:[15,15,15],ansGreen:[16,90,50],wrongRed:[180,30,30],
     stripBg:[235,248,240],divider:[200,230,210],muted:[100,100,100],
     headerBg:[22,60,42],topicRed:[200,0,0]
   };
-
-  function drawAccentBar(){
-    doc.setFillColor(...C.green);doc.rect(0,0,PW,6,'F');
-    doc.setFillColor(251,191,36);doc.rect(0,5.5,PW,2,'F');
-  }
+  function drawAccentBar(){doc.setFillColor(...C.green);doc.rect(0,0,PW,6,'F');doc.setFillColor(251,191,36);doc.rect(0,5.5,PW,2,'F');}
   function repeatHeader(){
     drawAccentBar();
     doc.setFillColor(...C.headerBg);doc.rect(0,7.5,PW,10,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.white);
     const subLabel=subject==='all'?'All Subjects':subject;
-    doc.text(
-      `SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,
-      PW/2,14,{align:'center'}
-    );
+    doc.text(`SCALPEL STUDY SQUAD  |  ${SECTION_LABELS[section].toUpperCase()}  |  ${subLabel.toUpperCase()}  |  ${subtitleExtra}`,PW/2,14,{align:'center'});
     y=22;
   }
-
-  /* ── COVER PAGE ── */
-  drawAccentBar(); y=10;
+  drawAccentBar();y=10;
   const logoSize=38;
   if(logo){try{doc.addImage(logo,'JPEG',M,y,logoSize,logoSize,'','FAST');}catch(e){}}
-  const tx=logo?M+logoSize+8:M; const titleW=PW-tx-M;
-
+  const tx=logo?M+logoSize+8:M;const titleW=PW-tx-M;
   doc.setFont('helvetica','bold');doc.setFontSize(24);doc.setTextColor(...C.green);
   doc.text('SCALPEL STUDY SQUAD',tx,y+11,{maxWidth:titleW});
   doc.setFontSize(13);doc.setTextColor(...C.gold);
   doc.text(pdfSubtitle,tx,y+22,{maxWidth:titleW});
   doc.setFontSize(12);doc.setTextColor(...C.nearBlack);
   doc.text(mode==='daily'?`Date: ${subtitleExtra}`:`Month: ${subtitleExtra}`,tx,y+33,{maxWidth:titleW});
-
   y=Math.max(y+logoSize+4,y+42);
   doc.setFillColor(...C.stripBg);doc.setDrawColor(...C.green);doc.setLineWidth(0.6);
   doc.roundedRect(M,y,CW,28,3,3,'FD');
@@ -1766,112 +1693,55 @@ function generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap){
   doc.text(`Subject: ${subject==='all'?'All Subjects':subject}`,M+7,y+11);
   doc.setFontSize(14);doc.setTextColor(...C.greenMid);
   doc.text(`Section: ${SECTION_LABELS[section]}`,M+7,y+22);
-  y+=34;
-  doc.setFillColor(...C.green);doc.rect(M,y,CW,2,'F');y+=10;
+  y+=34;doc.setFillColor(...C.green);doc.rect(M,y,CW,2,'F');y+=10;
 
-  /* ══════════════════════════════════════════════════════════
-     flowText — word-wrapping text renderer that is aware of
-     the image zone.
-     • While y < imgEndY  → renders in narrowW (beside image)
-     • While y >= imgEndY → renders in CW     (below image)
-     Works for both SIDE and WIDE layouts:
-       WIDE: pass narrowW=CW, imgEndY=imageBottomY so text
-             always uses full width but still respects page flow
-       SIDE: pass narrowW=textColW, imgEndY=imageBottomY
-  ══════════════════════════════════════════════════════════ */
-  function flowText(rawText, fontSize, mainColor, prefix, prefixMM, prefixColor, narrowW, imgEndY){
-    const text=String(rawText||'').trim();
-    if(!text) return;
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(fontSize);
-    const lineH=lh(fontSize);
-    const words=text.split(/\s+/).filter(Boolean);
-    let line='', firstLine=true;
-
-    function availW(){ return (y>=imgEndY?CW:narrowW)-2; }
-    function xStart(fl){ return fl&&prefix ? M+prefixMM : M; }
-
+  function flowText(rawText,fontSize,mainColor,prefix,prefixMM,prefixColor,narrowW,imgEndY){
+    const text=String(rawText||'').trim();if(!text)return;
+    doc.setFont('helvetica','bold');doc.setFontSize(fontSize);
+    const lineH=lh(fontSize);const words=text.split(/\s+/).filter(Boolean);
+    let line='',firstLine=true;
+    function availW(){return(y>=imgEndY?CW:narrowW)-2;}
     function flush(ln){
-      if(!ln.trim()) return;
-      np(lineH+1);
+      if(!ln.trim())return;np(lineH+1);
       doc.setFont('helvetica','bold');doc.setFontSize(fontSize);
-      if(firstLine&&prefix){
-        doc.setTextColor(...prefixColor);doc.text(prefix,M,y);
-        doc.setTextColor(...mainColor);doc.text(ln,M+prefixMM,y);
-      } else {
-        doc.setTextColor(...mainColor);doc.text(ln,xStart(false),y);
-      }
-      y+=lineH; firstLine=false;
+      if(firstLine&&prefix){doc.setTextColor(...prefixColor);doc.text(prefix,M,y);doc.setTextColor(...mainColor);doc.text(ln,M+prefixMM,y);}
+      else{doc.setTextColor(...mainColor);doc.text(ln,M,y);}
+      y+=lineH;firstLine=false;
     }
-
     for(let i=0;i<=words.length;i++){
-      const w=words[i];
-      const test=line?line+' '+(w||''):(w||'');
+      const w=words[i];const test=line?line+' '+(w||''):(w||'');
       const maxW=availW()-(firstLine&&prefix?prefixMM:0);
-      if(w===undefined||doc.getTextWidth(test)>maxW){
-        flush(line); line=w||'';
-      } else { line=test; }
+      if(w===undefined||doc.getTextWidth(test)>maxW){flush(line);line=w||'';}
+      else{line=test;}
     }
   }
-
-  /* ══════════════════════════════════════════════════════════
-     renderText — renders all text fields for an entry.
-     narrowW and imgEndY control flow-text behaviour.
-  ══════════════════════════════════════════════════════════ */
-  function renderText(entry, narrowW, imgEndY){
-    if(section==='notes'){
-      flowText(entry.text,14,C.nearBlack,null,0,C.nearBlack,narrowW,imgEndY);
-      y+=4;
-    } else {
-      flowText(entry.question,14,C.nearBlack,'Q:',9,C.green,narrowW,imgEndY); y+=3;
-      flowText(entry.correct||entry.answer||'',14,[20,80,45],'Ans:',13,C.ansGreen,narrowW,imgEndY); y+=3;
-      if(entry.wrong){
-        flowText(entry.wrong,13,[160,30,30],'Wrong:',17,C.wrongRed,narrowW,imgEndY); y+=3;
-      }
+  function renderText(entry,narrowW,imgEndY){
+    if(section==='notes'){flowText(entry.text,14,C.nearBlack,null,0,C.nearBlack,narrowW,imgEndY);y+=4;}
+    else{
+      flowText(entry.question,14,C.nearBlack,'Q:',9,C.green,narrowW,imgEndY);y+=3;
+      flowText(entry.correct||entry.answer||'',14,[20,80,45],'Ans:',13,C.ansGreen,narrowW,imgEndY);y+=3;
+      if(entry.wrong){flowText(entry.wrong,13,[160,30,30],'Wrong:',17,C.wrongRed,narrowW,imgEndY);y+=3;}
       if(entry.reason){
-        np(12);
-        doc.setFillColor(...C.goldBg);doc.setDrawColor(...C.gold);doc.setLineWidth(0.4);
+        np(12);doc.setFillColor(...C.goldBg);doc.setDrawColor(...C.gold);doc.setLineWidth(0.4);
         doc.setFont('helvetica','bold');doc.setFontSize(12);
-        const rLabel=`Reason: ${entry.reason}`;
-        const rW=doc.getTextWidth(rLabel)+10;
-        doc.roundedRect(M,y-3.5,rW,9,2,2,'FD');
-        doc.setTextColor(...C.gold);doc.text(rLabel,M+5,y+3);
-        y+=12;
+        const rLabel=`Reason: ${entry.reason}`;const rW=doc.getTextWidth(rLabel)+10;
+        doc.roundedRect(M,y-3.5,rW,9,2,2,'FD');doc.setTextColor(...C.gold);doc.text(rLabel,M+5,y+3);y+=12;
       }
     }
   }
-
-  /* ══════════════════════════════════════════════════════════
-     placeImage — draws image with green border.
-     x, y, w, h all in mm. Never distorts.
-  ══════════════════════════════════════════════════════════ */
-  function placeImage(dataUrl, x, imgY, w, h){
-    try{
-      const imgType=dataUrl.startsWith('data:image/png')?'PNG':'JPEG';
+  function placeImage(dataUrl,x,imgY,w,h){
+    try{const imgType=dataUrl.startsWith('data:image/png')?'PNG':'JPEG';
       doc.addImage(dataUrl,imgType,x,imgY,w,h,'','FAST');
-      doc.setDrawColor(...C.green);doc.setLineWidth(0.7);
-      doc.rect(x-0.5,imgY-0.5,w+1,h+1);
-    }catch(e){}
+      doc.setDrawColor(...C.green);doc.setLineWidth(0.7);doc.rect(x-0.5,imgY-0.5,w+1,h+1);}
+    catch(e){}
   }
-
-  /* ══════════════════════════════════════════════════════════
-     calcImageSize — returns {w_mm, h_mm} maintaining aspect
-     ratio, capped to provided max bounds.
-  ══════════════════════════════════════════════════════════ */
-  function calcImageSize(pxW, pxH, maxW, maxH){
-    const aspect=pxW/pxH;
-    let w=maxW, h=maxW/aspect;
-    if(h>maxH){ h=maxH; w=maxH*aspect; }
-    return {w:Math.round(w*10)/10, h:Math.round(h*10)/10};
+  function calcImageSize(pxW,pxH,maxW,maxH){
+    const aspect=pxW/pxH;let w=maxW,h=maxW/aspect;
+    if(h>maxH){h=maxH;w=maxH*aspect;}
+    return{w:Math.round(w*10)/10,h:Math.round(h*10)/10};
   }
-
-  /* ══════════════════════════════════════════════════════════
-     ENTRY LOOP
-  ══════════════════════════════════════════════════════════ */
   data.forEach((entry,idx)=>{
     np(55);
-
-    /* ── Entry header bar ── */
     doc.setFillColor(...C.headerBg);doc.rect(M,y,CW,11,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.white);
     doc.text(`Entry ${idx+1}`,M+4,y+7.5);
@@ -1879,79 +1749,39 @@ function generateJsPDF(section,subject,subtitleExtra,mode,data,logo,dimMap){
     doc.setFontSize(9);doc.setTextColor(200,230,210);
     doc.text(metaParts.join('   |   '),PW-M-3,y+7.5,{align:'right',maxWidth:CW-36});
     y+=15;
-
-    /* ── Topic label (red underlined) ── */
     if(entry.topic){
-      np(14);
-      doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.topicRed);
+      np(14);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.topicRed);
       doc.text(entry.topic,M,y);
       const tW=doc.getTextWidth(entry.topic);
       doc.setDrawColor(...C.topicRed);doc.setLineWidth(0.5);doc.line(M,y+1.8,M+tW,y+1.8);
       y+=10;
     }
-
     const hasImg=!!entry.image;
-
-    if(!hasImg){
-      /* ── NO IMAGE: simple full-width text ── */
-      renderText(entry, CW, Infinity);
-
-    } else {
-      /* ── HAS IMAGE: determine layout by aspect ratio ── */
-      const dims = dimMap[entry.id]||{w:4,h:3};
-      const aspect = dims.w / dims.h;
-
-      /* LANDSCAPE (wider than 1.2× height) → WIDE layout */
-      if(aspect > 1.2){
-        /* Scale image to full column width, preserve ratio, max 115mm tall */
-        const sz = calcImageSize(dims.w, dims.h, CW, 115);
-        /* Centre image horizontally */
-        const imgX = M + (CW - sz.w) / 2;
-        np(sz.h + 6);
-        const imgY = y;
-        placeImage(entry.image, imgX, imgY, sz.w, sz.h);
-        y = imgY + sz.h + 6;
-        /* All text below image at full width */
-        renderText(entry, CW, Infinity);
-
+    if(!hasImg){renderText(entry,CW,Infinity);}
+    else{
+      const dims=dimMap[entry.id]||{w:4,h:3};const aspect=dims.w/dims.h;
+      if(aspect>1.2){
+        const sz=calcImageSize(dims.w,dims.h,CW,115);
+        const imgX=M+(CW-sz.w)/2;np(sz.h+6);const imgY=y;
+        placeImage(entry.image,imgX,imgY,sz.w,sz.h);y=imgY+sz.h+6;renderText(entry,CW,Infinity);
       } else {
-        /* PORTRAIT / SQUARE → SIDE layout */
-        /* Image on the right, 68mm wide max, preserve ratio, max 110mm tall */
-        const sz = calcImageSize(dims.w, dims.h, 68, 110);
-        const imgX = M + CW - sz.w;       // flush to right margin
-        const textColW = CW - sz.w - 6;   // text column left of image
-        const blockY = y;
-        const imgEndY = blockY + sz.h;    // below this → full width text
-
-        /* Render text: flows beside image first, then full width below */
-        renderText(entry, textColW, imgEndY);
-
-        /* Draw image aligned to blockY on the right */
-        placeImage(entry.image, imgX, blockY, sz.w, sz.h);
-
-        /* Ensure we're below image bottom before divider */
-        y = Math.max(y, imgEndY + 4);
+        const sz=calcImageSize(dims.w,dims.h,68,110);
+        const imgX=M+CW-sz.w;const textColW=CW-sz.w-6;
+        const blockY=y;const imgEndY=blockY+sz.h;
+        renderText(entry,textColW,imgEndY);
+        placeImage(entry.image,imgX,blockY,sz.w,sz.h);
+        y=Math.max(y,imgEndY+4);
       }
     }
-
-    /* ── Entry divider ── */
-    np(8);
-    doc.setDrawColor(...C.divider);doc.setLineWidth(0.5);doc.line(M,y,PW-M,y);y+=9;
+    np(8);doc.setDrawColor(...C.divider);doc.setLineWidth(0.5);doc.line(M,y,PW-M,y);y+=9;
   });
-
-  /* ── FOOTERS on every page ── */
   const totalPages=doc.internal.getNumberOfPages();
   for(let i=1;i<=totalPages;i++){
-    doc.setPage(i);
-    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.muted);
-    doc.text(
-      `Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject==='all'?'All Subjects':subject}  |  ${subtitleExtra}`,
-      M,PH-7
-    );
+    doc.setPage(i);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...C.muted);
+    doc.text(`Scalpel Study Squad  |  ${SECTION_LABELS[section]}  |  ${subject==='all'?'All Subjects':subject}  |  ${subtitleExtra}`,M,PH-7);
     doc.text(`Page ${i} / ${totalPages}`,PW-M,PH-7,{align:'right'});
     doc.setDrawColor(...C.divider);doc.setLineWidth(0.3);doc.line(M,PH-10,PW-M,PH-10);
   }
-
   const safeSubject=(subject==='all'?'AllSubjects':subject).replace(/\s/g,'');
   const safeDate=subtitleExtra.replace(/[\s,]/g,'_');
   doc.save(`SSS_${SECTION_LABELS[section].replace(/\s/g,'_')}_${safeSubject}_${safeDate}.pdf`);
@@ -2001,84 +1831,47 @@ if('serviceWorker' in navigator){
 }
 
 /* ============================================================
-   PWA INSTALL — unified logic
-   • Android/Chrome/Edge: shows "Install App" button in the card
-   • iOS Safari: shows "Add to Home Screen" tip automatically
-   • Desktop: shows address-bar tip
-   • Already installed: shows "Already Installed" badge
+   PWA INSTALL
 ============================================================ */
 let deferredPrompt=null;
-const pwaMainInstallBtn = document.getElementById('pwaMainInstallBtn');
-const pwaInstalledBadge = document.getElementById('pwaInstalledBadge');
-const pwaIosTip         = document.getElementById('pwaIosTip');
-const pwaDesktopTip     = document.getElementById('pwaDesktopTip');
-
+const pwaMainInstallBtn=document.getElementById('pwaMainInstallBtn');
+const pwaInstalledBadge=document.getElementById('pwaInstalledBadge');
+const pwaIosTip=document.getElementById('pwaIosTip');
+const pwaDesktopTip=document.getElementById('pwaDesktopTip');
 function isIos(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
 function isInStandaloneMode(){return window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone;}
-
 function initPwaCard(){
-  if(isInStandaloneMode()){
-    // Already running as installed app
-    pwaInstalledBadge.style.display='inline-flex';
-    pwaMainInstallBtn.style.display='none';
-    pwaIosTip.style.display='none';
-    pwaDesktopTip.style.display='none';
-  } else if(isIos()){
-    // iOS — can't auto-prompt, show tip
-    pwaIosTip.style.display='block';
-    pwaMainInstallBtn.style.display='none';
-  } else {
-    // Android/Chrome/Desktop — button shown when prompt available (see beforeinstallprompt)
-    // Show desktop tip as fallback until prompt fires
-    pwaDesktopTip.style.display='block';
-  }
+  if(isInStandaloneMode()){pwaInstalledBadge.style.display='inline-flex';pwaMainInstallBtn.style.display='none';pwaIosTip.style.display='none';pwaDesktopTip.style.display='none';}
+  else if(isIos()){pwaIosTip.style.display='block';pwaMainInstallBtn.style.display='none';}
+  else{pwaDesktopTip.style.display='block';}
 }
 initPwaCard();
-
 window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  // Show the install button in our card
-  pwaMainInstallBtn.style.display='flex';
-  pwaDesktopTip.style.display='none';
-  // Also show old floating banner if not dismissed
+  e.preventDefault();deferredPrompt=e;
+  pwaMainInstallBtn.style.display='flex';pwaDesktopTip.style.display='none';
   const installBanner=document.getElementById('pwaInstallBanner');
-  if(!localStorage.getItem('sss_pwa_dismissed')){
-    installBanner.style.display='flex';
-  }
+  if(!localStorage.getItem('sss_pwa_dismissed'))installBanner.style.display='flex';
 });
-
 pwaMainInstallBtn.addEventListener('click',async()=>{
   if(!deferredPrompt)return;
   deferredPrompt.prompt();
   const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted'){
-    showToast('✅ SSS 20th Book installed!');
-    pwaMainInstallBtn.style.display='none';
-    pwaInstalledBadge.style.display='inline-flex';
-  }
-  deferredPrompt=null;
-  document.getElementById('pwaInstallBanner').style.display='none';
+  if(outcome==='accepted'){showToast('✅ SSS 20th Book installed!');pwaMainInstallBtn.style.display='none';pwaInstalledBadge.style.display='inline-flex';}
+  deferredPrompt=null;document.getElementById('pwaInstallBanner').style.display='none';
 });
-
-/* Old floating banner buttons */
 document.getElementById('pwaInstallBtn').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
+  if(!deferredPrompt)return;deferredPrompt.prompt();
   const{outcome}=await deferredPrompt.userChoice;
   if(outcome==='accepted')showToast('✅ SSS 20th Book installed!');
-  deferredPrompt=null;
-  document.getElementById('pwaInstallBanner').style.display='none';
+  deferredPrompt=null;document.getElementById('pwaInstallBanner').style.display='none';
 });
 document.getElementById('pwaDismissBtn').addEventListener('click',()=>{
   document.getElementById('pwaInstallBanner').style.display='none';
   localStorage.setItem('sss_pwa_dismissed','1');
 });
 window.addEventListener('appinstalled',()=>{
-  document.getElementById('pwaInstallBanner').style.display='none';
-  deferredPrompt=null;
-  pwaMainInstallBtn.style.display='none';
-  pwaInstalledBadge.style.display='inline-flex';
+  document.getElementById('pwaInstallBanner').style.display='none';deferredPrompt=null;
+  pwaMainInstallBtn.style.display='none';pwaInstalledBadge.style.display='inline-flex';
   showToast('🎉 SSS 20th Book installed on your home screen!');
 });
 </script>
