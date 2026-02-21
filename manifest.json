@@ -3,23 +3,36 @@
   "short_name": "SSS 20th Book",
   "description": "Scalpel Study Squad Revision Report — Notes, Facts, PYQ, SWT & GT Mistakes",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0b1a14",
-  "theme_color": "#0b1a14",
+  "background_color": "#0A1929",
+  "theme_color": "#0A1929",
   "categories": ["education", "medical"],
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg",
+      "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/scalpelstudysquad/scalpel-study-squad-planner-web-/9fbc7289362294966c7ff37470a6830476f405fe/IMG_20260212_225010_213.jpg",
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [],
