@@ -36,6 +36,21 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "./screenshot1.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "SSS 20th Book — Home Screen"
+    },
+    {
+      "src": "./screenshot2.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "SSS 20th Book — Notes & Facts"
+    }
+  ],
   "prefer_related_applications": false
 }
